@@ -1,0 +1,148 @@
+\section{SLAM: Back-end}
+\label{sec:backend}
+With large-scale environments, the need for a global map arises as the front-end estimate tends to drift over time.
+The back-end infers in the front-end data, abstracting it into a map and optimizing it. Two approaches are used, filter-based and optimization-based, depending on how the map is structured and processed.
+
+Filtering approaches marginalize all the poses for every new frame while retaining all the landmarks detected, creating a compact graph. This graph only grows when exploring new areas and detecting new features. However, it will eventually become a fully interconnected graph, severely limiting the number of features that can be stored while preserving computational efficiency. 
+
+Optimization approaches, as opposed to filtering, solve the complete graph, leveraging an algorithm such as \ac{BA}. They can either do it in a sliding window (local \ac{BA}), or in a subset of the overall frames, referred to as keyframes (global \ac{BA}). The rate at which the optimization is performed is lower than the frame rate: despite including more elements in the computation, they are sparsely connected, making optimization approaches comparatively more efficient.
+Furthermore, it has been argued that adding features is more beneficial for accuracy than adding frames \cite{strasdat2010whyfilteristhequestion}. All these facts have turned optimization approaches into the new de facto standard for the back-end in SLAM. A comparison between filtering and optimization approaches is represented in Fig. \ref{fig:filtervsopt}.
+
+In this section, filter-based approaches will be briefly outlined, followed by the introduction of the relevant elements and procedures for optimization-based approaches.
+
+
+\begin{figure}[!b]
+ \centering
+
+\subfloat[]{\includegraphics[width=0.47\linewidth]{figs/paper1-survey/Back-end/5a-filter-slam.pdf}}\quad
+\subfloat[]{\includegraphics[width=0.47\linewidth]{figs/paper1-survey/Back-end/5b-optimization-slam.pdf}}
+
+\caption[The SLAM back-end for filter-based and keyframe-based SLAM]{According to its back-end, SLAM can be classified as (\textbf{a}) filter-based, and  (\textbf{b}) keyframe-based. Filter-based approaches marginalise all camera poses onto the last pose $C_k$, which is stored in the state vector with all landmarks $p_k$. Keyframe-based approaches only process data from the keyframes $K_i$, generating a sparse graph with the camera poses $C_k$, the landmarks $p_k$, and the map points $P_i$.}
+\centering
+\label{fig:filtervsopt}
+\end{figure}
+
+
+
+\subsection{Filter-based}
+\label{sec:backend:filterbased}
+
+Filter-based approaches present SLAM as a probabilistic framework formulated with variants of the Bayes filter. These frameworks represent the environment and the robot's variables (i.e., pose and velocity) as a continuous state vector. The state is modelled as a Markov chain, in which the current belief contains all the knowledge about the previous states of the robot, that is, the probability of the next state depends only on the current one. This property originated from Markov's assumptions of a perfectly modeled system, a static world, and noise independence over time. While these assumptions do not hold in the real world, the uncertainty modeling from probabilistic approaches provides robustness against their violations \cite{probroboticsthrun}. 
+
+In filter-based SLAM, the state vector is updated recursively according to its belief distribution based on the available data. This update is performed in two steps: the prediction step, based on the previous state posterior, and the update or correction step, which incorporates the measurements originating from the environment's state. However, the Bayes filter framework only considers linear distributions under additive Gaussian noise.
+
+
+\ac{EKF} SLAM is one of the first approaches to state estimation for SLAM \cite{probroboticsthrun}, and it addresses the system's nonlinearities by linearizing the posterior around the state while keeping the Gaussian noise assumption.  
+It was first implemented in a monocular visual SLAM system in MonoSLAM \cite{davison2007monoslam}. EFK SLAM represents the belief for the state vector by its first and second moments. In MonoSLAM, the state vector contains the 3D pose of the camera plus the 3D position vector for the features. It formulates the prediction step according to a constant linear and angular velocity and the update step according to the measurements of the image features. Some more recent implementations of Kalman filters for SLAM include ROVIO \cite{bloesch2015rovio} and S-MSCKF \cite{sun2018s-msckf}, which also couple inertial measurements into the state vector and the process model.
+    
+Particle filters can work for nonlinear systems and non-Gaussian noise distributions \cite{pupilli2005realtctpf}. On the other hand, the main limitation of particle filters is the large number of particles required for high-dimensional spaces. Some SLAM systems overcome this issue by implementing Rao-Blackwellized Particle Filters (RBPF) for maintaining the distribution of the poses and the features in the map \cite{huletski2015modernevaluation}. L-SLAM \cite{zikos20156L-SLAM} applies the particle filter to the parameter that induces the nonlinearities, that is, the orientation, and the Kalman filter to the parameters that can be represented in a linear form, that is, the translation along with the position of the features.
+
+
+Although filter-based approaches still find their applications in SLAM \cite{geneva2019SEVIS,quan2019accurate,heo2018ekf,geneva2019linear}, optimization-based techniques have taken over the lead in visual SLAM implementations and therefore will be the focus of the rest of the sections of the back-end survey.
+
+\subsection{Optimization-based}
+\label{sec:backend:optbased}
+Most recent methods are based on optimization approaches, which perform local camera tracking in the front-end and optimize the map and the camera trajectory in the back-end. Both processes run on parallel threads. 
+Optimization-based SLAM relies on keyframes to reduce the computational cost of processing consecutive frames. Every time a new keyframe comes in, an optimization procedure is applied over the comprehensive set of keyframes throughout the map and trajectory estimates.
+Moreover, the optimization is also performed when a loop closure is detected in the front-end, allowing detection and correction of the accumulated drift.
+The information stored by the map and its structure will depend not only on the information processed by the front-end but also on the optimization process and the desired output data from the overall SLAM algorithm.
+
+The current section introduces the fundamental concepts relevant to the back-end of SLAM optimization approaches: the criteria for keyframe selection, the information stored in SLAM maps, and, lastly, the loop closing and optimization of the SLAM graph.
+
+\subsubsection{Keyframe selection}
+\label{sec:backend:keyframeselection}
+The back-end runs on the information extracted from the keyframes; hence, it is crucial to define optimal criteria for selecting whether the frame retrieved by the front-end is a keyframe.
+PTAM \cite{klein2007ptam}, LSD-SLAM \cite{engel2014lsd}, and DTAM \cite{klein2007dtam} include keyframes according to a distance criterion. VINS-Mono \cite{qin2018vins-mono} applies a parallax criterion, which considers translation and rotation. Moreover, VINS-Mono performs the keyframe selection in the front-end, previous to tracking.
+ORB-SLAM \cite{campos2021orb} is generous when including keyframes but very restrictive for keeping them, removing those that include redundant map points. ORB-SLAM and SVO \cite{forster2014svo} keep them according to visual change criteria as a function of the keypoints tracked. VOLDOR+SLAM \cite{min2021voldor+} uses a covisibility criteria of the map. OV$^2$SLAM \cite{ferrera2021ov2slam} uses both a parallax and keypoint tracking criteria, with a posterior culling similar to that of ORB-SLAM.
+
+\subsubsection{Information stored in the map}
+\label{sec:backend:map}
+The map contains information about the environment intended for use by other threads within the SLAM pipeline, namely loop closure or third-party processes such as augmented reality or path planning algorithms.
+
+
+\begin{figure}[!b]
+ \centering
+
+ \subfloat[]{\includegraphics[width=.48\columnwidth]{figs/paper1-survey/Back-end/6a-map.pdf}}\quad
+\subfloat[]{\includegraphics[width=.48\columnwidth]{figs/paper1-survey/Back-end/6b-atlas.pdf}}
+
+\caption[The information in the SLAM's map]{SLAM maps comprise the information inferred from the sensor's measurements. \textbf{(a)} showcases the elements that a SLAM map can contain.  \textbf{(b)} shows the structure of the Atlas map from ORB-SLAM1, 2, and 3. The notation for the map elements is the same as in the original papers.}
+\label{fig:atlasmap}
+\centering
+\end{figure}
+
+
+The information stored by the map, as obtained from the keyframes, is summarized in Fig. \ref{fig:atlasmap}a.
+A minimal setup includes the camera poses and the transforms between keyframes and the world coordinates. 
+Some maps include the image from the camera input. Additionally, approaches like PTAM \cite{klein2007ptam} store a pyramid of subsampled grayscale images. However, other approaches discard this data to reduce memory consumption, like VINS-Mono \cite{qin2018vins-mono}.
+
+The geometric map could be sparse or dense. Generally, sparse features are meant explicitly for localization, while dense features also allow scene representation. Sparse maps comprise the triangulated 3D points in world coordinates, with reference to their pixel location in the corresponding pyramid level of the keyframe. To aim for robust map points, approaches like ORB-SLAM \cite{campos2021orb}, or UcoSLAM \cite{munoz2020ucoslam} apply survival strategies consisting in keeping only those that are visible in a window of keyframes.
+Dense or semi-dense maps like the one generated by LSD-SLAM \cite{engel2014lsd} store a semi-dense inverse depth map for the pixels with larger gradients. Although usually direct methods are the ones that generate depth maps \cite{engel2014lsd,tateno2017cnnslam,czarnowski2020deepfactors}, indirect methods are also able to generate depth maps from sparse points: using a high amount of points in VITAMIN-E  \cite{Yokozuka_2019vitamine}, detecting planar surfaces from semantic segmentation in VPS-SLAM \cite{bavle2020vps-slam}, filling the background in DynaSLAM \cite{dynaslam18}, or creating a dense semantic octo-tree map in DS-SLAM \cite{yu2018ds-slam}. 
+As an alternative to classic dense or sparse feature representations, the work in \cite{zhen2021mapquadrics} proposes using simplified quadrics for geometric representation. It allows the creation of compact maps while still capturing the layout.
+
+Semantic information extends the capabilities of SLAM by adding information that other processes can use running in the system, most of them based on deep learning methods \cite{tateno2017cnnslam,liu2021rds-slam,yang2019cubeslam,bavle2020vps-slam,cui2019sof-slam,dynaslam18}. Semantic approaches are computationally expensive and cannot be implemented in real-time. DS-SLAM \cite{yu2018ds-slam} proposes creating the semantic map in a separate thread to improve the real-time performance.
+
+The inherent scale ambiguity of monocular systems makes SLAM drift. In the absence of other sensors to fuse the measurement with, classic approaches explicitly detect the drift in loop closures by normalizing the inverse depth map \cite{engel2014lsd}\cite{campos2021orb}. On the other hand, deep learning methods like CNN-SLAM \cite{tateno2017cnnslam} or UnDeepVO \cite{li2018undeepvo} can recover the absolute scale from monocular images\cite{czarnowski2020deepfactors} \cite{greene2020metrically}. They minimize the drift by choosing an adequate loss function for the network, for instance, by exploiting epipolar constraints \cite{godard2017unsupervisedleftrightconsistency} or the scale consistency between frames \cite{bian2019unsuperviseddepthconsistency}.
+VDO-SLAM \cite{zhang2020vdo} estimates the depth map with the learning-based monocular depth estimation method MonoDepth2 \cite{godard2019monodepth2}.
+
+
+
+Designing a mapping process implies meeting a tradeoff between tracking robustness and memory efficiency.
+The first versions of ORB-SLAM were susceptible to tracking loss: if the algorithm could not track the pose on the local map, the tracking loss would require restarting the process. However, since ORB-SLAM3 \cite{campos2021orb}, this issue is addressed by the so-called Atlas map (see Fig. \ref{fig:atlasmap}b). The Atlas map stores as inactive those maps in which the tracking was lost and initializes a new map from that frame on.  
+These maps can be later merged if the active map revisits an area from an inactive map. 
+Multi-map strategies improve relocalization under tracking loss or long mapping sessions and allow collaborative mapping.
+
+
+\subsubsection{Loop closing and graph optimization}
+\label{sec:backend:loopclosingandgraphopt}
+
+
+Introducing keyframes has allowed the creation of larger maps and more computationally expensive but accurate optimization algorithms for SLAM. Optimization methods for SLAM are based on factor graphs. In general, when applied to the \ac{SLAM} problem, the keyframes represent the nodes, and the edges represent the relationship between them, specific to each implementation.
+\begin{figure}[!b]
+
+    \centering
+    \smallskip
+    \includegraphics[scale=1]{figs/paper1-survey/Back-end/7-BA.pdf}
+
+    \caption[The information processed by the SLAM's factor graph]{Monocular visual SLAM uses factor graphs to optimize the data gathered in the front-end. In this figure, each image frame represents in red the observed value $\hat{p}_{ij}$ for the 3D point $P_i$ , and in blue, its reprojection value $p_{ij}$. Bundle adjustment optimizes the camera poses, the 3D map points, and their respective 2D projections. Pose graph optimization optimizes the camera poses and the rigid-body transformations.}
+    \label{fig:BA}
+\end{figure}
+There are two main implementations of factor graphs for SLAM: pose graph optimization and bundle adjustment (BA).
+
+
+In pose graph optimization, the nodes are the camera poses $C_k$, and the edges are the rigid-body transformations $T_{jk}$. The optimization problem that finds the optimal camera poses can be formulated as follows:    
+\begin{equation}
+        \argmin{C_k,T_k} \sum_{k,j} \rho(r(C_k,C_jT_{jk})) 
+    \end{equation}
+     with $r$ the residual error based on a distance function and $\rho$ the cost function for the residual error. It is used by frameworks that require a lower computational cost in the back end, such as LSD-SLAM \cite{engel2014lsd} and CNN-SLAM \cite{tateno2017cnnslam}.
+
+\ac{BA} also stores the position of the map points, in addition to the information stored by the pose graph, as outlined in \ref{fig:BA}. The edges are now the reprojection constraints from the points to the cameras. Given $N$ 3D points, $P_i$ seen from $M$ camera poses $C_k$, with $p_{ki}$ the observed 2D projection of the point  $P_i$ in the camera $C_k$, projected by the projection matrix $\pi_k$, the optimization problem for the reprojection error can be formulated as \cite{heyden2005multiplevgHyZ}:
+    \begin{equation}
+        \argmin{\hat{p}_{ki},P_i,\pi_k} \sum^N_i \sum^M_k \rho(r(\hat{p}_{ki}, \pi_kP_i))
+    \end{equation}
+     In local \ac{BA}, the optimization is performed over a window of connected keyframes, leaving the rest fixed, while global \ac{BA} operates over all keyframes within the map. Since it uses more data for optimization, \ac{BA} is more precise and computationally costly. PTAM applies local \ac{BA} for each newly inserted keyframe, and then global \ac{BA} in a separate thread. For dense point clouds, the computational cost of \ac{BA} is unfeasible; thus, VITAMIN-E  \cite{Yokozuka_2019vitamine} proposes a method called subspace Gauss-Newton. Instead of updating all the variables at once, it partially updates a subspace of them, keeping the rest fixed. The semantic approach CubeSLAM \cite{yang2019cubeslam} takes into account which points are static and which are dynamic and applies motion model constraints to the dynamic points.
+ 
+
+Optimization-based SLAM algorithms have commonly defined a nonlinear least-squares problem, in which the cost function $\rho(\cdot)$ corresponds to the square of the residual.
+
+Some approaches run combinations of the methods mentioned above. A common approach is running a local \ac{BA}, then a pose graph optimization for loop closing \cite{qin2018vins-mono,bruno2021lift,cui2019sof-slam,mur2015orb,liu2021rds-slam}.
+That was the case for the first version of ORB-SLAM \cite{mur2015orb}. Since ORB-SLAM2 \cite{mur2017orbslam2}, a new thread running full (or global) \ac{BA} was introduced. The same ORB features are used for better real-time performance for all these processes. As an alternative to full \ac{BA}, OV$^2$SLAM decreases the runtime by applying the so-called "loose-BA", which only optimizes the keyframes affected by the loop closure. 
+
+Some limitations of the \ac{BA} process arise under the presence of outliers, pure rotational motions, and small baselines. The nonlinear least-squares optimization process presents a strong sensitivity to outliers, which can dominate the cost function and lead to wrong results.
+With pure rotational motion or without enough baseline, the depth uncertainty grows due to unobservable disparities and numerical errors \cite{hess2014uncertaintyandbaseline}, as represented in Fig. \ref{fig:disparity}. The work in \cite{bustos2019LinfinitySLAM} proposes rotation averaging \cite{eriksson2018rotationaveraging} during the online update of the graph, leaving the global graph optimization as a lower-priority thread. This pipeline shows more robustness under pure rotational or low-speed motion updates while simplifying the online computation.
+Moreover, the least-squares approach for the cost function is sensitive to outliers from poor initialization, bad front-end estimates, or wrong loop estimates. This is due to the quadratic cost function making the measurements with high residuals have a big influence on the overall cost. Robust estimation theory suggests using robust cost functions such as the truncated least-squares, which prevents large residuals from dominating the cost, or the Huber loss, which is convex \cite{black1996robustloss}. However, the sum of all cost functions remains non-convex. 
+
+\begin{figure}[thb]
+
+    \centering
+    \smallskip
+    \includegraphics[scale=1]{figs/paper1-survey/Back-end/8-disparity.pdf}
+
+    \caption[How the baseline affects the estimate's uncertainty]{When observing a patch corresponding to the same 3D point from different baselines (for simplicity, depicted as a pure linear displacement of the camera), lower baselines result in higher uncertainty (in red), while higher baselines result in lower uncertainty (in green) for inverse depth estimation.}
+    \label{fig:disparity}
+\end{figure} 
+The aforementioned methods are based on a heuristic search, which, while computationally efficient, are vulnerable to convergence to local minima. Alternatively, convex relaxation techniques search for convex approximations that provide better convergence.
+The work in \cite{yangcarlone2020GNC} proposes a method called graduated non-convexity (GNC), which iteratively solves the optimization problem. It starts from a convex surrogate of the loss and gradually increases the non-convexity until the original non-convex least-squares formulation is reached. Despite being more computationally expensive, this method proved a better performance than classic solvers under the high presence of outliers.
+On the other hand, SE-Sync \cite{backend:sesyncrosen2019se} defines a simplified maximum likelihood estimation of the Euclidean synchronization problem for pose graph optimization. A convex semidefinite relaxation is applied to the estimator, which is then reduced to a low-dimension Riemannian manifold. Finally, the optimally-global solution is found with a Riemannian optimization method. Moreover, SE-Sync provides assessment on the global optimality of the found minimization.
+
+Although the methods based in heuristic search such as Gauss-Newton and Levenberg-Marquard are more established within visual SLAM pipelines, convex relaxation techniques present a promising alternative to be seen in future implementations.

@@ -1,0 +1,83 @@
+\section{Introduction}
+\label{sec:introduction}
+
+% Intro
+% Problem intro
+%Under the challenging imaging conditions that hinder the performance of computer vision algorithms, underwater vehicles' autonomy has been usually limited to sonar-based methods for localization and detection~\cite{rw:sonarwalldet}.
+%Nevertheless, the deep learning paradigm pushes the boundaries of computer vision-based algorithms underwater. Thus, the availability of data becomes the main limiting factor.
+
+% Niche
+%While other domains, such as autonomous driving, have long had a wide variety of datasets at their disposal \cite{cordts2016cityscapes, brostow2009semantic}, the availability in the underwater domain is limited by the difficulty of robot deployment and ground truth gathering. 
+%Offshore structures (such as pipelines) are suitable for \ac{AUV} deployment, as they require regular inspections. However, it is often unfeasible to open such data for public use for privacy and security reasons.
+%Hence, most of the datasets available are recorded in the context of marine life monitoring \cite{rw:dataset:nautec, rw:dataset:suim} or archaeological inspection \cite{dataset:aqualocdb}. Moreover, these datasets are often divided between localization, segmentation, or object detection, and rarely provide ground truth for both. 
+
+\begin{figure}[!t]
+    \centering
+    \includegraphics[width=.7\linewidth]{figs/paper4-subpipe/GA.pdf}
+    \caption[Data captured and recorded through SubPipe's data gathering procedure]{SubPipe has been recorded during a pipeline inspection mission with OceanScan's LAUV. The recorded data includes two monocular cameras (one monochrome camera and one RGB) with pipe segmentation annotations for the latter one; side-scan sonar images with bounding box annotations of the pipeline for object detection; temperature, altitude, and depth measurements; and the robot's pose, velocity, and acceleration.}
+    \label{fig:GA}
+\end{figure}
+
+% Aim
+This chapter presents SubPipe, a submarine pipeline inspection dataset with ground truth for object detection, image segmentation, and visual-inertial localization. It includes RGB images and  \ac{SSS} images of the seafloor, accelerations captured by an \ac{INS}, as well as the linear velocities estimated by a \ac{DVL}.  Annotations for semantic segmentation are provided for the RGB images from a designated camera, while the side-scan sonar images are annotated for object detection purposes.
+Other sensor measurements include forward-looking echo sounder, temperature, altitude, pressure, and depth. The outline of the data-gathering process can be seen in Fig. \ref{fig:GA}.
+
+% Niche claim
+As shown in Table \ref{subpipe:table:comparisonsoadataset}, the dataset closest to SubPipe is MIMIR-UW \cite{dataset:mimir}, with a similar set of sensors and pipe segmentation labels. However, MIMIR-UW presents a simulated dataset with fewer underwater artifacts, such as scattering and blur.  Fig. \ref{fig:sampledatasetimgs} visually compares the imaging conditions between SubPipe and some state-of-the-art underwater datasets.
+
+\begin{table}[!htbp]
+\caption[Comparison of state-of-the-art underwater datasets]{Comparison of state-of-the-art underwater datasets. "Seg." and "Det." indicate annotations for segmentation and object detection, while "Depth" notes range-based imagery (such as side-scan sonar and depth camera).}
+\centering
+\footnotesize
+\label{subpipe:table:comparisonsoadataset}
+\begin{tabular}{l@{\hspace{.3mm}} c@{\hspace{.8mm}} c@{\hspace{.8mm}} c@{\hspace{.4mm}} c@{\hspace{.3mm}} c@{\hspace{.7mm}} r }
+\toprule
+Dataset                                      & Pose      & Seg. & Det. & Camera    & Depth   & Object labels\\    
+\midrule
+Aqualoc \cite{dataset:aqualocdb}            & \textcolor{greenEIVAdark}{\cmark}    & \textcolor{redEIVA}{\xmark} & \textcolor{redEIVA}{\xmark}       & mono & \textcolor{redEIVA}{\xmark}  & N\slash A\\
+Aurora \cite{dataset:bernardi2022aurora}  & \textcolor{greenEIVAdark}{\cmark}    & \textcolor{redEIVA}{\xmark} & \textcolor{redEIVA}{\xmark}        & mono & \textcolor{redEIVA}{\xmark}  & N\slash A\\
+% Caves \cite{rw:dataset:caves}                & \textcolor{greenEIVAdark}{\cmark}    &  & ?& ? \textcolor{redEIVA}{\xmark}       & mono & \textcolor{greenEIVAdark}{\cmark}  & N\slash A\\
+MIMIR-UW\cite{dataset:mimir}              & \textcolor{greenEIVAdark}{\cmark}    & \textcolor{greenEIVAdark}{\cmark} & \textcolor{redEIVA}{\xmark}        &rig        & \textcolor{greenEIVAdark}{\cmark}  & Marine life; pipes\\  
+NAUTEC UWI\cite{rw:dataset:nautec}           & \textcolor{redEIVA}{\xmark}    & \textcolor{greenEIVAdark}{\cmark} & \textcolor{redEIVA}{\xmark}       & mono & \textcolor{redEIVA}{\xmark}  & Marine life; other\\%Divers; marine life; other objects\\ 
+SUIM\cite{rw:dataset:suim}                   & \textcolor{redEIVA}{\xmark}    & \textcolor{greenEIVAdark}{\cmark}  & \textcolor{redEIVA}{\xmark}      & mono & \textcolor{redEIVA}{\xmark}  & Marine life; other\\%Divers; marine life; AUVs; wrecks\\
+% TartanAIR\cite{rw:dataset:tartanair2020iros} & \textcolor{greenEIVAdark}{\cmark}    &  & ?\textcolor{greenEIVAdark}{\cmark}       & monocular       & \textcolor{greenEIVAdark}{\cmark}  & \textcolor{redEIVA}{\xmark}                 & \textcolor{greenEIVAdark}{\cmark}  & Nature\\
+TrashCan\cite{TrashCan}           & \textcolor{redEIVA}{\xmark}    & \textcolor{greenEIVAdark}{\cmark}  & \textcolor{greenEIVAdark}{\cmark}      & mono & \textcolor{redEIVA}{\xmark}  & Marine debris\\
+\midrule
+\textbf{SubPipe (ours)}             & \textcolor{greenEIVAdark}{\cmark}    & \textcolor{greenEIVAdark}{\cmark}   & \textcolor{greenEIVAdark}{\cmark}  &  mono(x2)       & \textcolor{greenEIVAdark}{\cmark}  & Pipe \\    
+\bottomrule
+
+\end{tabular}
+\end{table}
+
+\begin{figure*}
+\centering
+\Huge
+\resizebox{\textwidth}{!}{\begin{tabular}
+{c@{\hspace{.7mm}}c@{\hspace{1mm}}c@{\hspace{3mm}}c@{\hspace{3mm}}c@{\hspace{3mm}}c@{\hspace{.7mm}}c@{\hspace{3mm}}c@{\hspace{.7mm}}c@{\hspace{3mm}}c@{\hspace{.7mm}}c}
+
+ \multicolumn{2}{c}{SubPipe} & Aqualoc &  Aurora & Caves & \multicolumn{2}{c}{MIMIR } & \multicolumn{2}{c}{SUIM} & \multicolumn{2}{c}{TrashCan } \\ 
+ 
+ \adjustbox{valign=m,vspace=.2pt}{\includegraphics[height=.2\linewidth]{figs/paper4-subpipe/sample/McPipe-frame0-02-34.00.jpg}} 
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[height=.2\linewidth]{figs/paper4-subpipe/sample/McPipe-frame0-02-34.00_label.png}}
+
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[height=.2\linewidth]{figs/paper4-subpipe/sample/aqualoc_RGB.jpg}}
+
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[height=.2\linewidth]{figs/paper4-subpipe/sample/aurora_RGB.jpg}}
+
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[height=.2\linewidth]{figs/paper4-subpipe/sample/caves_RGB.jpg}}
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[height=.2\linewidth]{figs/paper4-subpipe/sample/mimir_RGB_1662121656355762176.jpg}}
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[height=.2\linewidth]{figs/paper4-subpipe/sample/mimir_segmentation_1662121656355762176.jpg}}
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[height=.2\linewidth]{figs/paper4-subpipe/sample/SUIM_d_r_437_.jpg}} 
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[height=.2\linewidth]{figs/paper4-subpipe/sample/SUIM_d_r_437_label.jpg}} 
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[height=.2\linewidth]{figs/paper4-subpipe/sample/trashCan60.jpg}} 
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[height=.2\linewidth]{figs/paper4-subpipe/sample/trashCan64.jpg}} 
+\end{tabular}}
+\caption[Sample images from SubPipe and other state-of-the-art underwater datasets]{Sample images from SubPipe and other state-of-the-art underwater datasets \cite{dataset:aqualocdb,dataset:bernardi2022aurora,rw:dataset:caves,dataset:mimir,rw:dataset:suim,TrashCan}. A sample segmentation image is also shown for those datasets that include segmentation labels.}
+\label{fig:sampledatasetimgs}
+\end{figure*}
+
+
+% Conclusion
+By releasing SubPipe, we aim to provide the research community with a novel and multimodal underwater dataset, facilitating advancements in underwater computer vision algorithms. To underscore the dataset's significance, we propose a series of experiments that demonstrate the necessity of SubPipe and showcase the novel challenges that state-of-the-art algorithms face in underwater scenarios. Through this contribution, we encourage a collaborative effort toward developing robust and versatile underwater computer vision solutions.
+
+The rest of this chapter is structured as follows. Section \ref{sec:dataset} presents SubPipe, including information about the sensors and techniques used for gathering the dataset. Furthermore, Section \ref{section:subpipe:metrics} provides insights about the dataset's quality by analyzing different metrics and comparing them with other state-of-the-art datasets. Section \ref{sec:evaluations} lists the conducted experiments and their results. Finally, Section \ref{sec:conclusion} concludes this paper.

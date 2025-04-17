@@ -1,0 +1,37 @@
+\section{Future Work and Open Questions}
+\label{sec:future_work}
+
+While this thesis presents significant advancements, it also opens avenues for further research and addresses remaining open questions in marine robotics autonomy. Building upon the contributions presented, future work should focus on the following directions:
+
+\begin{enumerate}
+    \item \textbf{Integration and Holistic Validation:}
+        \begin{itemize}
+            \item \textcolor{blue}{Integrate the developed components into a unified framework.} For instance, utilize models learned via PINC or disturbances estimated by DF-GP within the REACT planner and the VT-NMPC controller.
+            \item \textcolor{blue}{Conduct extensive real-world validation} of the integrated system, particularly REACT and the marine application of VT-NMPC, in diverse and challenging underwater environments beyond controlled tank tests or simulations. This is crucial for assessing true robustness and identifying limitations not captured synthetically.
+        \end{itemize}
+
+    \item \textbf{Enhancing Simulation Capabilities (UNav-Sim):}
+        \begin{itemize}
+            \item Incorporate a wider range of underwater sensors (e.g., various sonar types, acoustic modems, chemical sensors) with realistic noise models.
+            \item Expand the library of vehicle models (different \acp{AUV}/\acp{ROV} with varying dynamics) and diverse, complex environmental scenarios (e.g., shipwrecks, coral reefs, offshore structures).
+            \item Improve hydrodynamic modeling, potentially integrating learned components (from PINC/DF-GP) back into the simulator for higher fidelity.
+        \end{itemize}
+
+    \item \textbf{Advancing Control and Planning Algorithms:}
+        \begin{itemize}
+            \item Extend REACT to handle dynamic obstacles, multi-robot coordination with shared tethers, and optimize for energy consumption alongside coverage and safety.
+            \item Fully adapt and validate the VT-NMPC framework for underwater visual inspection, considering challenges like poor visibility, variable lighting, and marine fouling. Explore fusion with other sensor modalities (e.g., sonar) for perception-aware control in low visibility.
+            \item Investigate adaptive planning strategies that modify coverage paths based on real-time sensor feedback or areas of interest identified during the mission.
+        \end{itemize}
+
+    \item \textbf{Refining Data-Driven Modeling Techniques:}
+        \begin{itemize}
+            \item \textcolor{blue}{Train and evaluate PINC models on extensive real-world ROV trajectory data} to assess performance beyond simulation and potentially uncover limitations.
+            \item \textcolor{blue}{Extend PINC to robustly handle full 6-DOF rotational dynamics} (roll, pitch, yaw) using appropriate representations (e.g., quaternions, rotation matrices) for greater accuracy during complex maneuvers.
+            \item Investigate methods for \textcolor{blue}{online adaptation and lifelong learning} for both PINC and DF-GP, allowing models to continuously improve and adapt to changing vehicle dynamics or environmental conditions over long deployments.
+            \item Explore \textcolor{blue}{minimal loss configurations} for PINC to optimize computational efficiency, potentially investigating alternative architectures like Recurrent Neural Networks (RNNs) as suggested.
+            \item Further investigate \textcolor{blue}{dynamic input and inducing point selection} strategies for \ac{DF-GP} to optimize performance and computational cost for online learning.
+        \end{itemize}
+
+
+\end{enumerate}

@@ -1,0 +1,48 @@
+
+\nomenclature[01]{\(I_k\)}{Image function mapping pixel positions to intensity values (grayscale or RGB).}
+
+\nomenclature[02]{\(C_k\)}{Camera pose $\in SE(3)$ in absolute coordinates corresponding to $I_k$. Corresponds to the transform $T_{0,k}$.}
+
+\nomenclature[03]{\(T_{k-1,k}\)}{Rigid body transform $\in SE(3)$ from camera frame $k-1$ to $k$.}
+
+\nomenclature[04]{\(p^k_{i}\)}{Pixel $i$ in image coordinates corresponding to image frame $I_k$.}
+
+\nomenclature[05]{\(\tilde{p}_i\)}{$p_i$ in homogeneous coordinates.}
+
+\nomenclature[06]{\(\hat{p}_i\)}{Estimated value for $p_i$.}
+
+\nomenclature[07]{\(P_{i}\)}{Projection of $p_{i}$ in 3D coordinates.}
+
+\nomenclature[08]{\(\xi_k\)}{Inverse depth map contained by $I_k$.}
+
+\nomenclature[09]{\(\pi\)}{Function warping the pixels in $I_k$ onto $I_{k-1}$.}
+
+\nomenclature[10]{\(KF\)}{Keyframe.}
+
+\nomenclature[11]{\(\Omega\)}{Domain.}
+
+\nomenclature[13]{\(G, g\)}{Group, group element.}
+
+\nomenclature[14]{\(\rho(g)\)}{Group representation.}
+
+\nomenclature[17]{\(C_N\)}{Cyclic group or order N.}
+
+\nomenclature[19]{\(D_N\)}{Dihedral group of order 2N.}
+
+\nomenclature[20]{\(\mathbb{R}^n\)}{n-dimensional Euclidean space.}
+
+\nomenclature[21]{\(\mathbb{S}^n\)}{n-dimensional sphere.}
+
+\nomenclature[22]{\(\text{SE}(3)\)}{Special Euclidean group in 3 dimensions.}
+
+\nomenclature[23]{\(\text{SO}(3)\)}{Special Orthogonal group in 3 dimensions.}
+
+\nomenclature[24]{\(\text{GL}(n, \mathbb{R})\)}{General Linear group of degree \(n\) over the reals.}
+
+\nomenclature[25]{\(\mathcal{X}(\Omega)\)}{Space of signals on the domain $\Omega$.}
+
+\nomenclature[26]{\(\mathcal{F}(\mathcal{X}(\Omega))\)}{Parameterized function on the signal space.}
+
+\nomenclature[27]{\(\tau: \Omega \rightarrow \Omega\)}{Automorphism of the domain.}
+
+\nomenclature[28]{\(\eta: \Omega \rightarrow \Omega'\)}{Isomorphism between two different domains.}

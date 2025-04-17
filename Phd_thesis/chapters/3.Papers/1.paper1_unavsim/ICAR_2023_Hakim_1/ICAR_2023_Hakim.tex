@@ -1,0 +1,193 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%2345678901234567890123456789012345678901234567890123456789012345678901234567890
+%        1         2         3         4         5         6         7         8
+
+\documentclass[letterpaper, 10 pt, conference]{ieeeconf}  % Comment this line out if you need a4paper
+\usepackage[T1]{fontenc}
+\usepackage{booktabs}
+\usepackage{cite}
+
+%\documentclass[a4paper, 10pt, conference]{ieeeconf}      % Use this line for a4 paper
+
+\IEEEoverridecommandlockouts                              % This command is only needed if 
+                                                          % you want to use the \thanks command
+
+\overrideIEEEmargins                                      % Needed to meet printer requirements.
+
+%In case you encounter the following error:
+%Error 1010 The PDF file may be corrupt (unable to open PDF file) OR
+%Error 1000 An error occurred while parsing a contents stream. Unable to analyze the PDF file.
+%This is a known problem with pdfLaTeX conversion filter. The file cannot be opened with acrobat reader
+%Please use one of the alternatives below to circumvent this error by uncommenting one or the other
+%\pdfobjcompresslevel=0
+%\pdfminorversion=4
+
+% See the \addtolength command later in the file to balance the column lengths
+% on the last page of the document
+
+% The following packages can be found on http:\\www.ctan.org
+%\usepackage{graphics} % for pdf, bitmapped graphics files
+%\usepackage{epsfig} % for postscript graphics files
+%\usepackage{mathptmx} % assumes new font selection scheme installed
+%\usepackage{times} % assumes new font selection scheme installed
+\usepackage{amsmath} % assumes amsmath package installed
+%\usepackage{amssymb}  % assumes amsmath package installed
+\usepackage[dvipsnames]{xcolor}
+\usepackage{bbding}
+\usepackage{pifont}
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage[pdftex]{graphicx}
+\usepackage{multicol}
+\usepackage{colortbl}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{mathtools}
+\usepackage{xcolor}
+\usepackage[nolist]{acronym}
+\usepackage{amssymb}% http://ctan.org/pkg/amssymb
+\usepackage{pifont}% http://ctan.org/pkg/pifont
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+%\newcommand{\HIU}[1]{\textcolor{cyan}{HIU: #1}}
+%\newcommand{\HAK}[1]{\textcolor{orange}{ HAK: #1}}
+%\newcommand{\OLA}[1]{\textcolor{blue}{OLA: #1}}
+%\newcommand{\JON}[1]{\textcolor{green}{JON: #1}}
+
+
+
+
+%% ORCID
+\RequirePackage{tikz} % For \foreach used for Orcid icon
+% Make Orcid icon
+\newcommand{\orcidicon}{\includegraphics[width=0.32cm]{figures/logo-orcid.eps}}
+
+% Define link and button for each author
+\foreach \x in {A, ..., Z}{%
+\expandafter\xdef\csname orcid\x\endcsname{\noexpand\href{https://orcid.org/\csname orcidauthor\x\endcsname}{\noexpand\orcidicon}}
+}
+
+\definecolor{Bookcolor}{HTML}{00F9DE}
+\definecolor{darkgreen}{rgb}{0.0, 0.5, 0.0}
+
+\newcommand{\orcidauthorA}{0000-0001-5387-7613} % Add \orcidA{} behind the author's Hakim
+\newcommand{\orcidauthorB}{0000-0003-3581-9481} % Add \orcidB{} behind the author's Olaya
+\newcommand{\orcidauthorC}{0000-0002-1609-5783} % Add \orcidC{} behind the author's name  Halil
+\newcommand{\orcidauthorD}{0000-0002-7742-6996} % Add \orcidD{} behind the author's name  Jonas
+\newcommand{\orcidauthorE}{0009-0002-0445-8126} % Add \orcidE{} behind the author's name  Yury
+\newcommand{\orcidauthorF}{0000-0002-7143-8777} % Add \orcidF{} behind the author's name  Erdal
+
+
+\DeclareMathOperator*{\minimize}{{min}}
+\DeclareMathOperator*{\maximize}{{max}}
+
+
+
+%acronyms
+\begin{acronym}
+    \acro{ROV}{remotely operated vehicle}
+    \acro{AUV}{autonomous underwater vehicle}
+    \acro{UWRS}{underwater robotics simulator}
+    \acro{NMPC}{nonlinear model predictive control}
+    \acro{MPC}{model predictive control}
+    \acro{SLAM}{simultaneous localisation and mapping}
+    \acro{vSLAM}{visual SLAM}
+    \acro{RL}{reinforcement learning}
+    \acro{DRL}{deep reinforcement learning}
+    \acro{UE}{unreal engine}
+    \acro{NED}{North-East-Down}
+    \acro{UE5}{unreal engine 5}
+    \acro{UE4}{unreal engine 4}
+    \acro{ROS}{robot operating system}
+    \acro{AI}{artificial intelligence}
+    \acro{APE}{absolute positioning error}
+    \acro{RPE}{relative positioning error}
+    \acro{PWM}{pulse width modulation}
+    \acro{DFKI}{Deutsches Forschungszentrum für Künstliche Intelligenz}
+\end{acronym}
+
+
+
+
+
+\title{\LARGE \bf
+UNav-Sim: A Visually Realistic Underwater Robotics Simulator and Synthetic Data-generation Framework
+}
+
+
+\author{ 
+Abdelhakim Amer\orcidA{}, Olaya Álvarez-Tuñón\orcidB{}, Halil \.{I}brahim U\u{g}urlu\orcidC{}, Jonas le Fevre Sejersen\orcidD{}, \\ Yury Brodskiy\orcidE{} and
+Erdal Kayacan\orcidF{}% <-this % stops a space
+% <-this % stops a space
+\thanks{A. Amer, O. Tunon, H. U\u{g}urlu, J. Sejersen  are with the Department of Electrical Engineering and Computer Engineering, Aarhus University, 8200 Aarhus, Denmark {\tt\small \{abdelhakim, olaya, halil, jonas\} at ece.au.dk}.
+Y. Brodskiy is with EIVA a/s, 8660 Skanderborg, Denmark. {\tt\small \{ybr\} at eiva.com}.
+E. Kayacan is with the Automatic Control Group, Department of Electrical Engineering and Information Technology, Paderborn University, Paderborn, Germany. {\tt\small \{erdal.kayacan\} at uni-paderborn.de}}
+}
+\begin{document}
+
+
+
+\maketitle
+\thispagestyle{empty}
+\pagestyle{empty}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abstract}
+%Underwater robotics tests are expensive due to the complex working environment and requirement for various sensor modalities in the underwater domain. Even though underwater simulators are a must, the rendering quality of many existing simulators is inadequate, limiting their ability to transfer algorithms from simulation to real-world applications. We introduce UNav-Sim, to overcome this limitation. To the best of our knowledge, UNav-Sim is the first simulator to incorporate the efficient, high-detail rendering of unreal engine 5 (UE5). It is open-source\footnote{\url{https://github.com/Zartris/ColosseumUnderWater}} and includes an autonomous control and vision-based navigation framework. Furthermore, Hydr-Sim makes use of AirSim's advanced features, such as its efficient physics solver and diverse sensor models, including GPS, IMU, cameras, and sonar. To enable communication between the autonomy framework and the physics simulator, an API can be utilized in either C++ or Python to transfer essential sensor data and issue control commands. Additionally, the C++ client library can be interfaced with a ROS wrapper, enabling researchers to efficiently develop and test their algorithms underwater and transfer them to real-world systems. 
+
+%, it suppor enabling researchers to efficiently develop and test their algorithms underwater and transfer them to real-world systems. 
+
+%Marine robotics simulators are essential for advancing robotics research as they enable rapid algorithm testing without the cost and complexity of real-time experiments. In addition, they can provide accurate positioning data, which is often unavailable in the real world. However, the rendering quality of many existing simulators is inadequate, limiting their ability to transfer algorithms from simulation to real-world applications. To overcome this limitation, we introduce \ac{UWRS}, a new simulator for autonomous underwater robotics research that extends the popular drone simulator AirSim. \ac{UWRS} is the first simulator of its kind to incorporate the efficient, high-detail rendering of \ac{UE5}. It is open-source and includes an autonomous control and vision-based navigation framework, enabling researchers to efficiently develop and test their algorithms and transfer them to real-world systems.
+
+i just checked hallowen is only this week%Underwater robotics surveys can be expensive due to the complex working environment and the need for various sensor modalities. Although underwater simulators are essential, many existing simulators have inadequate rendering quality, which limits their ability to transfer algorithms from simulation to real-world applications. 
+
+Underwater robotic surveys can be costly due to the complex working environment and the need for various sensor modalities. While underwater simulators are essential, many existing simulators lack sufficient rendering quality, restricting their ability to transfer algorithms from simulation to real-world applications. To address this limitation, we introduce UNav-Sim, which, to the best of our knowledge, is the first simulator to incorporate the efficient, high-detail rendering of Unreal Engine 5 (UE5). UNav-Sim is open-source\footnote{\url{https://github.com/open-airlab/UNav-Sim}} and includes an autonomous vision-based navigation stack. By supporting standard robotics tools like ROS, UNav-Sim enables researchers to develop and test algorithms for underwater environments efficiently.% It also facilitates the easy transfer of these algorithms from simulation to real-world systems.
+\end{abstract}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{sections/1-introduction.tex}
+\input{sections/2-state_of_the_art.tex}
+\input{sections/3-simulator_description.tex}
+\input{sections/4-robotics_stack.tex}
+\input{sections/5-tests.tex}
+\input{sections/6-conclusion.tex}
+
+
+
+
+% \addtolength{\textheight}{-12cm}   % This command serves to balance the column lengths
+                                  % on the last page of the document manually. It shortens
+                                  % the textheight of the last page by a suitable amount.
+                                  % This command does not take effect until the next page
+                                  % so it should come on the page before the last. Make
+                                  % sure that you do not shorten the textheight too much.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section*{APPENDIX}
+
+
+\section*{Acknowledgement}
+This work is supported by EIVA a/s and Innovation Fund Denmark under grants 2040-00032B and 1044-00007B, the European Union’s Horizon 2020 Research and Innovation Program (OpenDR) under Grant 871449 and the Marie Skłodowska-Curie (REMARO) under Grant 956200. This publication reflects the authors’ views only. The European Commission is not responsible for any use that may be made of the information it contains.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%. 1044-00007B
+
+
+
+\bibliographystyle{unsrt}
+\bibliography{refs}
+\end{document}

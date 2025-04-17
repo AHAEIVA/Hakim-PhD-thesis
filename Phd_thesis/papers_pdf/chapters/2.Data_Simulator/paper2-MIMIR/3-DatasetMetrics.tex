@@ -1,0 +1,96 @@
+\section{Dataset metrics}
+\label{mimir:section:metrics}
+% A primary objective of AI is the design of generalizable algorithms that can infer under different unseen conditions. The key instrument for general deep learning models lies in the data used during validation and training; therefore, it is necessary to assess the information comprised by the data. 
+% This section proposes a set of measurements to quantitatively evaluate the dataset's characteristics and compare them with existing datasets.
+% The proposed metrics allow to gauge the data complexity for a certain class of algorithms, thus making algorithm benchmarking more uniform.
+
+
+
+
+% \begin{figure*}[ht!]
+% \centering
+%     \includegraphics[width=\textwidth]{figs/paper2-mimir/results/delentropies/all.pdf}
+
+
+
+% \caption[Distribution of the delentropy values for the sequences in EuRoC, Aqualoc, and MIMIR-UW]{Distribution of the delentropy values for the sequences in EuRoC, Aqualoc, and MIMIR-UW. Compared to other datasets, MIMIR-UW provides a higher concentration of lower entropy values caused by blurred, dark, and low-contrast images.}
+% \label{mimir:fig:delentropygraph}
+% \end{figure*}
+
+% \subsection{Image entropy}
+
+% We rely on entropy to quantify the amount of information contained in each image. The image's spatial information is incorporated into Shannon's second-order entropy using the isotropic formulation derived in \cite{metrics:shannonisotropic}. 
+
+% Consider a discrete band-limited signal $f$ containing $2N\times2M$ samples in the $x$ and $y$ axes, respectively. The signal's derivatives $f_x$ and $f_y$ are obtained by applying a convolution Sobel operator to the image.
+% % \begin{comment}
+% % The signal's derivative through the $x$ axis can be defined by the convolution operator:
+% % \begin{equation}
+% %     f_x(x) = \frac{\partial f(x)}{\partial x} = g_x \ast f
+% % \end{equation}
+% % which can be similarly defined for the $y$ axis $f_y(x)$. 
+% % \end{comment}
+% Then, the joint probability density function $p_{i,j}$ of the signal's derivative %, referred to as deldensity, 
+% is computed using the Kronecker delta function $\delta_{i,j}$ as:
+% \begin{equation}
+%     p_{i,j} = \frac{1}{4MN}\sum_{n=-N}^{N-1}\sum_{m=-M}^{M-1}\delta_{i,f_x(m,n)}\delta_{j,f_y(m,n)}
+% \end{equation}
+% %https://gist.github.com/mxmlnkn/5a225478bc576044b035ad4a45c54f73
+% %  Consider the standard Shannon's information entropy applied to all pixels in image $I$:
+% % \begin{equation}
+% %     H(f) = - \sum_{i=1}^{I}p_i\log( p_i),
+% % \end{equation}
+% % with  $p_i$ the probability of being in cell $i$. The probability density function $p$ is computed for each image axis as the
+% Hence, Shannon's joint entropy formulation yields the delentropy as:
+% \begin{equation}
+%     H(f_x,f_y) = - \sum_{j=1}^{J}\sum_{i=1}^{I}p_{i,j}\log_2( p_{i,j}).
+% \end{equation}
+% The delentropy value is maximized for a uniform distribution of $p_{i,j}$. This indicates the presence of nondistinctive features in the image, which can lead to misclassified pixels in segmentation, or mismatched features in feature-based localization. On the contrary, the entropy is minimized for zero-gradient images containing no information for the segmentation to classify or for the localization to track. Therefore, the ideal conditions for the proposed computer vision pipelines lie in intermediate values for delentropy.
+
+
+% \subsection{Motion diversity}
+% To assess the diversity of motion patterns in the dataset, the metric proposed in \cite{dataset:tartanair2020iros} is adopted, based on principal component analysis of the motion pattern.
+% %For the motion pattern diversity metric $\sigma$ proposed in \cite{dataset:tartanair2020iros}, 
+% Given a sequence of $n$ concatenated relative translations $\textbf{T} \in \mathbb{R}^{3\times n}$ and rotations $\textbf{R} \in \mathbb{R}^{4\times 4\times n}$ in $\mathit{so}(3)$, their principal motion components are computed through singular value decomposition. The obtained eigenvalues $(t_1,t_2,t_3)$ and $(r_1,r_2,r_3)$ and their associated eigenvectors represent the first, second and third principle motion axes of the sequence and their magnitudes. 
+
+% The motion diversity metric is then obtained as:
+% % its principal components can be decomposed as:
+% % \begin{align}
+% %     \textbf{U} diag(t_1,t_2,t_3) \textbf{V}^{T} &= \textbf{T} \\
+% %     \textbf{U} diag(r_1,r_2,r_3) \textbf{V}^{T} &= \textbf{R}
+% % \end{align}
+% % The eigenvalues $t_1,t_2,t_3$ and $r_1,r_2,r_3$ and their associated eigenvectors represent the principle motion of the sequence. 
+% % The motion diversity metric is then obtained as:
+% \begin{equation}
+%     \sigma = \frac{1}{2}\left( \frac{\sqrt{t_2t_3}}{t_1}+\frac{\sqrt{r_2r_3}}{r_1} \right),
+% \end{equation}
+% where evenly distributed motions retrieve equal values for the eigenvalues, making the motion diversity metric converge to one. Conversely, an absence of motion in one or both of the secondary axes yields a value of zero for its eigenvalues, and consequently, for the motion diversity metric.
+
+
+% \subsection{Results}
+
+The dataset comparison candidates for the delentropy and motion diversity metrics introduced in Section \ref{section2:metrics} are EuRoC and Aqualoc; both of which present recordings from mobile platforms with degrees of freedom comparable to MIMIR-UW. 
+Aqualoc comprises underwater sequences recorded in a real environment. Although EuRoC was recorded above water it is a well-established dataset, serving as a comparison of differences in the imaging conditions between underwater and above-water environments, and their impact on the proposed metrics.
+
+\paragraph*{Delentropy analysis}
+As discussed in Section \ref{section2:metrics:entropy}, delentropy (or image entropy) quantifies the amount of information contained in each image. It is based on Shannon's joint entropy formulation, considering the image gradients in the $x$ and $y$ axes. Higher delentropy values indicate a uniform distribution of gradients, implying the presence of nondistinctive features, while lower values indicate minimal information content.
+
+The delentropy results for EuRoC, Aqualoc, and MIMIR-UW are shown in Fig. \ref{mimir:fig:delentropygraph}. EuRoC's difficult sequences, characterized by dark or blurred images, present lower delentropy values compared to its easier sequences. Both EuRoC and Aqualoc generally exhibit higher delentropy values than MIMIR-UW due to their richer textures and higher contrast in images.
+
+In contrast, MIMIR-UW's sequences, such as OceanFloor and SandPipe, contain very dark images with only nearby elements visible or completely dark images without any nearby objects, leading to many low delentropy values. SeaFloor Algae provides the highest entropy values for MIMIR-UW, attributed to the rich textures of the algae. Considering that the state-of-the-art algorithms proposed in Section \ref{mimir:section:evaluationAnalysis} are intended for datasets richer in visual information, the delentropy metric provides a first impression of how the environments proposed by MIMIR-UW will challenge them.
+
+\begin{figure}[ht!]
+\centering
+    \includegraphics[width=\textwidth]{figs/paper2-mimir/results/delentropies/all.pdf}
+
+
+
+\caption[Distribution of the delentropy values for the sequences in EuRoC, Aqualoc, and MIMIR-UW]{Distribution of the delentropy values for the sequences in EuRoC, Aqualoc, and MIMIR-UW. Compared to other datasets, MIMIR-UW provides a higher concentration of lower entropy values caused by blurred, dark, and low-contrast images.}
+\label{mimir:fig:delentropygraph}
+\end{figure}
+
+
+\paragraph*{Motion diversity analysis}
+The motion diversity metric, as described in Section \ref{section2:metrics:motiondiversity}, evaluates the variety of motion patterns in the dataset. It is derived from the principal components of the sequence of relative motions. Higher values of the motion diversity metric indicate more evenly distributed motions across the principal axes, while lower values indicate constrained or uni-axial motion.
+
+The motion diversity results are summarized in Table \ref{mimirtable:comparisonmotiondiv}. Aqualoc shows the lowest motion diversity, as its mobile robot primarily moves in the $xy$ plane. In contrast, MIMIR-UW's trajectories are designed to maximize diversity in the linear axes, outperforming EuRoC in the translation metric. Both EuRoC and MIMIR-UW exhibit similar overall motion diversity metrics, although EuRoC has higher rotational diversity.
+

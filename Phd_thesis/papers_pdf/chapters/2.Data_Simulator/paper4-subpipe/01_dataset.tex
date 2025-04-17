@@ -1,0 +1,174 @@
+\section{The dataset}
+\label{sec:dataset}
+
+\renewcommand{\arraystretch}{1.5}
+\begin{table*}
+    \centering
+    \footnotesize
+    \caption{Overview of the data for each SubPipe chunk, including sample images from the cameras and the side-scan sonar.}
+    \begin{tabular}{lp{.14\textwidth}@{\hspace{0.4mm}}c@{\hspace{0.2mm}}c@{\hspace{0.1mm}}c@{\hspace{0.1mm}}c}
+    \toprule
+        \multicolumn{2}{l}{Chunk}  & Trajectory [m] / [$\deg$] & Cam0 & Cam1 & Side-scan  \\
+\midrule
+
+        0    & \vspace{-7mm}Time: 9m 0.54s Length: 577.3m \#Poses: 16199      
+        &  \adjustbox{valign=m,vspace=.1mm}{\includegraphics[height=0.085\textwidth]{figs/paper4-subpipe/trajectories/chunk0_xyz.pdf}} 
+         \adjustbox{valign=m,vspace=.1mm}{\includegraphics[height=0.085\textwidth]{figs/paper4-subpipe/trajectories/chunk0_rpy.pdf}}  
+
+        & \adjustbox{valign=m,vspace=.1mm}{\includegraphics[height=0.085\textwidth]{figs/paper4-subpipe/sample/Chunk0_cam0.jpg}} 
+        & \adjustbox{valign=m,vspace=.1mm}{\includegraphics[height=0.085\textwidth]{figs/paper4-subpipe/sample/Chunk0_cam1.jpg}} 
+        & \adjustbox{valign=m,vspace=.1mm}{\includegraphics[height=0.085\textwidth, width=0.18\textwidth ]{figs/paper4-subpipe/sample/Chunk0_sidescan.jpg}} \\ 
+        % \hline----------------------------------------------------------------------------
+
+        1    & \vspace{-7mm}Time 9m 0.54s Length: 471.1m \#Poses: 16199      &  \adjustbox{valign=m,vspace=.15mm}{\includegraphics[height=0.085\textwidth]{figs/paper4-subpipe/trajectories/Chunk1_xyz.pdf}} \adjustbox{valign=m,vspace=.15mm}{\includegraphics[height=0.085\textwidth]{figs/paper4-subpipe/trajectories/Chunk1_rpy.pdf}} 
+
+        & \adjustbox{valign=m,vspace=.15mm}{\includegraphics[height=0.085\textwidth]{figs/paper4-subpipe/sample/Chunk1_cam0.jpg}} 
+        & \adjustbox{valign=m,vspace=.15mm}{\includegraphics[height=0.085\textwidth]{figs/paper4-subpipe/sample/Chunk1_cam1.jpg}} 
+        & \adjustbox{valign=m,vspace=.15mm}{\includegraphics[height=0.085\textwidth, width=0.18\textwidth ]{figs/paper4-subpipe/sample/Chunk1_sidescan.jpg}} \\
+        % -----------------------------------------------------------------------------
+        2    &  \vspace{-7mm}Time: 8m 59.54s Length: 463.4m \#Poses: 16169      &  \adjustbox{valign=m,vspace=.15mm}{\includegraphics[height=0.085\textwidth]{figs/paper4-subpipe/trajectories/chunk2_xyz.pdf}} \adjustbox{valign=m,vspace=.15mm}{\includegraphics[height=0.085\textwidth]{figs/paper4-subpipe/trajectories/Chunk2_rpy.pdf}}
+        & \adjustbox{valign=m,vspace=.15mm}{\includegraphics[height=0.085\textwidth]{figs/paper4-subpipe/sample/Chunk2_cam0.jpg}} 
+        & \adjustbox{valign=m,vspace=.15mm}{\includegraphics[height=0.085\textwidth]{figs/paper4-subpipe/sample/Chunk2_cam1.jpg}} 
+        & \adjustbox{valign=m,vspace=.15mm}{\includegraphics[height=0.085\textwidth, width=0.18\textwidth]{figs/paper4-subpipe/sample/Chun2-sidescan.jpg}} \\
+        % ---------------------------------------------------------------------------
+
+        3    &  \vspace{-7mm}Time: 8m 59.54s Length: 382.4m \#Poses: 16169      &  \adjustbox{valign=m,vspace=.15mm}{\includegraphics[height=0.085\textwidth]{figs/paper4-subpipe/trajectories/chunk3_xyz.pdf}} \adjustbox{valign=m,vspace=.15mm}{\includegraphics[height=0.085\textwidth]{figs/paper4-subpipe/trajectories/chunk3_rpy.pdf}} 
+        & \adjustbox{valign=m,vspace=.15mm}{\includegraphics[height=0.085\textwidth]{figs/paper4-subpipe/sample/Chunk3_cam0.jpg}} 
+        & \adjustbox{valign=m,vspace=.15mm}{\includegraphics[height=0.085\textwidth]{figs/paper4-subpipe/sample/Chunk3_cam1.jpg}} 
+        & \adjustbox{valign=m,vspace=.15mm}{\includegraphics[height=0.085\textwidth, width=0.18\textwidth]{figs/paper4-subpipe/sample/Chunk3_sidescan.jpg}} \\ % -------------------------------------------------------
+        4     &  \vspace{-7mm}Time: 7m 15.73s Length: 374.1m \#Poses: 13057      &  \adjustbox{valign=m,vspace=.15mm}{\includegraphics[height=0.085\textwidth]{figs/paper4-subpipe/trajectories/chunk4_xyz.pdf}} \adjustbox{valign=m,vspace=.15mm}{\includegraphics[height=0.085\textwidth]{figs/paper4-subpipe/trajectories/chunk4_rpy.pdf}} 
+        & \adjustbox{valign=m,vspace=.15mm}{\includegraphics[height=0.085\textwidth]{figs/paper4-subpipe/sample/Chunk4_cam0.jpg}} 
+        & \adjustbox{valign=m,vspace=.15mm}{\includegraphics[height=0.085\textwidth]{figs/paper4-subpipe/sample/Chunk4_cam1.jpg}} 
+        & \adjustbox{valign=m,vspace=.15mm}{\includegraphics[height=0.085\textwidth, width=0.18\textwidth]{figs/paper4-subpipe/sample/Chunk4_sidescan.jpg}} \\
+        \bottomrule
+    \end{tabular}
+    
+    \label{tab:subpipe-data}
+\end{table*}
+
+\begin{figure}[!t]
+    \centering
+    \includegraphics[width=.5\linewidth]{figs/paper4-subpipe/6_DOF-LAUV.pdf}
+    \caption[The 6 degrees of freedom of the LAUV]{The 6 degrees of freedom of the LAUV \cite{vo:lsts_6dof}.}
+    \label{fig:6DOF-lauv}
+\end{figure}
+
+SubPipe has been recorded during a survey mission performed by OceanScan-MST\footnote{OceanScan's home page: \url{https://www.oceanscan-mst.com/}}, near an underwater pipeline with about 1 km length in Porto, Portugal. The data recorded during the mission corresponds to the data measured by the onboard sensors and the estimated state of the robot as inferred from the sensors.
+
+The onboard sensors are: two downward-looking cameras with 3-channel $2704 \times 1520$ and 1-channel $1936 \times 1216$ images, respectively; a Klein 3500 side-scan sonar, providing sonar images recorded at 900 KHz and 455 KHz, with a range of 30m per transducers, resulting in monochrome waterfall images with sizes $5000 \times 500$ and $2500\times 500$, respectively. Further details on the dataset, such as the exact number of frames and the intrinsic and extrinsic parameters of the cameras, the side-scan sonar, and other sensors, can be found in the online repository of SubPipe. 
+
+
+
+\begin{figure}[t]
+  \centering
+
+    \begin{tabular}{@{\hspace{0.3mm}}c@{\hspace{0.3mm}}c@{\hspace{0.3mm}}c@{\hspace{0.3mm}}c@{}}
+
+     
+     
+      
+      \adjustbox{valign=m,vspace=.05mm}{\includegraphics[width=0.17\textwidth]{figs/paper4-subpipe/annotation-examples/original/1693574011.009.jpg}} &
+      \adjustbox{valign=m,vspace=.05mm}{\includegraphics[width=0.17\textwidth]{figs/paper4-subpipe/annotation-examples/equalized-rgb/1693574011.009.jpg}} &
+      \adjustbox{valign=m,vspace=.05mm}{\includegraphics[width=0.17\textwidth]{figs/paper4-subpipe/annotation-examples/equalized-gray/1693574011.009.jpg}} &
+      \adjustbox{valign=m,vspace=.05mm}{\includegraphics[width=0.17\textwidth]{figs/paper4-subpipe/annotation-examples/annotation/1693574011.009_label.png}}
+      \\[2.mm]
+
+      
+     
+      
+      \adjustbox{valign=m,vspace=.05mm}{\includegraphics[width=0.17\textwidth]{figs/paper4-subpipe/annotation-examples/original/1693574111.968.jpg}} &
+      \adjustbox{valign=m,vspace=.05mm}{\includegraphics[width=0.17\textwidth]{figs/paper4-subpipe/annotation-examples/equalized-rgb/1693574111.968.jpg}} &
+      \adjustbox{valign=m,vspace=.05mm}{\includegraphics[width=0.17\textwidth]{figs/paper4-subpipe/annotation-examples/equalized-gray/1693574111.968.jpg}} &
+      \adjustbox{valign=m,vspace=.05mm}{\includegraphics[width=0.17\textwidth]{figs/paper4-subpipe/annotation-examples/annotation/1693574111.968_label.png}}
+      \\[2.mm]
+    
+      
+  \end{tabular}
+
+
+  \caption[SubPipe's segmentation mask generation process]{ Segmentation mask generation process illustrated with two examples. Each row presents a unique example. From left to right: the original raw image, the image after histogram equalization of RGB channels, the original image after converting to grayscale and applying histogram equalization, and the final segmentation mask. The equalization process enhances contrast, aiding in the precise delineation of the pipeline, including the pipe clamp, which is annotated as part of the pipeline.}
+  \label{fig:segmentation-annotation}
+
+  % \vspace{-2mm plus 0.5mm}
+\end{figure}
+
+
+The estimated state corresponds to the 6 DOF pose of the robot (see Fig. \ref{fig:6DOF-lauv}) as inferred from the \ac{INS} and DVL. The three translational measurements, surge~$x$, sway~$y$, and heave~$z$, are recorded in meters and are estimated by a Kalman filter considering the last recorded GPS coordinates and measured velocities. On the other hand, the rotational measurements roll~$\phi$, pitch~$\theta$, and yaw~$\psi$ are provided in radians and measured by a gyroscope. Besides, SubPipe provides other measurements of i. the \ac{AUV} (e.g., depth, altitude, velocities, angular velocities, accelerations, rpm, forward distance measured from the nose of the \ac{AUV}) and ii. the environment (water velocity, temperature, pressure).
+
+%, manually labeled with the annotation tool LabelMe~\cite{Wada_Labelme_Image_Polygonal}.
+
+SubPipe provides five video sequences, ranging between approximately 7 and 9 minutes. The high-resolution camera has been recorded at 240 Hz, and the low-resolution one at 4 Hz. All the SSS waterfall images have been extracted and manually annotated using the COCO format for object detection. This process created a single class named \textit{Pipeline}. 
+The sonar images were resized to a dimension of $640 \times 640$ pixels for compatibility with computer vision algorithms. 
+
+An overview of the data contained in each of the sequences (or chunks) is depicted in Table \ref{tab:subpipe-data}. Given the large dataset size, a smaller subsample of SubPipe referred to as SubPipeMini, is provided.
+SubPipeMini contains approximately 20\% of the complete sequence data. Segmentation labels for the class 'pipeline' were manually annotated for every 25 frames of the 16170 high-resolution images of SubPipeMini, resulting in 647 labeled images. The annotation process was conducted using the LabelMe tool~\cite{Wada_Labelme_Image_Polygonal}. The repetitive nature of the underwater environment led to the decision to label the frames selectively, reducing redundancy in the labeled dataset.
+The dataset's pipeline visibility is significantly reduced due to considerable blurring. To facilitate the labeling process, the images' contrast was enhanced using histogram equalization, as depicted in Fig. \ref{fig:segmentation-annotation}. Note that these preprocessed images, though crucial for label generation, are not part of the released dataset. 
+
+
+Since the high-resolution camera was not synchronized with the rest of the vehicle's sensors, no exact sensor measurements were available for the timestamps of the extracted video frames. To solve this issue, we used the recorded sensor measurements, and by applying linear interpolation, we calculated the estimated sensor values corresponding to the timestamp of each frame, formally:
+
+\begin{equation}
+    \nu^{*}(t) = \frac{\nu_1 - \nu_0}{t_1 - t_0} * (t - t_0) + \nu_0,
+\end{equation}
+
+\noindent where $\langle t_0, \nu_0 \rangle$ and $\langle t_1, \nu_1 \rangle$, represent the (closest in time) previous and following timestamp and measurement values, correspondingly. At the same time, $t$ is the timestamp for which we calculate the estimate, and finally, $\nu^{*}$ is the estimated value. This interpolation is applied for all sensor measurements, providing the estimated values for the timestamps corresponding to the extracted camera images.
+
+
+
+
+
+\begin{figure*}[hbt]
+\centering
+\Huge
+\resizebox{\textwidth}{!}{\begin{tabular}
+{c c@{\hspace{.7mm}}c@{\hspace{3mm}}c@{\hspace{3mm}}c@{\hspace{3mm}}c@{\hspace{3mm}}c@{\hspace{3mm}}c@{\hspace{.3mm}}c@{\hspace{3mm}}c@{\hspace{.3mm}}c@{\hspace{3mm}}c@{\hspace{.3mm}}c}
+
+ &\multicolumn{2}{c}{SubPipe} & \multicolumn{2}{c}{Aqualoc \cite{dataset:aqualocdb}} & \multicolumn{2}{c}{MIMIR \cite{dataset:mimir}}
+ &  \multicolumn{2}{c}{EuRoC \cite{dataset:burri2016euroc}} & \multicolumn{2}{c}{KITTI \cite{dataset:kitti}}  & \multicolumn{2}{c}{TartanAir \cite{dataset:tartanair2020iros}}  \\ 
+
+\raisebox{.5cm}{\rotatebox[origin=l]{90}{delentropy (H)}} & \multicolumn{2}{c}{\includegraphics[width=.5\linewidth]{figs/paper4-subpipe/dataset-metrics/subpipe/delentropy.pdf}}
+  & \multicolumn{2}{c}{\includegraphics[width=.5\linewidth]{figs/paper4-subpipe/dataset-metrics/aqualoc/delentropy.pdf}} 
+  & \multicolumn{2}{c}{\includegraphics[width=.5\linewidth]{figs/paper4-subpipe/dataset-metrics/mimir/delentropy.pdf}}
+  &  \multicolumn{2}{c}{\includegraphics[width=.5\linewidth]{figs/paper4-subpipe/dataset-metrics/euroc/delentropy.pdf}}  
+  & \multicolumn{2}{c}{\includegraphics[width=.5\linewidth]{figs/paper4-subpipe/dataset-metrics/kitti/delentropy.pdf}}    
+  & \multicolumn{2}{c}{\includegraphics[width=.5\linewidth]{figs/paper4-subpipe/dataset-metrics/tartanair/delentropy.pdf}}   \\ 
+ 
+ \rotatebox[origin=c]{90}{min/max H} &\adjustbox{valign=m,vspace=.2pt}{\includegraphics[height=.2\linewidth]{figs/paper4-subpipe/dataset-metrics/subpipe/min_entropy_img.png}} 
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[height=.2\linewidth]{figs/paper4-subpipe/dataset-metrics/subpipe/max_entropy_img.png}}
+
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[height=.2\linewidth]{figs/paper4-subpipe/dataset-metrics/aqualoc/min_entropy_img.png}}
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[height=.2\linewidth]{figs/paper4-subpipe/dataset-metrics/aqualoc/max_entropy_img.png}}
+
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[height=.2\linewidth]{figs/paper4-subpipe/dataset-metrics/mimir/min_entropy_img.png}}
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[height=.2\linewidth]{figs/paper4-subpipe/dataset-metrics/mimir/max_entropy_img.png}}
+
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[height=.2\linewidth]{figs/paper4-subpipe/dataset-metrics/euroc/min_entropy_img.png}}
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[height=.2\linewidth]{figs/paper4-subpipe/dataset-metrics/euroc/max_entropy_img.png}}
+
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[height=.2\linewidth, width = .4\linewidth]{figs/paper4-subpipe/dataset-metrics/kitti/min_entropy_img.png}}
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[height=.2\linewidth, width = .4\linewidth]{figs/paper4-subpipe/dataset-metrics/kitti/max_entropy_img.png}}
+
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[height=.2\linewidth]{figs/paper4-subpipe/dataset-metrics/tartanair/min_entropy_img.png}} 
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[height=.2\linewidth]{figs/paper4-subpipe/dataset-metrics/tartanair/max_entropy_img.png}} \\
+
+\rotatebox[origin=c]{90}{$\sigma$} &\multicolumn{2}{c}{0.05} & \multicolumn{2}{c}{0.14} & \multicolumn{2}{c}{0.35}
+ &  \multicolumn{2}{c}{0.44} & \multicolumn{2}{c}{0.014}  & \multicolumn{2}{c}{0.49}  \\ 
+ 
+\end{tabular}}
+\caption[Dataset metrics across various datasets]{Dataset metrics. The top section presents the distribution of delentropy values across various datasets, accompanied by representative images that yield the minimum and maximum delentropy. On the bottom are the motion diversity metric results. Lower delentropy and motion diversity values indicate a high degree of uniformity in image content and limited motion variety across the six degrees of freedom. This phenomenon is particularly evident in SubPipe, since pipeline inspection missions inherently limit motion and imaging variability. In contrast, datasets such as EuRoC, featuring a drone navigating freely in six degrees of freedom within an indoor environment, exhibit significantly more diversity in both imaging and motion.}
+\label{fig:datasetmetrics}
+\end{figure*}
+
+\section{Dataset metrics}
+\label{section:subpipe:metrics}
+The information contained in the SubPipe dataset is quantitatively evaluated and compared with existing state-of-the-art datasets using delentropy and motion diversity metrics as discussed in Section \ref{section2:metrics}. These metrics provide insights into the dataset's complexity and its suitability for benchmarking SLAM and segmentation algorithms.
+
+\paragraph*{Delentropy analysis} The delentropy (or image entropy) $H$ is calculated for each image in the dataset to measure the amount of information it contains. It is based on Shannon's joint entropy formulation, taking the image's gradient in the $x$ and $y$ axes as the joint probability density function. A uniform distribution of the joint probability density function for the gradient yields maximum values for $H$. The delentropy is maximized under the presence of nondistinctive features and minimized (zeroed) for zero-gradient images containing no features. Ideal conditions are then represented by intermediate values that indicate the presence of distinctive features.
+
+Fig. \ref{fig:datasetmetrics} depicts the result of deploying the proposed metrics on SubPipe and the datasets for visual localization Aqualoc \cite{dataset:aqualocdb}, MIMIR \cite{dataset:mimir}, EuRoC \cite{dataset:burri2016euroc}, KITTI \cite{dataset:kitti}, and TartanAir \cite{dataset:tartanair2020iros}.  This deployment is driven by the specific design of these metrics for localization datasets. Aqualoc and MIMIR are real and synthetic underwater datasets, respectively. TartanAir includes a high diversity of synthetic tracks, including underwater environments. EuRoC and KITTI are above-water datasets recorded with a drone and a car, respectively.
+Noticeably, above-water datasets retrieve much more information-rich images than underwater ones. Underwater datasets have a higher presence of images with low sharpness due to textureless or blurred areas caused by the seabed's uniformity and light scattering, among other phenomena. Nevertheless, motion blur and low illumination frames can also retrieve low entropy values above water, as seen in EuRoC. MIMIR presents richer images among the underwater datasets, as is to be expected in simulated images. SubPipe's images show delentropy values close to zero in almost all images, reflecting the uniformity of the background and low illumination, which highlights the challenging imaging conditions in underwater environments.
+
+\paragraph*{Motion diversity analysis} The motion diversity metric $\sigma$ is a function of the principal components of the sequence of relative motions. The motion diversity metric converges to one with evenly distributed motion sequences, and to zero under the presence of motion in only one axis.
+
+Drone sequences like the ones in EuRoC and TartanAir present higher diversity. SubPipe, however, presents a low diversity, as is expected for a pipeline inspection mission: the robot follows a mainly straight path, only altered by the seabed's and the pipe's shape, which the robot must follow. In that sense, the diversity of the motion is similar to a car's motion, with the motion, in this case, constrained by the degrees of freedom of the car. That is evidenced by the similarity between SubPipe and KITTI's motion diversity metrics.
+

@@ -1,0 +1,16 @@
+\section{Project structure}
+
+This PhD thesis is structured into four main parts, each focusing on different aspects of enhancing underwater robots' capabilities through improved visual-aided navigation systems using deep learning techniques. The structure is designed to address the aforementioned research questions systematically, providing a comprehensive approach to the development and evaluation of these methods.
+
+Part I lays the foundations of this thesis by exploring the current state-of-the-art for monocular visual \ac{SLAM} methodologies. This survey formulates the monocular \ac{SLAM} problem, introducing the different taxonomies that can be implemented. From geometry-based to deep learning-based, it identifies and evaluates the challenges posed by the different environments and identifies the gaps in existing methods.
+
+Two of the primary identified gaps are (1) the lack of open data availability for the development of underwater computer vision algorithms, and (2) the need for architectures that minimize such data requirements.
+Part II and III focus on addressing those gaps.
+
+In part II, a collection of datasets for underwater computer vision is proposed. The dataset MIMIR-UW is initially introduced, which, as a synthetic dataset, allows the automatic collection of ground truth for visual SLAM, segmentation, and depth estimation. On the other hand, the next dataset, SubPipe, is a dataset recorded in a real pipeline inspection scenario. Among other data, it provides estimated ground truth for localization and hand-labeled annotations for segmentation. The proposed datasets address the gap in data availability and propose a set of experiments that emphasize the conclusions drawn from the survey, thus encouraging the studies performed in Part III.
+
+Due to the high dimensionality of the visual \ac{SLAM} problem, the data requirements limit the performance that the models can achieve by just feeding there more data. Thus, Part III proposes a study of architectures suited for learning-based localization under the following premise: the usage of optimal architectures will not only reduce the data requirements but also enhance the model's ability to generalize to unseen data. The proposed architectures focus on the pose regression, output head, and loss function modules.
+
+Finally, Part IV explores preliminary implementations of a framework suited for mission planning and data gathering in real \ac{AUV} missions, and the evaluation of innovative vision-based paradigms for underwater robotics, providing insights into future research directions.
+
+Overall, the structure of this thesis is designed to systematically address the research questions, providing a comprehensive analysis of the state-of-the-art in visual localization methods, the role of synthetic data, the design of deep learning architectures, and the integration of these methods into practical, real-world frameworks for visual odometry.

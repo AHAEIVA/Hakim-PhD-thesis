@@ -1,0 +1,488 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% AUthesis book
+% LaTeX Template
+% Version 1.0 (23/10/2023)
+%
+% This template is based on a template from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Lorenzo Pantieri (http://www.lorenzopantieri.net) with extensive modif  ications by:
+% Vel (vel@latextemplates.com), and
+% Morten (morten.haastrup@eng.au.dk).
+% Adaptation to Aarhus University and extension of the original template by:
+% Mario J. Rincon (mjrp@mpe.au.dk)
+%
+% License:
+% cC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+% Tip: compile with PDF chain (Options -> Configure TeXstudio -> Build -> Build & View)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\immediate\write18{makeindex \jobname.nlo -s nomencl.ist -o \jobname.nls}  % to be able to compile the nomenclature
+
+\documentclass[
+10pt, % Main document font size 10pt
+b5paper, % Paper type, use 'letterpaper' for US Letter paper, b5paper for PhD Thesis book print, a4paper for standard page size (standard online version)
+% oneside, % One page layout (no page indentation)
+twoside, % Two page layout (page indentation for binding and different headers)
+% headinclude,footinclude, % Extra spacing for the header and footer
+% BCOR5mm, % Binding correction
+openright  % to maintain the page order if the cover is a custom pdf page
+]{book}  % book
+\usepackage{duckuments}
+\usepackage{epigraph}
+\usepackage{tabularx}
+\usepackage{tikz}
+\usepackage{tikz-3dplot}
+\usepackage{amsmath}
+\usepackage{pdfpages}
+
+\usepackage{amssymb}
+\usepackage{xcolor}
+\usepackage[most]{tcolorbox} % add this in your preamble if not already there
+\usepackage{arabtex}
+\usepackage{utf8}
+
+\input{template/template} % Include the structure.tex file which specifies most of the document structure and layout
+\input{formal/acronyms}
+
+%\epigraphfontsize{\small\itshape}
+\setlength\epigraphwidth{8cm}
+\setlength\epigraphrule{0pt}
+  
+
+%%
+%\documentclass[tikz, border=10pt]{standalone} % Increased border slightly
+\usepackage[nolist]{acronym}
+
+\usepackage{tikz}
+\usepackage{tikz-3dplot} % Required for tdplot_main_coords
+\usepackage{amsmath}     % For math symbols and environments (pmatrix, bmatrix)
+\usepackage{bm}          % For bold math symbols (\bm{0})
+\usepackage{xcolor}      % For defining colors
+\usetikzlibrary{arrows.meta} % For nicer arrow tips like Stealth
+\usetikzlibrary{shapes.misc} % For rounded corners on nodes
+\usetikzlibrary{patterns}    % For seafloor pattern
+%%
+
+
+%----------------------------------------------------------------------------------------
+%	BEGIN DOCUMENT
+%----------------------------------------------------------------------------------------
+
+\begin{acronym}
+    % \acro{CAMAP}{conflict-aware multi-agent planner}
+
+    \acro{MPC}{model predictive control}
+    \acro{GP}{Gaussian process}
+    \acro{AUV}{autonomous underwater vehicle}
+    \acro{MHE}{moving horizon estimator}
+    \acro{EKF}{extended kalman filter}
+    \acro{ROV}{remotely operated vehicle}
+    \acro{TSP}{traveling salesman problem}
+    \acro{IMU}{inertial measurement unit}
+    \acro{DVL}{doppler velocity log}
+    \acro{NED}{North East Down}
+    \acro{RTI}{real-time iteration}
+    \acro{OCP}{optimal control problem}
+    \acro{LP}{linear program}
+    \acro{MIP}{mixed integer program}
+    \acro{EA-MPC}{entanglement aware model predictive control}
+    \acro{TSDF}{ truncated signed distance field}
+    \acro{SDF}{ signed distance field}
+    \acro{CPP}{ coverage path planner}
+    \acro{OEA-PP}{online entanglement aware path planner}
+    \acro{OMPL}{open motion planning}
+        \acroplural{ROV}[ROVs]{remotely operated vehicles}
+
+\acro{REACT}{Real-time Entanglement-Aware Coverage
+Path Planning for Tethered Underwater Vehicles}
+
+  % Ensures ROVs is treated the same as ROV
+}
+
+
+\end{acronym}
+
+
+
+\begin{document}
+
+%%
+
+%%
+
+%%
+% \frontmatter
+\pagenumbering{gobble}  % To avoid page numbering for cover, abstract, preface etc
+
+%----------------------------------------------------------------------------------------
+%	COVER PAGE (I suggest that you make a custom PDF cover with Inkscape or similar software)
+%----------------------------------------------------------------------------------------
+
+% \begin{titlepage}
+%     \includepdf[fitpaper=true, pages=1]{figs/formal/coverOnlineColour.pdf}
+%     % \includepdf[fitpaper=true, pages=1]{figs/formal/coverOnlineBW.pdf}
+% \end{titlepage}
+% \newpage
+
+%
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\begin{titlepage}
+\begin{center}
+
+\vspace*{.06\textheight}
+{\scshape\LARGE Aarhus University\par}\vspace{1.5cm} % University name
+\textsc{\Large Doctoral Thesis}\\[0.5cm] % Thesis type
+
+\HRule \\[0.4cm] % Horizontal line
+{\huge \bfseries Autonomous Marine Robots Optimal Control and Path Planning with Data-Driven Models
+\par}\vspace{0.4cm} % Thesis title
+\HRule \\[1.5cm] % Horizontal line
+
+\emph{Author:}
+{Abdelhakim Khaled Amer} % Author name - remove the \href bracket to remove the link
+
+\begin{minipage}[t]{0.4\textwidth}
+\begin{flushright} \large
+
+\end{flushright}
+\end{minipage}\\[3cm]
+ 
+\vfill
+
+\large \textit{A thesis submitted in fulfillment of the requirements\\ for the degree of Doctor of Philosophy}\\[0.3cm] % University requirement text
+\textit{in the}\\[0.4cm]
+Artificial Intelligence in Robotics Group\\Department of Electrical and Computer Engineering\\[2cm] % Research group name and department name
+ 
+\vfill
+
+{\large \today}\\[4cm] % Date
+%\includegraphics{Logo} % University/department logo - uncomment to place it
+ 
+\end{center}
+\end{titlepage}
+%----------------------------------------------------------------------------------------
+%	HEADERS (defined in template file)
+%----------------------------------------------------------------------------------------
+
+% If you want to experiment with headers, here is an example:
+% \renewcommand{\sectionmark}[1]{\markright{\textsc{\color{AUpantoneDark}#1}}}
+% \renewcommand{\chaptermark}[1]{\markleft{\textsc{\color{AUpantoneDark}#1}}}
+% \renewcommand{\sectionmark}[1]{\markright{\spacedlowsmallcaps{#1}}} % The header for all pages (oneside) or for even pages (twoside)
+% \lehead{\mbox{\llap{\small\color{AUpantone}\thepage\kern1em \vline}\color{AUpantone}\hspace{0.5em}\rightmark\hfil}} % The header style
+% \rehead{\mbox{\llap{\small\color{AUpantone}\thepage\kern1em \vline}\color{AUpantone}\hspace{0.5em}\leftmark\hfil}} % The header style
+
+% \rehead{\mbox{\hfill\color{AUpantone}\sectionmark\rlap{\small\vline\kern1em\thepage}}}
+
+% \pagestyle{empty} % Enable the headers specified in this block (empty)
+
+%----------------------------------------------------------------------------------------
+% HEADINGS FORMAT
+%----------------------------------------------------------------------------------------
+
+% \titleformat{\chapter}[display]
+%   {\color{AUpantoneDark}}
+%   {\chaptertitlename\ \thechapter}{20pt}{\Huge}
+% \titleformat{\section}
+%   {\Large\bfseries\sffamily\color{AUpantoneDark}}
+%   {\thesection}{1em}{}
+% \titleformat{\subsection}
+%   {\large\bfseries\sffamily\color{AUpantoneDark}}
+%   {\thesubsection}{1em}{}
+
+% \newenvironment{AUPeto}{\fontfamily{<familyname>}\selectfont}{\par}
+% \setmainfont{AUPassata_Rg}[Extension = .ttf, BoldFont={AUPassata_Bold}]
+
+%----------------------------------------------------------------------------------------
+%  TITLE (Title page made in LaTeX. I recommend making a custom PDF and adding it since it is usually prettier)
+%----------------------------------------------------------------------------------------
+
+% \input{formal/title}
+% \clearpage
+
+%----------------------------------------------------------------------------------------
+%	AUTHOR, COVER IMAGE, AND INSTITUTION INFORMATION
+%----------------------------------------------------------------------------------------
+
+\BgThispage  % add watermark
+% \newgeometry{paper=a4paper,
+%     inner=12.5mm,
+%     outer=12.5mm,
+%     % bindingoffset=10mm, % Binding offset FOR BOOK PRINTING
+%     top=20mm,
+%     bottom=20mm}  % to maintain margins in this page since minipages usually mess them up
+\vspace*{\fill}
+\begin{minipage}{0.6\textwidth}
+% To avoid hyphenation in this section
+\tolerance=1
+% \emergencystretch=\maxdimen
+\hyphenpenalty=10000
+\hbadness=10000
+
+\vspace*{\fill}
+\textbf{Abdelhakim Amer } \\
+\textit{Autonomous Marine Robots Optimal
+Control and Path Planning with
+Data-Driven Models } \\
+Artificial intelligence in Robotics Laboratory (AIRLab) \\
+Ph.D. Thesis \\
+May 2024
+
+\vspace*{2ex}
+\textbf{Aarhus University} \\
+Electrical and Computer Engineering \\
+Finlandsgade 22 \\
+8200 Aarhus N, Denmark \\
+\url{https://ece.au.dk/en}
+
+\vspace*{2ex}
+\textbf{Cover page image} \\
+- \\
+\vspace*{2ex}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.1\paperwidth}
+	\vspace*{15ex}  % adjust this distance to keep seal at the bottom
+	\includegraphics[width=0.1\paperwidth]{figs/logos/ausegl_blaa.pdf}
+\end{minipage}
+\restoregeometry
+
+%----------------------------------------------------------------------------------------
+%	DEDICATION
+%----------------------------------------------------------------------------------------
+
+\cleardoublepage
+\begin{dedication}
+
+
+% You cannot hope to build a better world without improving the individuals.\\ To that end, each of us must work for our own improvement and share a general responsibility for all humanity, our particular duty being to aid those to whom we think we can be most useful.\\
+% -- Marie Curie
+
+
+%“It's not who we are underneath, but what we do that defines us.”\\
+%― Batman Begins
+
+
+\end{dedication}
+\cleardoublepage
+\pagenumbering{roman}  % To avoid page numbering for cover, abstract, preface etc
+
+%----------------------------------------------------------------------------------------
+%	ABSTRACT
+%----------------------------------------------------------------------------------------
+
+\input{formal/abstract}
+\cleardoublepage % Start the acknowledgments on the second page, remove this if you have a longer abstract that goes onto the second page
+
+%----------------------------------------------------------------------------------------
+%	ACKNOWLEDGEMENTS
+%----------------------------------------------------------------------------------------
+
+\input{formal/acknowledgments}
+\cleardoublepage
+
+%----------------------------------------------------------------------------------------
+%	PREFACE
+%----------------------------------------------------------------------------------------
+
+\backgroundsetup{contents=\includegraphics{figs/formal/watermarkEvenPage.pdf}, scale=1, opacity=0.05, angle=0}  % Changing the background picture to EVEN pages
+\input{formal/preface}
+\cleardoublepage
+
+%----------------------------------------------------------------------------------------
+%	TABLE OF CONTENTS &/OR LISTS OF FIGURES AND TABLES &/OR NOMENCLATURE
+%----------------------------------------------------------------------------------------
+
+% Format a little the ToC to align the formatting to the rest of the document
+\renewcommand{\contentsname}{\normalfont\LARGE{Contents}}  % custom title
+\pagestyle{plain}  % to not show headers or footers in these sections
+\setcounter{tocdepth}{4}
+\setcounter{secnumdepth}{4}
+\tableofcontents  % Print the table of contents
+
+\cleardoublepage
+\renewcommand{\listfigurename}{\normalfont\LARGE{List of Figures}}  % custom title
+\listoffigures  % Print the list of figures
+
+\cleardoublepage
+\renewcommand{\listtablename}{\normalfont\LARGE{List of Tables}}  % custom title
+\listoftables  % Print the list of tables
+
+%\cleardoublepage
+%\input{formal/nomencl.ist}  
+%\printnomenclature[2cm]  % Print the nomenclature
+
+% To set headers and footers
+\pagestyle{fancy}  % Enable the headers specified in this block and page style
+\fancyhf{}  % clear headers and footers
+\fancyhf[RFO, LFE]{\thepage}  % page number on the right on odd pages and the left of even pages
+\fancyhf[RHO]{\slshape\nouppercase{\leftmark}}  % chapter name in the right of odd pages
+\fancyhf[LHE]{\slshape Abdelhakim K. A. Ph.D. Thesis}  % text in the left of even pages
+\renewcommand{\headrulewidth}{0pt} % rule width
+
+%----------------------------------------------------------------------------------------
+%	THE CONTENT
+%----------------------------------------------------------------------------------------
+\mainmatter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\part*{Part I: Thesis Overview}
+\label{partI:intro}
+ \input{Phd_thesis/chapters/1.Introduction/1-intro}
+ \input{Phd_thesis/chapters/1.Introduction/2-mpc}
+ \input{Phd_thesis/chapters/1.Introduction/3-challenges}
+ \input{Phd_thesis/chapters/1.Introduction/4-hypothesis}
+ \input{Phd_thesis/chapters/1.Introduction/5-evaluation}
+ \input{Phd_thesis/chapters/1.Introduction/6-contributions}
+ \input{Phd_thesis/chapters/2.Background/1-modelling}
+ \input{Phd_thesis/chapters/2.Background/2-mpc}
+ \input{Phd_thesis/chapters/2.Background/3-model_learning}
+
+ \input{Phd_thesis/chapters/4.Conclusion/1-results_summary}
+ \input{Phd_thesis/chapters/4.Conclusion/2-analysis_conclusion}
+  \input{Phd_thesis/chapters/4.Conclusion/3-future_work}
+
+%\input{chapters/1.Introduction}
+%\input{chapters/2.Background}
+%\input{chapters/3.Papers}
+
+% \input{chapters/1.introduction/3-papers}
+% \input{chapters/1.introduction/paper1} \cleardoublepage  % Survey
+
+% % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\part*{Part II: Contributed Papers}
+ %\addcontentsline{toc}{part}{Part II: Data Availability and Model Adaptability in Underwater Robotics}
+ \label{partII:paper}
+
+
+\chapter*{Paper I: UNav-Sim – A High-Fidelity Underwater Robotics Simulator}
+\addcontentsline{toc}{chapter}{Paper I: UNav-Sim}
+\vspace{1cm}
+This paper was published at the \textbf{International Conference on Advanced Robotics (ICAR), 2023}.
+
+
+\includepdf[pages=-,pagecommand={},width=\textwidth]{chapters/3.Papers/1.paper1_unavsim/ICAR_2023_Hakim_1/ICAR_2023_Hakim.pdf}
+
+
+\chapter*{Paper II: VTNMPC}
+\addcontentsline{toc}{chapter}{Paper II: VTNMPC}
+\vspace{1cm}
+This paper was published at the \textbf{International Conference on Advanced Robotics (ICAR), 2023}.
+
+
+\includepdf[pages=-,pagecommand={},width=\textwidth]{chapters/3.Papers/2.paper2_vtnmpc/ICAR_2023_Hakim_2/Autonomous_Robots/IROS/ICAR_2023_Hakim_2.pdf}
+
+
+
+\chapter*{Paper III: PINNS}
+\addcontentsline{toc}{chapter}{Paper III:  PINNS}
+\vspace{1cm}
+This paper was published at the \textbf{International Joint Conference on Neural Networks (IJCNN), 2025}.
+
+
+\includepdf[pages=-,pagecommand={},width=\textwidth]{chapters/3.Papers/3.paper3_pinc/pinc.pdf}
+
+
+\chapter*{Paper V: DFGP}
+\addcontentsline{toc}{chapter}{Paper III: DFGP}
+\vspace{1cm}
+This paper was published at the \textbf{IEEE Transactions on Control Systems Technology (TCST)}.
+
+
+\includepdf[pages=-,pagecommand={},width=\textwidth]{chapters/3.Papers/4.paper4_dfgp/dfgp.pdf}
+
+
+
+
+% \input{chapters/2.Data_Simulator/RelatedWorks}
+% \input{chapters/2.Data_Simulator/DatasetMetrics}
+% \input{chapters/2.Data_Simulator/paper2} \cleardoublepage  % MIMIR%%
+% % % \input{chapters/2.Data_Simulator/paper5} \cleardoublepage  % UNAVSim
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \part*{Part III: Optimal Control for Coverage Path Planning }
+% \addcontentsline{toc}{part}{Part III: Architectures for Learning-based Localization}
+% \label{partIII:architectures}
+
+% \input{chapters/3.Architectures/Intro}
+% \label{chapter:3:architectures:intro}
+% \input{chapters/3.Architectures/geometry}
+% \label{chapter:3:architectures:geometry}
+% \input{chapters/3.Architectures/groups}
+% \label{chapter:3:architectures:groups}
+
+% \input{chapters/3.Architectures/paper3} 
+% \cleardoublepage  % Loss it right
+% \label{chapter:3:architectures:lossright}
+
+% \input{chapters/3.Architectures/paper7} \cleardoublepage  % Regress right
+% \label{chapter:3:architectures:regressright}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\part*{Part IV: Data-Driven Modelling}
+%\addcontentsline{toc}{part}{Part IV: Applications and Alternative Vision Paradigms}
+%\label{partiv:applications}
+
+%\input{chapters/4.Other/Intro}
+%\input{chapters/4.Other/paper6} \cleardoublepage  % BT
+%\input{chapters/4.Other/paper8} % Event
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%part*{Part V: Final Remarks}
+%\addcontentsline{toc}{part}{Part V: Final Remarks}
+%\label{partv:final}
+%\input{chapters/conclusions}
+
+
+% \input{chapters/epilogue}
+
+% \input{chapters/conclusions} \cleardoublepage
+% \input{chapters/epilogue} \cleardoublepage
+
+%----------------------------------------------------------------------------------------
+%	BIBLIOGRAPHY
+%----------------------------------------------------------------------------------------
+% \backmatter
+\renewcommand\bibname{Bibliography}  % For modifying the bibliography heading
+\bibliographystyle{ieeetr}
+\addcontentsline{toc}{chapter}{Bibliography}
+\bibliography{bibliography.bib} % The file containing the bibliography
+% \printbibliography
+
+%----------------------------------------------------------------------------------------
+%	APPENDICES
+%----------------------------------------------------------------------------------------
+
+% \newpage
+% \appendix
+% \appendixpage
+% \input{appendices/appendix}
+
+%----------------------------------------------------------------------------------------
+%	BACK PAGE &\OR COLOPHON
+%----------------------------------------------------------------------------------------
+
+\cleardoublepage\null\thispagestyle{empty}
+\input{formal/colophon}
+
+%----------------------------------------------------------------------------------------
+%	END OF DOCUMENT... CONGRATS!
+%----------------------------------------------------------------------------------------
+
+\end{document}

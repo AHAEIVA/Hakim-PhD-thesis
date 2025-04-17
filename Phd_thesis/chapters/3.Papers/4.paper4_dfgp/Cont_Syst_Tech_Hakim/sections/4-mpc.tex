@@ -1,0 +1,34 @@
+\section{Model Predictive Control}
+\label{sec:mpc}
+
+
+%{MPC}'s exceptional success lies in its distinctive capacity to manage constraints, along with a myriad of other design specifications, while optimizing performance systematically and elegantly through iterative online optimization processes \cite{ Mohit2017Receding, mpc_survey, vtnmpc}. This method is also called receding horizon control. The optimal control problem is given in discrete time as follows:
+
+
+
+
+\ac{MPC} is an optimization-based control strategy aimed at determining an optimal sequence of actions over a predefined time horizon, denoted by $N_c$. This optimization process is conducted at each time step in a receding horizon manner after the system's initial state is updated. The optimal control problem is given in discrete time as follows:
+%
+{
+\begin{subequations} 
+\label{eq:NMPC}
+\begin{align}
+    \minimize_{\mathbf{x}_k,\mathbf{u}_k} \quad & \sum_{k = 0}^{N_c-1} \left( \|\mathbf{x}_k- \mathbf{x}^{ref}_k\|^2_{\mathbf{Q}}
+    +  \|\mathbf{u}_k\|^2_{\mathbf{R}}\right) + 
+    \nonumber
+    %\\
+    %&\quad \hspace{4cm}    
+    \|\mathbf{x}_ {N_c}- \mathbf{x}^{ref}_{N_c}\|^2_{\mathbf{Q}_T} \nonumber \\
+    & \label{eq:NMPC1} \\
+    \text{s.t.} \quad & \mathbf{x}_{k+1} = \mathtt{f}_d(\mathbf{x}_k,\mathbf{u}_k, \mathbf{\Delta}) , \quad k \in [0, N_c-1],  \nonumber \\
+    & \label{eq:NMPC2} \\
+    & \mathbf{u}_{k,\textrm{l}} \leq \mathbf{u}_k \leq \mathbf{u}_{k,\textrm{u}}, \quad k \in [0, N_c-1].  & \label{eq:NMPC4} 
+\end{align}
+\end{subequations}
+}
+%
+The discretized nonlinear model, denoted as $\mathtt{f}_d(\mathbf{x}_k, \mathbf{u}_k, \mathbf{\Delta})$, is obtained by applying a 4th-order Runge-Kutta method to the continuous dynamics in \eqref{eq:model_eqs}. The equations are discretized using a chosen sampling time $T_s$. Additionally, a zero-order hold assumption is adopted for the control inputs, whereby the control inputs $\mathbf{u}$ remain constant throughout each sampling interval $T_s$.
+
+Herein, $\mathbf{u}_{k,\textrm{l}}$ and $\mathbf{u}_{k,\textrm{u}}$ denote the respective minimum and maximum bounds on the controls, where each is a vector in $\mathbb{R}^{4}$. The components inside the summation in \eqref{eq:NMPC1} represent costs associated with the full state and control vectors \eqref{eq:state_control} and \eqref{eq:control}. While the state cost penalizes the deviations between the predicted $\mathbf{x}_k$  and reference $\mathbf{x}^{ref}$ states, the control cost minimizes energy consumption along the trajectory. The second term in \eqref{eq:NMPC1} is the terminal cost, which caters to the finite nature of the prediction horizon, thereby ensuring convergence.  In this context, $ \mathbf{Q} \in \mathbb{R}^ {8 \times 8} $, $  \mathbf{Q}_{T} \in \mathbb{R}^ {8 \times 8}$,  and $  \mathbf{R} \in \mathbb{R}^ {4 \times 4} $ are positive-(semi) definite weight matrices. In this work, we obtain the coefficients of the weight matrices using the meta-heuristic strategy described in \cite{mpc_tune}.
+
+

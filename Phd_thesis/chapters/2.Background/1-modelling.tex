@@ -1,0 +1,200 @@
+
+%tikz stuff
+\definecolor{xaxisred}{RGB}{220,20,60}    % Crimson for x-axis
+\definecolor{yaxisgreen}{RGB}{50,205,50}  % Lime Green for y-axis
+\definecolor{zaxisblue}{RGB}{0,0,255}     % Blue for z-axis
+\definecolor{earthblue}{RGB}{0,51,102}    % Darker blue for earth frame
+\definecolor{bodyred}{RGB}{178,34,34}     % Red for body frame
+\definecolor{oceancolor}{RGB}{0,105,148}  % Ocean color
+\definecolor{seafloor}{RGB}{139,115,85}   % Seafloor color
+\definecolor{rovblue}{RGB}{30,144,255}    % ROV blue color
+\definecolor{rovframe}{RGB}{50,50,50}     % ROV frame color
+
+% Set up the view angles
+\tdplotsetmaincoords{70}{120}
+
+
+
+\chapter{Background on Model Predictive Control for Marine Robots}
+\label{ch:background}
+\section{Modelling Marine Robots}
+\label{sec:modelling}
+
+This section explains the common principles of modelling marine robotics, particularly underwater vehicles, using first principles. A well-formulated mathematical model is fundamental for simulation, control system design, and mission planning, enabling prediction of vehicle behavior under various conditions and control inputs. Such models are crucial for developing simulators, designing model-based controllers like MPC, and providing insights into system dynamics and limitations.
+
+\subsection{Frames of Reference}
+Underwater vehicle motion is typically described using two coordinate systems: an earth fixed(inertial) reference frame and a body-fixed reference frame attached to the vehicle.
+
+The global reference frame, denoted $\mathcal{F}_E$, is fixed relative to the Earth. For marine applications, the North-East-Down (NED) coordinate system is commonly used. Its origin is often set at a convenient location (e.g., deployment point), with axes defined as:
+\begin{itemize}
+    \item $x$-axis pointing toward true North
+    \item $y$-axis pointing toward East
+    \item $z$-axis pointing downward, perpendicular to the Earth's surface
+\end{itemize}
+
+The body-fixed reference frame, denoted $\mathcal{F}_B$, moves with the vehicle. Its origin is usually placed at the vehicle's center of gravity (CG) or geometric center. Following the Society of Naval Architects and Marine Engineers (SNAME) convention, the axes are:
+\begin{itemize}
+    \item $x$-axis pointing forward along the longitudinal axis
+    \item $y$-axis pointing starboard (right)
+    \item $z$-axis pointing downward
+\end{itemize}
+
+\begin{figure}[h!] % Changed [b!] to [h!] for better placement flexibility, adjust as needed
+    \centering
+    \includegraphics[width=0.5\textwidth]{Phd_thesis/chapters/1.Introduction/figures/brov4.pdf} % Ensure path is correct
+    \caption{Coordinate frame of the ROV ($\mathcal{F}_B$) in relation to the world frame ($\mathcal{F}_G$).}
+    \label{fig:rov-coord-frame}
+\end{figure}
+
+The vehicle's state involves position, orientation, linear velocities, and angular velocities. The SNAME notation standardizes these terms:
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        \textbf{DOF} & \textbf{Motion} & \textbf{Forces/Moments} & \textbf{Linear/Angular Velocities} \\
+        \hline
+        1 & Surge (longitudinal motion) & $X$ & $u$ \\
+        2 & Sway (lateral motion) & $Y$ & $v$ \\
+        3 & Heave (vertical motion) & $Z$ & $w$ \\
+        4 & Roll (rotation about $x$-axis) & $K$ & $p$ \\
+        5 & Pitch (rotation about $y$-axis) & $M$ & $q$ \\
+        6 & Yaw (rotation about $z$-axis) & $N$ & $r$ \\
+        \hline
+    \end{tabular}
+    \caption{SNAME notation for marine vehicles.}
+    \label{tab:sname_notation}
+\end{table}
+
+The position and orientation in the global frame $\mathcal{F}_G$ are represented by the vector $\vect{\eta} = [x, y, z, \phi, \theta, \psi]^T$, where $\phi$, $\theta$, and $\psi$ are the Euler angles (roll, pitch, yaw). The linear and angular velocities in the body frame $\mathcal{F}_B$ are represented by the vector $\vect{\nu} = [u, v, w, p, q, r]^T$.
+
+\subsection{Newton-Euler Model}
+The dynamics of an underwater vehicle, treated as a rigid body moving in a fluid, can be derived using the Newton-Euler equations. These must account for hydrodynamic effects like added mass and damping, as well as gravitational and buoyancy forces.
+
+Fossen's vectorial formulation provides a standard framework:
+\begin{align} % Use align for multi-line equations with alignment
+    \dot{\vect{\eta}} &= \mat{J}(\vect{\eta})\vect{\nu} \label{eq:kinematics} \\
+    \mat{M}\dot{\vect{\nu}} + \mat{C}(\vect{\nu})\vect{\nu} + \mat{D}(\vect{\nu})\vect{\nu} + \mat{g}(\vect{\eta}) &= \vect{\tau} + \vect{\tau}_{env} \label{eq:dynamics}
+\end{align}
+Equation \eqref{eq:kinematics} describes the kinematics, relating body-fixed velocities $\vect{\nu}$ to the rates of change of position and orientation in the global frame $\dot{\vect{\eta}}$ via the transformation matrix $\mat{J}(\vect{\eta})$:
+\begin{equation}
+    \mat{J}(\vect{\eta}) =
+    \begin{bmatrix}
+        \mat{R}(\phi,\theta,\psi) & \mat{0}_{3\times3} \\
+        \mat{0}_{3\times3} & \mat{T}(\phi,\theta)
+    \end{bmatrix}
+\end{equation}
+where $\mat{R}(\phi,\theta,\psi)$ is the rotation matrix from $\mathcal{F}_B$ to $\mathcal{F}_G$ (using ZYX Euler angle convention):
+\begin{equation}
+    \mat{R}(\phi,\theta,\psi) = \mat{R}_z(\psi)\mat{R}_y(\theta)\mat{R}_x(\phi)
+\end{equation}
+and $\mat{T}(\phi,\theta)$ transforms body angular velocities to Euler angle rates:
+\begin{equation}
+    \mat{T}(\phi,\theta) =
+    \begin{bmatrix}
+        1 & \sin\phi\tan\theta & \cos\phi\tan\theta \\
+        0 & \cos\phi & -\sin\phi \\
+        0 & \sin\phi/\cos\theta & \cos\phi/\cos\theta
+    \end{bmatrix}
+\end{equation}
+Note that $\mat{T}(\phi,\theta)$ becomes singular when $\theta = \pm 90^\circ$.
+
+Equation \eqref{eq:dynamics} describes the dynamics. The matrix $\mat{M}$ is the system inertia matrix, including rigid-body mass $\mat{M}_{RB}$ and hydrodynamic added mass $\mat{M}_A$:
+\begin{equation}
+    \mat{M} = \mat{M}_{RB} + \mat{M}_A
+\end{equation}
+The rigid-body inertia matrix $\mat{M}_{RB}$ is given by:
+\begin{equation}
+    \mat{M}_{RB} =
+    \begin{bmatrix}
+        m\mat{I}_{3\times3} & -m\mat{S}(\vect{r}_G) \\
+        m\mat{S}(\vect{r}_G) & \mat{I}_G
+    \end{bmatrix}
+\end{equation}
+where $m$ is the mass, $\mat{I}_{3\times3}$ is the $3 \times 3$ identity matrix, $\vect{r}_G = [x_G, y_G, z_G]^T$ is the position of the CG in $\mathcal{F}_B$, $\mat{I}_G$ is the inertia tensor about the CG, and $\mat{S}(\vect{r}_G)$ is the skew-symmetric matrix:
+\begin{equation}
+    \mat{S}(\vect{r}_G) =
+    \begin{bmatrix}
+        0 & -z_G & y_G \\
+        z_G & 0 & -x_G \\
+        -y_G & x_G & 0
+    \end{bmatrix}
+\end{equation}
+The added mass matrix $\mat{M}_A$ accounts for the inertia of the surrounding fluid accelerated by the vehicle's motion. It is typically represented using hydrodynamic derivatives:
+\begin{equation}
+    \mat{M}_{A} = -
+    \begin{bmatrix}
+        X_{\dot{u}} & X_{\dot{v}} & X_{\dot{w}} & X_{\dot{p}} & X_{\dot{q}} & X_{\dot{r}} \\
+        Y_{\dot{u}} & Y_{\dot{v}} & Y_{\dot{w}} & Y_{\dot{p}} & Y_{\dot{q}} & Y_{\dot{r}} \\
+        Z_{\dot{u}} & Z_{\dot{v}} & Z_{\dot{w}} & Z_{\dot{p}} & Z_{\dot{q}} & Z_{\dot{r}} \\
+        K_{\dot{u}} & K_{\dot{v}} & K_{\dot{w}} & K_{\dot{p}} & K_{\dot{q}} & K_{\dot{r}} \\
+        M_{\dot{u}} & M_{\dot{v}} & M_{\dot{w}} & M_{\dot{p}} & M_{\dot{q}} & M_{\dot{r}} \\
+        N_{\dot{u}} & N_{\dot{v}} & N_{\dot{w}} & N_{\dot{p}} & N_{\dot{q}} & N_{\dot{r}}
+    \end{bmatrix}
+\end{equation}
+where $X_{\dot{u}}$ is the added mass force in $x$-direction due to surge acceleration $\dot{u}$, etc.
+
+The matrix $\mat{C}(\vect{\nu})$ represents Coriolis and centripetal forces, including rigid-body $\mat{C}_{RB}(\vect{\nu})$ and added mass $\mat{C}_A(\vect{\nu})$ terms:
+\begin{equation}
+    \mat{C}(\vect{\nu}) = \mat{C}_{RB}(\vect{\nu}) + \mat{C}_A(\vect{\nu})
+\end{equation}
+These terms arise from the rotation of the body frame and the interaction of the vehicle with the fluid.
+
+The damping matrix $\mat{D}(\vect{\nu})$ represents hydrodynamic drag forces and moments opposing motion. It is often decomposed into linear $\mat{D}_{lin}$ and nonlinear (quadratic) $\mat{D}_{nonlin}(\vect{\nu})$ components:
+\begin{equation}
+    \mat{D}(\vect{\nu}) = \mat{D}_{lin} + \mat{D}_{nonlin}(\vect{\nu})
+\end{equation}
+Linear damping is often approximated as diagonal:
+\begin{equation}
+    \mat{D}_{lin} = -\text{diag}(X_u, Y_v, Z_w, K_p, M_q, N_r)
+\end{equation}
+Nonlinear damping, mainly due to quadratic drag, is often modeled as:
+\begin{equation}
+    \mat{D}_{nonlin}(\vect{\nu}) = -\text{diag}(X_{u|u|}|u|, Y_{v|v|}|v|, Z_{w|w|}|w|, K_{p|p|}|p|, M_{q|q|}|q|, N_{r|r|}|r|)
+\end{equation}
+
+The vector $\mat{g}(\vect{\eta})$ represents restoring forces and moments due to gravity (weight $W=mg$) and buoyancy ($B$). If the CG and center of buoyancy (CB) at $\vect{r}_B = [x_B, y_B, z_B]^T$ do not coincide, these forces create moments:
+\begin{equation}
+    \mat{g}(\vect{\eta}) =
+    \begin{bmatrix}
+        (W-B)\sin\theta \\
+        -(W-B)\cos\theta\sin\phi \\
+        -(W-B)\cos\theta\cos\phi \\
+        (y_G W - y_B B)\cos\theta\cos\phi - (z_G W - z_B B)\cos\theta\sin\phi \\
+        -(x_G W - x_B B)\cos\theta\cos\phi - (z_G W - z_B B)\sin\theta \\ % Corrected signs based on Fossen convention
+        -(x_G W - x_B B)\cos\theta\sin\phi + (y_G W - y_B B)\sin\theta % Corrected signs based on Fossen convention
+    \end{bmatrix}
+\end{equation}
+
+The vector $\vect{\tau} = [X, Y, Z, K, M, N]^T$ represents the control forces and moments generated by actuators (thrusters, fins, etc.). The vector $\vect{\tau}_{env}$ represents external environmental disturbances (currents, waves).
+
+\subsection{Model Implementation Considerations}
+Implementing this 6-DOF model requires several steps:
+\begin{itemize}
+    \item \textbf{Parameter Estimation:} Hydrodynamic coefficients ($\mat{M}_A$, $\mat{D}(\vect{\nu})$ terms) must be determined via CFD, experiments (e.g., towing tank tests, system identification), or analytical/empirical formulas.
+    \item \textbf{Model Simplification:} Based on vehicle symmetry (e.g., port-starboard symmetry simplifies matrices) or specific operational scenarios (e.g., planar motion neglecting roll, pitch, heave), the model can be reduced in complexity.
+    \item \textbf{Actuation Model:} The control input vector $\vect{\tau}$ results from individual actuator outputs. For a vehicle with $n$ thrusters, where the $i$-th thruster produces thrust $T_i$, the total wrench is often modeled linearly:
+    \begin{equation}
+        \vect{\tau} = \mat{B} \vect{T}
+    \end{equation}
+    Here, $\vect{T} = [T_1, T_2, ..., T_n]^T$ is the vector of individual thruster commands, and $\mat{B}$ is the $6 \times n$ thrust configuration matrix (or allocation matrix). Each column $i$ of $\mat{B}$ maps the thrust $T_i$ to forces and moments in $\mathcal{F}_B$ based on the thruster's position $\vect{r}_i$ and orientation (unit thrust direction vector $\vect{d}_i$) in the body frame:
+    \begin{equation}
+        \mat{B}_i = \begin{bmatrix} \vect{d}_i \\ \vect{r}_i \times \vect{d}_i \end{bmatrix}
+    \end{equation}
+    Actuator dynamics (response times, saturation limits) should also be considered for realistic simulation and control design.
+\end{itemize}
+
+\subsection{Model Limitations and Extensions}
+The presented model relies on several assumptions and has limitations:
+\begin{itemize}
+    \item Hydrodynamic coefficients are often assumed constant or only velocity-dependent, but can vary with acceleration, Reynolds number, frequency of motion, proximity to boundaries, etc.
+    \item Fluid memory effects (history of motion) are typically neglected.
+    \item Environmental disturbances need explicit modeling. Ocean currents are often included by using the relative velocity $\vect{\nu}_r = \vect{\nu} - \vect{\nu}_c$ (where $\vect{\nu}_c$ is the current velocity in $\mathcal{F}_B$) in the hydrodynamic force calculations ($\mat{C}$, $\mat{D}$ terms). Wave effects require more complex modeling (e.g., wave spectra, response amplitude operators).
+    \item For tethered vehicles (ROVs), tether dynamics add significant forces and moments, requiring dedicated modeling.
+    \item Effects like vortex shedding, fluid-structure interaction, or varying water density might be important in specific scenarios but are not included in the standard model.
+\end{itemize}
+Despite these limitations, Fossen's model provides a robust and widely used foundation for the simulation and control of underwater vehicles, balancing physical fidelity with mathematical tractability.
+
+% \end{tikzpicture}
+% % --- END: TikZ picture code ---
+% % --- END: TikZ picture code ---

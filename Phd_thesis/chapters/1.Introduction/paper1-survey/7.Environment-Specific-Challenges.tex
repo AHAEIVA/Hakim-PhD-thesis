@@ -1,0 +1,289 @@
+
+
+\section{Environment-specific challenges}
+\label{sec:environment}
+One of SLAM’s most severe challenges is developing robust architectures
+being applied in various working conditions without compromising accuracy under various sources of degradation. 
+
+Indirect methods are sensitive to geometrically-degraded environments by textureless or repetitive patterns, that is, perceptual aliasing. 
+The lack of features and the wrong matching between them lead to wrong tracking or tracking failure. Direct methods are more sensitive than indirect methods to high parallax, due to the higher nonconvexity of the optimization. In both cases, visually degraded environments such as those with low light, illumination changes and Lambertian surfaces are known sources of tracking failure. 
+
+Another source of spurious estimates is geometrically and visually degraded images caused by dusty or underwater environments or dynamic elements in the scene. In that case, learning-based pipelines that can encode higher-level representations of the semantic information are presented as an alternative. On the other hand, a limitation exclusive to learning-based methods is the variety of imaging conditions and motion patterns, which affects their generalizability. The remainder of this section presents an experimental evaluation of the aforementioned challenges, as detailed below.
+
+\subsection{Experimental evaluation}
+This section carries out an experimental evaluation of the SLAM algorithms surveyed throughout the Chapter \footnote{The code for the experimental evaluation is available at \url{https://github.com/olayasturias/monocular_visual_slam_survey}}. Moreover, the test cases are selected according to the challenges mentioned above. 
+
+
+\subsubsection{Test datasets}
+Table \ref{table:comparisonsoadataset} lists some prevailing SLAM databases and the challenges for SLAM they present. A sample of these datasets has been selected for the experimental evaluation, such that the SLAM algorithms are tested under various environment-specific challenges. This sample consists of the following datasets: KITTI \cite{dataset:kitti}, EuRoC \cite{dataset:burri2016euroc}, TUM-RGBD \cite{sturm2012tumrgbd}, Aqualoc \cite{dataset:aqualocdb}, and MIMIR-UW \cite{dataset:mimir}. Their imaging conditions are exemplified in Fig. \ref{fig:sampleimgs}.
+
+KITTI is recorded from a car, which severely limits the motion patterns of the sequences. It contains sequences with dynamic elements (e.g., moving cars or pedestrians), structured scenes from cities or motorways, and unstructured scenes from rural areas. EuRoC \cite{dataset:burri2016euroc} is recorded with a drone, containing sequences recorded under different difficulty levels. The difficult sequences for "Machine Hall" include motions at high speeds, with the subsequent motion blur, while the ones for "Vicon Room" present significant illumination changes across frames. TUM-RGBD \cite{sturm2012tumrgbd} is a handheld-recorded dataset. It includes sequences recorded under pure rotations, with the subsequent view changes and motion blur, and a sequence recorded under the total absence of structure and texture. The two remaining datasets, Aqualoc and MIMIR-UW, are recorded underwater, with imaging conditions characteristic of these environments. Underwater environments commonly present repetitive patterns or untextured areas, which might, for example, come from the seabed's lack of structure, the presence of floating particles, and the backscattering effects.
+Furthermore, they often present many dynamic elements, such as fishes, vegetation, and floating particles. The lack of natural light in underwater environments often requires robots to carry artificial light. This artificial lighting creates scattering effects from floating particles, uneven lighting across the scene, and illumination changes of the objects across frames. These challenges are present in Aqualoc and MIMIR-UW. 
+MIMIR-UW is a simulated underwater dataset with dynamic elements, varied motion patterns, and lighting conditions, including artificial lights under very dark scenes. Aqualoc presents frames with uniform texture and dynamic elements from fishes, robot parts, and particle dust. It follows a very uniform horizontal motion pattern.
+
+\begin{table}[!htbp]
+\caption[Comparison of the state-of-the-art datasets for SLAM]{Comparison of the state-of-the-art datasets for SLAM.}
+\centering
+\scriptsize
+\label{table:comparisonsoadataset}
+\begin{tabular}{r@{\hspace{1mm}}  c@{\hspace{1mm}}  c@{\hspace{1mm}} c@{\hspace{1mm}} c@{\hspace{1mm}} c@{\hspace{1mm}} c@{\hspace{1mm}} c@{\hspace{1mm}} c@{\hspace{1mm}} c@{\hspace{1mm}} }
+\toprule
+Dataset                                   & Type       & Environment   & IMU      & Segmentation & Camera    & Depth   & Perceptual aliasing  & Dynamic &  Varying light\\    
+\midrule
+
+EuRoC \cite{dataset:burri2016euroc}       & real      & indoor        & \textcolor{greenEIVAdark}{\cmark}    & \textcolor{redEIVA}{\xmark}       & stereo    & \textcolor{redEIVA}{\xmark}  & \textcolor{redEIVA}{\xmark}               & \textcolor{redEIVA}{\xmark}  & \textcolor{greenEIVAdark}{\cmark}\\ 
+TUM-RGBD \cite{sturm2012tumrgbd} & real      & indoor        & \textcolor{greenEIVAdark}{\cmark}    & \textcolor{redEIVA}{\xmark}       & stereo    & \textcolor{greenEIVAdark}{\cmark}  & \textcolor{greenEIVAdark}{\cmark}                  & \textcolor{greenEIVAdark}{\cmark} & \textcolor{redEIVA}{\xmark} \\ 
+RIO10 \cite{wald2019rio10} & real      & indoor        & \textcolor{redEIVA}{\xmark}    & \textcolor{greenEIVAdark}{\cmark}       & mono    & \textcolor{greenEIVAdark}{\cmark}  & \textcolor{redEIVA}{\xmark}                  & \textcolor{redEIVA}{\xmark} & \textcolor{greenEIVAdark}{\cmark}\\  
+OpenLORIS \cite{openloris} & real      & indoor        & \textcolor{greenEIVAdark}{\cmark}    & \textcolor{redEIVA}{\xmark}       & mono    & \textcolor{greenEIVAdark}{\cmark}  & \textcolor{redEIVA}{\xmark}                  & \textcolor{redEIVA}{\xmark} & \textcolor{redEIVA}{\xmark} \\  
+BONN-RGBD \cite{palazzolo2019bonndynamic} & real      & indoor        & \textcolor{redEIVA}{\xmark}    & \textcolor{redEIVA}{\xmark}       & mono    & \textcolor{greenEIVAdark}{\cmark}  & \textcolor{redEIVA}{\xmark}                  & \textcolor{greenEIVAdark}{\cmark} & \textcolor{redEIVA}{\xmark} \\ 
+ETH-MS \cite{dataset:eth_ms_visloc_2021}  & real      & in/outdoor    & \textcolor{redEIVA}{\xmark}    & \textcolor{redEIVA}{\xmark}       & rig       & \textcolor{redEIVA}{\xmark}  & \textcolor{redEIVA}{\xmark}               & \textcolor{redEIVA}{\xmark}  & \textcolor{greenEIVAdark}{\cmark} \\ 
+KITTI \cite{dataset:kitti}                & real      & city          & \textcolor{greenEIVAdark}{\cmark}    & \textcolor{greenEIVAdark}{\cmark}       & stereo    & \textcolor{greenEIVAdark}{\cmark}  & \textcolor{redEIVA}{\xmark}               & \textcolor{greenEIVAdark}{\cmark}  & \textcolor{greenEIVAdark}{\cmark} \\  
+RobotCar \cite{maddern2017Robotcar} & real      & city        & \textcolor{greenEIVAdark}{\cmark}    & \textcolor{redEIVA}{\xmark}       & mono    & \textcolor{redEIVA}{\xmark}  & \textcolor{greenEIVAdark}{\cmark}                  & \textcolor{redEIVA}{\xmark} & \textcolor{greenEIVAdark}{\cmark} \\ 
+UMCD \cite{UMCD} & real      & city        & \textcolor{greenEIVAdark}{\cmark}    & \textcolor{redEIVA}{\xmark}       & mono    & \textcolor{redEIVA}{\xmark}  & \textcolor{greenEIVAdark}{\cmark}                  & \textcolor{redEIVA}{\xmark} & \textcolor{greenEIVAdark}{\cmark} \\ 
+Aqualoc \cite{dataset:aqualocdb}                  & real      & underwater    & \textcolor{greenEIVAdark}{\cmark}    & \textcolor{redEIVA}{\xmark}       & mono & \textcolor{redEIVA}{\xmark}  & \textcolor{greenEIVAdark}{\cmark}               & \textcolor{greenEIVAdark}{\cmark}  & \textcolor{greenEIVAdark}{\cmark}\\
+AURORA \cite{dataset:bernardi2022aurora}  & real      & underwater    & \textcolor{greenEIVAdark}{\cmark}    & \textcolor{redEIVA}{\xmark}       & mono & \textcolor{redEIVA}{\xmark}  & \textcolor{greenEIVAdark}{\cmark}               & \textcolor{greenEIVAdark}{\cmark}  & \textcolor{greenEIVAdark}{\cmark}\\
+TartanAIR\cite{dataset:tartanair2020iros}  & synthetic & miscellaneous & \textcolor{greenEIVAdark}{\cmark}    & \textcolor{greenEIVAdark}{\cmark}       & mono       & \textcolor{greenEIVAdark}{\cmark}  & \textcolor{redEIVA}{\xmark}                 & \textcolor{greenEIVAdark}{\cmark} & \textcolor{greenEIVAdark}{\cmark} \\
+MIMIR-UW \cite{dataset:mimir} & synthetic & underwater    & \textcolor{greenEIVAdark}{\cmark}    & \textcolor{greenEIVAdark}{\cmark}       & rig        & \textcolor{greenEIVAdark}{\cmark}  & \textcolor{greenEIVAdark}{\cmark}               & \textcolor{greenEIVAdark}{\cmark} & \textcolor{greenEIVAdark}{\cmark}\\    
+\bottomrule
+
+\end{tabular}
+\end{table}
+
+
+
+
+
+
+\begin{figure*}[hbtp]
+\centering
+\resizebox{\textwidth}{!}{\begin{tabular}{p{.2cm}c@{\hspace{.7mm}}c@{\hspace{3mm}\color{ white}\vrule}!{\color{ white}\vrule}c@{\hspace{.7mm}}c@{\hspace{3mm}\color{ white}\vrule}!{\color{ white}\vrule}c@{\hspace{.7mm}}c@{\hspace{3mm}\color{ white}\vrule}!{\color{ white}\vrule}c@{\hspace{.7mm}}c@{\hspace{3mm}}}
+
+ &\multicolumn{2}{c@{\hspace{3mm}}}{00}
+ &\multicolumn{2}{c@{\hspace{3mm}}}{01}
+ &\multicolumn{2}{c@{\hspace{3mm}}}{02}
+ &\multicolumn{2}{c@{\hspace{3mm}}}{03}\\
+
+\rotatebox[origin=c]{90}{KITTI \cite{dataset:kitti}} 
+&\multicolumn{2}{c@{\hspace{3mm}}}{\adjustbox{valign=c,vspace=.2pt }{\includegraphics[width=.4\linewidth ]{figs/paper1-survey/Datasets/kitti/001919.png}}}
+&\multicolumn{2}{c@{\hspace{3mm}}}{\adjustbox{valign=c,vspace=.2pt }{\includegraphics[width=.4\linewidth ]{figs/paper1-survey/Datasets/kitti/001084.png}} }
+&\multicolumn{2}{c@{\hspace{3mm}}}{\adjustbox{valign=c,vspace=.2pt }{\includegraphics[width=.4\linewidth ]{figs/paper1-survey/Datasets/kitti/000065.png}} }
+&\multicolumn{2}{c@{\hspace{3mm}}}{\adjustbox{valign=c,vspace=.2pt }{\includegraphics[width=.4\linewidth ]{figs/paper1-survey/Datasets/kitti/000353.png}} }\\
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ &\multicolumn{2}{c@{\hspace{3mm}}}{MH\_01\_easy}
+ &\multicolumn{2}{c@{\hspace{3mm}}}{MH\_04\_difficult}
+ &\multicolumn{2}{c@{\hspace{3mm}}}{V1\_02\_medium} &\multicolumn{2}{c@{\hspace{3mm}}}{V1\_03\_difficult} \\ 
+ 
+\rotatebox[origin=c]{90}{EuRoC \cite{dataset:burri2016euroc}} 
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper1-survey/Datasets/euroc/m1/1403636579763555584.png}} 
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper1-survey/Datasets/euroc/m1/1403636735063555584.png}}
+
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper1-survey/Datasets/euroc/m4/1403638149245096960.png}}
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper1-survey/Datasets/euroc/m4/1403638184445096960.png}}
+
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper1-survey/Datasets/euroc/v2/1403715550562142976.png}}
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper1-survey/Datasets/euroc/v2/1403715555212143104.png}}
+
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper1-survey/Datasets/euroc/v3/1403715897884058112.png}}
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper1-survey/Datasets/euroc/v3/1403715904484058112.png}}\\
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ & \multicolumn{2}{c@{\hspace{3mm}}}{fr1/360}
+ & \multicolumn{2}{c@{\hspace{3mm}}}{fr1/rpy}
+ &  \multicolumn{2}{c@{\hspace{3mm}}}{fr3/nostructure\_notexture\_far}
+ &  \multicolumn{2}{c@{\hspace{3mm}}}{fr3/nostructure\_texture near\_loop} \\ 
+ 
+\rotatebox[origin=c]{90}{TUM-RGBD \cite{sturm2012tumrgbd}} 
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper1-survey/Datasets/TUM/360/1305031791.181287.png}} 
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper1-survey/Datasets/TUM/360/1305031807.181430.png}}
+
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper1-survey/Datasets/TUM/rpy/1305031233.361800.png}}
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper1-survey/Datasets/TUM/rpy/1305031234.161729.png}}
+
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper1-survey/Datasets/TUM/far/1341840839.193463.png}}
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper1-survey/Datasets/TUM/far/1341840842.874411.png}}
+
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper1-survey/Datasets/TUM/near/1341840083.789974.png}}
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper1-survey/Datasets/TUM/near/1341840134.466088.png}}\\
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ & \multicolumn{2}{c@{\hspace{3mm}}}{Archaeological sequence 1} & \multicolumn{2}{c@{\hspace{3mm}}}{Archaeological sequence 2} &  \multicolumn{2}{c@{\hspace{3mm}}}{Archaeological sequence 3} &  \multicolumn{2}{c@{\hspace{3mm}}}{Archaeological sequence 4} \\ 
+ 
+\rotatebox[origin=c]{90}{Aqualoc \cite{dataset:aqualocdb}} 
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper1-survey/Datasets/Aqualoc/frame000734.png}} 
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper1-survey/Datasets/Aqualoc/frame008122.png}}
+
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper1-survey/Datasets/Aqualoc/frame001434.png}}
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper1-survey/Datasets/Aqualoc/frame001951.png}}
+
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper1-survey/Datasets/Aqualoc/frame000097.png}}
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper1-survey/Datasets/Aqualoc/frame002149.png}}
+
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper1-survey/Datasets/Aqualoc/frame000000.png}}
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper1-survey/Datasets/Aqualoc/frame005298.png}}\\
+%%%%%%%%%%%%%%%%%%%%%
+
+ & \multicolumn{2}{c@{\hspace{3mm}}}{SeaFloor} & \multicolumn{2}{c@{\hspace{3mm}}}{SeaFloor\_Algae} &  \multicolumn{2}{c@{\hspace{3mm}}}{OceanFloor} &  \multicolumn{2}{c@{\hspace{3mm}}}{SandPipe} \\ 
+ 
+\rotatebox[origin=c]{90}{MIMIR-UW \cite{dataset:mimir}} 
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper1-survey/Datasets/MIMIR/1662122146122420480.png}} 
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper1-survey/Datasets/MIMIR/1662122117711814400.png}}
+
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper1-survey/Datasets/MIMIR/1662120311850779648.png}}
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper1-survey/Datasets/MIMIR/1662120293679392000.png}}
+
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper1-survey/Datasets/MIMIR/1662129827676694528.png}}
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper1-survey/Datasets/MIMIR/1662129858769357824.png}}
+
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper1-survey/Datasets/MIMIR/1662121590663360768.png}}
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper1-survey/Datasets/MIMIR/1662121655893752320.png}}\\
+
+\end{tabular}}
+\caption[Images from the datasets chosen for experimental evaluation]{Images from the datasets chosen for experimental evaluation. The roads where KITTI is recorded have varying degrees of structural elements. EuRoC assigns difficulty levels based on the presence of lighting changes and motion blur. TUM-RGBD displays motion blur and image sequences with no texture. Aqualoc and MIMIR-UW measurements are taken underwater, with uneven illumination from artificial lightning, dynamic elements, and floating particles. }
+\label{fig:sampleimgs}
+\end{figure*}
+
+
+\subsubsection{Evaluation metrics}
+The selected metrics are the standard accuracy metrics for trajectory estimates as implemented in \cite{grupp2017evo}. 
+Let us assume an estimated trajectory $P_i \in SE_3$ and the ground truth $Q_i \in SE_3$ composing a sequence of time-synchronized spatial poses.
+
+
+The \ac{APE} measures the Euclidean distance between the absolute poses at each timestamp $i$.
+This metric quantifies the global consistency of the trajectory.  
+Ground truth and estimate coordinate frames are first aligned using the least-squares alignment implemented in \cite{grupp2017evo} to retrieve the transform $S \in Sim_3$ that best aligns $P_i$ with $Q_i$:
+\begin{equation}
+   APE_i= Q_i^{-1}SP_i 
+\end{equation}
+
+
+The \ac{RPE} quantifies the local consistency of the trajectory. It measures the Euclidean distance at time step $i$ between the consecutive poses over a fixed time interval $\Delta$, such  that:
+\begin{equation}
+    RPE_i = \left(Q_i^{-1}Q_{i+\Delta} \right)^{-1}\left(P_i^{-1}P_{i+\Delta} \right)
+\end{equation}
+
+For the overall trajectory, the \ac{APE} and \ac{RPE} are obtained as the \ac{RMSE} over all time intervals $\Delta$:
+
+\begin{align}
+   APE_{RMSE}&= \sqrt{\frac{1}{n} \sum^n_{i=1}||APE_i||^2} \\
+    RPE_{RMSE} &= \sqrt{\frac{1}{m} \sum^m_{i=1}||RPE_i||^2}  ,
+\end{align}
+with $m = n-\Delta$. The translation and rotation components are computed separately. The rotation errors are obtained as the geodesic distance $||\log_{SO3}\left((E_i)\right)||$, with $E_i$ the representing either the $APE_i$ or the $RPE_i$, and $\log_{SO3}(\cdot)$ the logarithmic mapping of $SO3$ \cite{huynh2009metrics}.
+
+
+\subsubsection{Evaluation results}
+The open-source algorithms ORB-SLAM3, DSO, DF-VO,  and TrianFlow  are tested in the state-of-art mentioned above datasets. ORB-SLAM2 and DSO are indirect and direct approaches to geometry-based SLAM. DF-VO represents a hybrid architecture, with a learning-based pipeline trained with KITTI for optical flow and depth estimation, and a geometry-based PnP algorithm. TrianFlow is an end-to-end learning-based pipeline trained under KITTI and TUM\_RGBD. The results obtained are depicted in Tables \ref{table:comparisonSLAM} and \ref{table:comparisonSLAMrot} for translation and rotation, respectively.
+
+The results in Tables \ref{table:comparisonSLAM} and \ref{table:comparisonSLAMrot} show that ORB-SLAM3 outperforms the other algorithms in most sequences. However, it fails to track those sequences with very low texture for Aqualoc and TUM-RGBD. As expected for direct SLAM algorithms, DSO fails under high parallax sequences caused by pure rotations and movements relative to close-up objects. Learning-based algorithms can infer under those harsh conditions, since they do not fail to execute under any of the sequences. However, the estimates in those sequences give large errors as a sign of wrong estimations.
+It can be noted that the performance of learning-based algorithms is conditioned by the datasets under which they have been trained. In other words, they present better results for those sequences recorded under the same or similar conditions (i.e. KITTI and TUM-RGBD); however, the geometry-based algorithms outperform them in those sequences with very different motion patterns and environments. This is particularly noticeable in MIMIR-UW, which presents differently illuminated scenes. For EuRoC, TrianFlow presents lower relative errors to DF-VO. TrianFlow's model is trained under more \ac{DOF} than DF-VO, which may be the source of that difference. However, the hybrid architecture of DF-VO allows it to still provide a close performance to TrianFlow. In Aqualoc's case, the opposite is true, as the motions are closer to KITTI's, with lower errors for DF-VO.
+
+While learning-based methods present a promising alternative in those visually-degraded conditions where geometry-based algorithms fail, it is necessary to assess the quality of the measurement, for instance, as an uncertainty value. On the other hand, geometry-based methods are still the prevailing techniques in those environments with a lack of data that do not allow training a reliable model.
+
+The performance difference between geometry and learning-based approaches originates from the SLAM’s high dimensionality and limited data availability. The datasets like EuRoC and TUM-RGB are not large enough to train a network independently, whereas larger datasets like KITTI lack diversity in the data distribution.  The possibility of data augmentation is considered in Section \ref{sec:futureworks:trainingdata}. However, the high requirement for training data of learning-based SLAM originates from the
+insufficient dimensionality of the pose regressors’ inductive bias, as discussed in Section \ref{sec:frontend:vo:supervised}. The approaches like DF-VO opt for hybrid approaches in pose regression to counteract this limitation. Another future direction would be implementing networks with embeddings representative of the geometric space, as discussed in Section \ref{sec:futureworks:generalizability}.
+
+
+
+\begin{table*}[ht!]
+\centering
+\scriptsize
+\caption[Results on the translation metrics obtained from deploying SLAM algorithms on the proposed datasets]{Results on the translation metrics obtained from deploying SLAM algorithms on the proposed datasets. The best results are marked in \textbf{bold}, and the second-best results are \underline{underlined}.}
+\label{table:comparisonSLAM}
+\resizebox{\textwidth}{!}{\begin{tabular}{rccccccccc}
+\toprule
+\multirow{2}{*}{Dataset}  & \multirow{2}{*}{Sequence}
+& \multicolumn{2}{c}{ORB-SLAM3 \cite{campos2021orb}} &  \multicolumn{2}{c}{DSO \cite{engel2017dso}} & \multicolumn{2}{c}{DF-VO \cite{zhan2019dfvo}}                     & \multicolumn{2}{c}{TrianFlow \cite{zhao2020trianflow}}    \\ 
+                                &            & APE[m] & RPE[m]  &  APE[m] & RPE[m] &  APE[m] & RPE[m] &  APE[m] & RPE[m]\\
+\toprule
+
+\multirow{4}{*}{KITTI \cite{dataset:kitti}} 
+                                & 00       & \textbf{6.043} & \underline{0.1138}    &  115.67  & 4.23   & \underline{10.965}  & \textbf{0.0356} & 74.531  & 0.3415   \\
+                                & 01       & \textbf{7.561} & \textbf{0.4616}    &  \underline{161.94}  & 18.53  & 201.253 & \underline{2.2723} & 256.990 & 2.6451   \\
+                                & 02       & \underline{26.36} & \underline{0.2210}    &  89.72   & 2.98   & \textbf{17.285}  & \textbf{0.0417} & 129.550 & 0.3317   \\
+                                & 03       & \underline{1.614} & \underline{0.0488}    &  136.99  & 1.62   & \textbf{0.589}  & \textbf{0.0220}  &  9.464  & 0.3157   \\
+                                & 04       & \underline{1.386} & \underline{0.0893}    &  41.46   & 87.57  & \textbf{0.387}  & \textbf{0.0325}  &  3.162  & 0.2505  \\
+
+\midrule
+\multirow{4}{*}{EuRoC \cite{dataset:burri2016euroc}} 
+                                & MH\_01\_easy       & \textbf{0.0385} & \textbf{0.0285}    &  4.14  & 0.1449  & \underline{2.51}  & 0.0891   & 3.394  & \underline{0.031} \\
+                                & MH\_04\_difficult  & \textbf{0.1043} & \underline{0.0745}    &  6.11  & 0.213   & \underline{3.498}  & 0.115   & 6.139  & \textbf{0.0575} \\
+                                & V1\_02\_medium     & \textbf{0.0685} & \underline{0.0623}    &  \underline{1.750}  & 0.134   & 1.754  & 0.0664  & 1.760   & \textbf{0.0498}  \\
+                                & V1\_03\_difficult  & \textbf{0.0761} & 0.0663    &  1.55  & 0.105   & \underline{1.372}  & \underline{0.0580}  & 1.531   & \textbf{0.0420} \\
+\midrule
+\multirow{4}{*}{TUM-RGBD \cite{sturm2012tumrgbd}} 
+                                & fr1/360       & \textbf{0.0069} & \textbf{0.0091}  & 0.179  & 0.046 & \underline{0.128}   & 0.0160 & 0.176  & \underline{0.0118} \\
+                                & fr1/rpy       & \underline{0.0484} & 0.0310  &  -     & -     & \textbf{0.034 } & \underline{0.0050} & 0.0532 & \textbf{0.0042} \\
+                                & fr3/nostructure\_notexture\_far   & -      & -       & -      & -     & \textbf{0.0634}  & \underline{0.0203} & \underline{0.561}  & \textbf{0.0183} \\
+                                & fr3/nostructure\_texture\_near\_loop  & \textbf{0.0246} & \underline{0.0123}  & \underline{0.174}  & 0.020 & 0.628   & 0.0190 & 1.729  & \textbf{0.0110} \\
+
+\midrule
+\multirow{4}{*}{Aqualoc \cite{dataset:aqualocdb}} 
+                                & Archaeo 1   & \textbf{0.0124} & \textbf{0.0138}  & 2.60 & 4.16 &  \underline{2.12}   & \underline{0.037} & 2.57 &  2.39  \\
+                                & Archaeo 2   & \textbf{0.0280 }& \textbf{0.0347}  & 5.31 & 7.01 &  4.12   & \underline{0.180} & \underline{2.65} &  5.14  \\
+                                & Archaeo 3   &\textbf{ 0.006}  & \textbf{0.0058} & 3.36 & 3.61 &  \underline{1.088}  & \underline{0.057} & 1.13 &  1.68  \\
+                                & Archaeo 4   & -      &  -      & 3.13 & 4.36 &  \textbf{0.248}  & \textbf{0.111} & \underline{0.267} & \underline{0.327} \\
+
+\midrule
+\multirow{4}{*}{MIMIR-UW \cite{dataset:mimir}} 
+                                & SeaFloor/0       & \textbf{3.67} & 0.13 &  - & - &  \underline{13.24}  & 0.143 & 16.04 &  \textbf{0.123}  \\
+                                & SeaFloor/1       & \underline{8.78} & 0.19  & \textbf{2.73} & \textbf{0.0053} &  13.99  & 0.127 & 18.65 &  \underline{0.126}  \\
+                                & SeaFloor\_Algae/1     & \textbf{1.15} & 0.134   & \underline{7.00} & \textbf{0.048}   & 14.083  & \underline{0.120} & 16.61 & 0.125  \\
+                                & OceanFloor/0\_dark & \textbf{5.78} & \underline{0.523}   &  - & - &  \underline{17.649}  & \textbf{0.144} & 17.90 &  0.544  \\
+
+\bottomrule
+
+\end{tabular}}
+\end{table*}
+
+
+
+
+
+\begin{table*}[ht!]
+\centering
+\scriptsize
+\caption[Results on the rotation metrics obtained from deploying SLAM algorithms on the proposed datasets]{Results on the rotation metrics obtained from deploying SLAM algorithms on the proposed datasets. The best results are marked in \textbf{bold}, and the second-best results are \underline{underlined}.}
+\label{table:comparisonSLAMrot}
+\resizebox{\textwidth}{!}{\begin{tabular}{cccccccccc}
+\toprule
+\multirow{2}{*}{Dataset}  & \multirow{2}{*}{Sequence}
+& \multicolumn{2}{c}{ORB-SLAM3 \cite{campos2021orb}} &  \multicolumn{2}{c}{DSO \cite{engel2017dso}} & \multicolumn{2}{c}{DF-VO \cite{zhan2019dfvo}}                     & \multicolumn{2}{c}{TrianFlow \cite{zhao2020trianflow}}    \\ 
+                                &            & APE[rad] & RPE[rad]  &  APE[rad] & RPE[rad] &  APE[rad] & RPE[rad] &  APE[rad] & RPE[rad]\\
+\toprule
+
+\multirow{4}{*}{KITTI \cite{dataset:kitti}} 
+                                & 00       & \textbf{0.0207} & \underline{0.0043} & 1.103 & 0.2588 & \underline{0.0532} & \textbf{0.0019} & 0.8790 & 0.0278 \\
+                                & 01       & \textbf{0.0165} & \textbf{0.0019} & 0.7180 & 0.1941   & 2.8907  & 0.0995 & \underline{0.3903} & \underline{0.0023}  \\
+                                & 02       & \textbf{0.0275} & \underline{0.0020}  &  0.3814  & 0.1280   & \underline{0.0685}  & \textbf{0.0011} & 0.6706  & 0.0136  \\
+                                & 03       & \textbf{0.0082} & \underline{0.0009}    & 1.7836 & 0.1045   & \underline{0.0298}  & \textbf{0.0008} & 0.2579  & 0.0234  \\
+                                & 04       & \underline{0.0878} & \underline{0.0008}    &  1.909  & 0.0052   & \textbf{0.0644}  & \textbf{0.0005} & 0.1403 & 0.0020  \\
+\midrule
+\multirow{4}{*}{EuRoC \cite{dataset:burri2016euroc}} 
+                                & MH\_01\_easy       & \underline{1.557} & \textbf{0.0143} &  1.940  & 0.0642 & \textbf{1.549}  & \underline{0.0182} & 2.007  & 0.0205  \\
+                                & MH\_04\_difficult  & \textbf{1.550} & \textbf{0.0165}  &  1.745  & 0.057  & \underline{1.585}  & \underline{0.0205} & 1.992  & 0.0221  \\
+                                & V1\_02\_medium     & \textbf{1.549} & 0.0519  &  2.429  & 0.1189  & \underline{2.276}  & \underline{0.0484} & 2.4497  & \textbf{0.0407} \\
+                                & V1\_03\_difficult  & \textbf{1.542} & 0.0757  &  2.295  & 0.1255   & 2.109  & \underline{0.0554} & \underline{1.763}  & \textbf{0.0472}  \\
+\midrule
+\multirow{4}{*}{TUM-RGBD \cite{sturm2012tumrgbd}} 
+                                & fr1/360                               & \textbf{0.2684} & \textbf{0.0062}  &  2.2604  & 0.1600 & \underline{1.875}  & 0.3036 & 2.093  & \underline{0.0794}  \\
+                                & fr1/rpy                               & \textbf{1.821} & \textbf{0.0260} &  - & - & 2.739 & 0.2160 & \underline{2.600} & \underline{0.0689}  \\
+                                & fr3/nostructure\_notexture\_far       & -      & -       & -      & -     & \textbf{2.091}  & \underline{0.0321} & \underline{2.838}  & \textbf{0.0268} \\
+                                & fr3/nostructure\_texture\_near\_loop  & \textbf{0.0248} & \textbf{0.0133} &  \underline{0.111}  & 0.0335  & 1.843  & 0.0472 & 2.285  & \underline{0.0219} \\
+
+\midrule
+\multirow{4}{*}{Aqualoc \cite{dataset:aqualocdb}} 
+                                & Archaeo 1   & \textbf{0.0197} & \textbf{0.0145}  &  2.659  & 1.919   & \underline{2.382}  & \underline{0.0267} & 2.459  & 1.382  \\
+                                & Archaeo 2   & \textbf{0.0413} & \textbf{0.0190} & \underline{0.6874} & 0.8024  & 2.491 & \underline{0.2630} & 2.113  & 1.852  \\
+                                & Archaeo 3   & \textbf{0.0492} & \textbf{0.0292} &  \underline{0.6797}  & 0.9806  & 2.117  & \underline{0.264} & 2.342  & 2.12  \\
+                                & Archaeo 4   & -      &  -      & \textbf{0.5936} &  \underline{0.7571} & \underline{1.780} & \textbf{0.2870} & 2.393 & 1.294\\
+\midrule
+\multirow{4}{*}{MIMIR-UW \cite{dataset:mimir}} 
+                                & SeaFloor/0       & 2.344 & \textbf{0.0191} &  -  & -   &  \textbf{1.959}  & \underline{0.0203} & \underline{2.069} & 0.0256  \\
+                                & SeaFloor/1       & 2.472 &  0.0241 & 2.783 & 0.0700 &  \textbf{2.028}  & \textbf{0.0170} & \underline{2.445} & \underline{0.0223} \\
+                                & SeaFloor\_Algae/1     & \underline{2.339} & 0.0249 & 2.827 & 1.129 &  \textbf{2.010}  & \textbf{0.0173} & 2.559 & \underline{0.0217} \\
+                                & OceanFloor/0\_dark & \underline{2.073} & \textbf{0.0078}   &  - & - &  2.474  & 0.1696 & \textbf{2.029} &  \underline{0.0660}  \\
+
+\bottomrule
+
+\end{tabular}}
+\end{table*}

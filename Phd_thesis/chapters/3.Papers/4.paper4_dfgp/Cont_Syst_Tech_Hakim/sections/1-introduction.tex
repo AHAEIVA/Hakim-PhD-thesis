@@ -1,0 +1,54 @@
+\section{Introduction}
+\label{sec:introduction}
+
+
+% ROV applications:  Inspection, search and rescue, , monitoring etc:
+
+% Challenges in Control: 
+% Control requires an accurate model of the system
+% difficult to get an accurate model  
+% Model Predictive Control for underwater vehicles
+% Mention some approaches to control 
+
+
+
+
+%4-4-2024
+%\Ac{AUV} technologies play a crucial role in various industrial tasks like pipe inspection and underwater mapping. 
+%, tasks impractical for human divers. %To achieve fully autonomous solutions with minimal human intervention,
+%To realize a fully autonomous solution, advanced control strategies are essential for precise and safe navigation in complex underwater environments. Recently, \ac{MPC} has been widely adopted in robotics applications due to its capability to plan optimal actions, while taking into account actuator and state constraints, thus enabling precise and safe navigation \cite{ Mohit2017Receding, mpc_survey, vtnmpc}. However, \ac{MPC} performance relies on the system model accuracy, which poses a challenge as \ac{AUV} models often exhibit inaccuracies. These inaccuracies arise from various factors such as time-varying model parameters, unmodeled effects like tether dynamics, and sudden disturbances like currents, all of which can degrade the performance of \ac{MPC}. 
+
+
+
+
+\acp{AUV} are gaining popularity for pipe inspection and underwater-terrain mapping tasks. As such, fully autonomous operation requires advanced control strategies to navigate accurately and safely in complex underwater environments. In this regard, the optimization-based \ac{MPC} algorithm is among the most adopted candidates as it elegantly caters to actuators and states constraints \cite{mpc_survey, vtnmpc}. However, the tracking performance of the \ac{MPC} algorithm heavily relies on the accuracy of the underlying model. It poses a challenge for \acp{AUV} as the estimated models often contain inaccuracies originating from time-varying parameters, unmodeled effects including tether dynamics, and sudden disturbances such as currents. These inaccuracies lead to a suboptimal performance from MPC in AUV navigation.
+
+
+
+
+
+
+
+To address the critical need for a precise system model by MPC, we adopt a learning-based framework that utilizes \ac{GP} models to accurately estimate external disturbances. The main reason to utilize \ac{GP} over other regression techniques is its non-parametric nature that also furnishes uncertainty distribution along with the prediction value. Conventionally, the hyperparameter tuning of \ac{GP} models is conducted offline for real-time disturbance estimation. However, pre/offline tuning limits the overall accuracy, especially with time-varying disturbances. To overcome the limitation mentioned above, we propose a novel \ac{DF-GP}  methodology that imparts adaptive forgetting capability to the underlying \ac{GP}. In essence, the external disturbances are predicted by several \ac{GP} models designed with different forgetting factors. The final estimation is the weighted prediction of each \ac{GP} that is obtained via online performance optimization over a horizon consisting of past measurements. Thanks to this optimal combination, the \ac{DF-GP} methodology can efficiently learn disturbances with various timescales, thus eliminating the need for hyperparameter retuning. As such, the key outcomes of this study are outlined as follows:
+
+
+
+
+%29-5
+%\acp{AUV} have become useful for tasks such as inspecting pipes and mapping underwater terrain. Achieving fully autonomous underwater operations requires advanced control strategies to navigate accurately and safely in complex underwater environments. \ac{MPC} is an optimization-based control algorithm that elegantly takes into account constraints on actuators and system states \cite{ Mohit2017Receding, mpc_survey, vtnmpc}. However, \ac{MPC} performance heavily depends on the accuracy of the system model. This poses a challenge for \acp{AUV} because their models often contain inaccuracies stemming from factors such as time-varying parameters, unmodeled effects like tether dynamics, and sudden disturbances such as currents. These inaccuracies cause suboptimal performance for \ac{MPC} in \ac{AUV} navigation.
+
+%In this paper, we address the critical issue of accurately modelling external disturbances to significantly enhance the performance of \ac{MPC}. We propose a novel framework based on \acp{GP} with adaptive forgetting, utilizing a \ac{DF-GP}. The disturbance acting on the \ac{AUV} at the next time instance is predicted by several \ac{GP}s that have different forgetting factors. The weighted prediction of each \ac{GP} is then optimized over a horizon consisting of the past measurements. The overall learning-based MPC framework, as depicted in Fig. \ref{fig:abstract}, lays the foundation for the key outcomes of this study, which are outlined as follows:
+
+%The overall learning-based \ac{MPC} framework is shown in Fig. \ref{fig:abstract}. As such, the key outcomes of this study are outlined here:
+
+\begin{itemize}
+ %A learning-based MPC framework, with a cascaded \ac{GP} structure, a \ac{GP} that allows learning modeling errors, while an online learning GP that allows learning unmodeled effects such as currents and other sudden effects, with a forgetting factor to tradeoff between the two \ac{GP}. 
+  \item A learning-based \ac{MPC} framework built upon a \ac{GP} architecture. The presented GP structure facilitates efficient disturbance learning of varying time scales along with the unmodeled uncertainties.
+     \item An online adaptive framework that optimally weighs the predictions of \ac{GP}s with varying forgetting factors.    
+    \item Validation of the proposed framework through simulations and real-world experiments.
+\end{itemize}
+
+%this part can be uncommented
+The subsequent sections are organized as follows:  Section \ref{sec:related_work} overviews model learning methods. Section \ref{sec:model} outlines the mathematical model of the AUV, followed by the formulation of \ac{MPC} in Section \ref{sec:mpc}. The proposed \ac{DF-GP} approach is then detailed in Section \ref{sec:dfgp}. Subsequently, Section \ref{sec:expirments} presents the obtained simulation and real-world experimental results. Finally, Section \ref{sec:conclusion} derives some conclusions from this work.
+
+%However, controlling ROVs remains a challenging task due to the uncertainties in the vehicle's dynamics and the underwater environment. Conventional control methods, such as PID control with fixed gains, often fail to provide satisfactory performance in the face of significant changes in the system. To address these limitations, advanced control techniques, such as \ac{MPC}, have been proposed and show promise in the robotics literature. MPC has the advantage of ensuring system constraints, such as thrust limits and safe operating regions, through an optimization process. A limitation of \ac{MPC}

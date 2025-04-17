@@ -1,0 +1,1733 @@
+
+\documentclass[letterpaper, 10 pt, conference]{ieeeconf}  % 
+\IEEEoverridecommandlockouts                             
+\pdfoutput=1
+                                                         
+\overrideIEEEmargins% Needed to meet printer requirements.
+\usepackage[nolist]{acronym}
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\usepackage{soul}
+\usepackage{mathtools}
+\usepackage{verbatim}
+\usepackage[pdftex]{graphicx}
+\usepackage{epsfig,subcaption}
+\usepackage{amsmath,amssymb,amsfonts,bm,amscd} 
+\usepackage{mathrsfs}
+\usepackage{setspace}
+\usepackage{multirow}
+\usepackage{fancyhdr}
+\usepackage{algorithm} 
+\usepackage{psfrag}
+\usepackage{multirow, makecell}
+\usepackage{svg}
+%\usepackage{flushend}
+\usepackage{cite}
+\usepackage{hyperref}
+\usepackage{color}
+\usepackage{cleveref}
+\usepackage{dblfloatfix}
+\usepackage[export]{adjustbox}% http://ctan.org/pkg/adjustbox
+
+\usepackage{xcolor}
+\usepackage{framed}
+\usepackage{lipsum}
+
+\colorlet{shadecolor}{yellow!50}
+
+%\usepackage[outdir=./]{epstopdf}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{insight}{insight}[section]
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+%\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{example}{Example}[section]
+\newtheorem{assumption}{Assumption}[section]
+%\theoremstyle{remark}
+\newtheorem{remark}{Remark}[section]
+\newtheorem{problem}{Problem}[section]
+%\newtheorem{algorithm}{Algorithm}[section]
+\newcommand{\scale}{0.8}
+\newcommand{\norm}[1]{\left\Vert#1\right\Vert}
+\newcommand{\abs}[1]{\left\vert#1\right\vert}
+\newcommand{\set}[1]{\left\{#1\right\}}
+\newcommand{\Real}{\mathbb R}
+\newcommand{\Complex}{\mathbb C}
+\newcommand{\eps}{\varepsilon}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+% Color definitions
+\usepackage{xcolor,colortbl}
+\definecolor{lightgreen}{RGB}{173,213,176}
+\definecolor{lightyellow}{RGB}{255,255,204}
+\definecolor{lightblue}{RGB}{204,255,255}
+\definecolor{lightred}{RGB}{255,204,204}
+
+% notes
+\newcommand{\mmnote}[1]{{\xxnote{MM}{blue}{#1}}} %Mohit
+\newcommand{\hanote}[1]{{\xxnote{HA}{red}{#1}}} %Hakim
+\newcommand{\eknote}[1]{{\xxnote{EK}{blue}{#1}}} %Erdal
+\newcommand{\jsnote}[1]{{\xxnote{JS}{orange}{#1}}} %Jonas
+\newcommand{\xxnote}[3]{}
+\ifx\hidenotes\undefined
+  \usepackage{color}
+  \renewcommand{\xxnote}[3]{\color{#2}{#1: #3}}
+\fi
+
+%% ORCID
+\RequirePackage{tikz} % For \foreach used for Orcid icon
+% Make Orcid icon
+\newcommand{\orcidicon}{\includegraphics[width=0.32cm]{Autonomous_Robots/figures/orcid/logo-orcid.eps}}
+
+% Define link and button for each author
+\foreach \x in {A, ..., Z}{%
+\expandafter\xdef\csname orcid\x\endcsname{\noexpand\href{https://orcid.org/\csname orcidauthor\x\endcsname}{\noexpand\orcidicon}}
+}
+
+\definecolor{Bookcolor}{HTML}{00F9DE}
+\definecolor{darkgreen}{rgb}{0.0, 0.5, 0.0}
+
+\newcommand{\orcidauthorA}{0000-0001-5387-7613} % Add \orcidA{} behind the author's name
+\newcommand{\orcidauthorB}{0000-0003-1958-0263} % Add \orcidB{} behind the author's name
+\newcommand{\orcidauthorC}{0000-0002-7742-6996} % Add \orcidB{} behind the author's name  JONAS 
+\newcommand{\orcidauthorD}{0000-0002-7143-8777} % Add \orcidB{} behind the author's name  ERDAL
+
+\DeclareMathOperator*{\minimize}{{min}}
+\DeclareMathOperator*{\maximize}{{max}}
+
+\begin{acronym}
+    \acro{NMPC}{nonlinear model predictive control}
+    \acro{MPC}{model predictive control}
+    \acro{VT-NMPC}{visual tracking nonlinear model predictive control}
+    \acro{PAMPC}{perception-aware model predictive control}
+    \acro{ROI}{region of interest}
+    \acro{FOV}{field of view}
+    \acro{VS}{visual servoing}
+    \acro{PBVS}{position-based visual servoing}
+    \acro{PBVS}{position-based visual servoing}
+    \acro{IBVS}{image-based visual servoing}
+    \acro{STL}{standard triangle language}
+    \acro{KKT}{karush–kuhn–tucker}
+    \acro{TSP}{traveling salesman problem}
+\end{acronym}
+
+
+
+\title{\LARGE \bf
+Visual Tracking Nonlinear Model Predictive Control Method for Autonomous Wind Turbine Inspection
+}
+
+
+% \author{Abdelhakim Amer\orcidA{}, Mohit Mehndiratta\orcidB{}, Jonas le Fevre Sejersen\orcidC{}, Huy Xuan Pham\orcidE{}, Erdal Kayacan\orcidD{}} 
+
+
+
+% \thanks{A. Amer, J. le Fevre and H. X. Pham are with Artificial Intelligence in Robotics Laboratory (AiR Lab), the Department of Electrical and Computer Engineering, Aarhus University, 8000 Aarhus C, Denmark, \{abdelhakim, jonas.le.fevre, huy.pham\} @ece.au.dk. Mohit Mehndiratta is with Sensible 4 Oy, Helsinki, Finland, mohit.mehndiratta@sensible4.fi. E. Kayacan is with the Automatic Control Group, Department of Electrical Engineering and Information Technology, Paderborn University, Paderborn, Germany. {\tt\small \{erdal.kayacan\} at uni-paderborn.de}}
+
+
+
+\author{ 
+Abdelhakim Amer\orcidA{}, Mohit Mehndiratta\orcidB{}, Jonas le Fevre Sejersen\orcidC{}, Huy Xuan Pham\orcidE{}, Erdal Kayacan\orcidD{}% <-this % stops a space
+% <-this % stops a space
+\thanks{A. Amer, J. le Fevre and H. X. Pham are with Artificial Intelligence in Robotics Laboratory (AiR Lab), the Department of Electrical and Computer Engineering, Aarhus University, 8000 Aarhus C, Denmark, \{abdelhakim, jonas.le.fevre, huy.pham\} @ece.au.dk. Mohit Mehndiratta is with GIM Robotics, Espoo, Finland, mohit.mehndiratta@gimrobotics.fi. E. Kayacan is with the Automatic Control Group, Department of Electrical Engineering and Information Technology, Paderborn University, Paderborn, Germany,  \{erdal.kayacan\} at uni-paderborn.de.}
+}
+
+
+
+
+
+
+
+\bibliographystyle{IEEEtran}
+\begin{document}
+\maketitle
+%\thispagestyle{empty}
+%\pagestyle{empty}
+\begin{abstract}
+
+
+%Automated visual inspection of on-and offshore wind turbines using aerial robots provides several benefits, inter alia, a safe working environment by eliminating the risks where workers are suspended high above the ground, reduced inspection time, preventive maintenance, and access to hard-to-reach areas.  A novel nonlinear model predictive control (NMPC) framework alongside a global wind turbine path planner is proposed to achieve distance-optimal coverage for wind turbine inspection. 
+Automated visual inspection of on-and offshore wind turbines using aerial robots provides several benefits, namely, a safe working environment by circumventing the need for workers to be suspended high above the ground, reduced inspection time, preventive maintenance, and access to hard-to-reach areas. A novel nonlinear model predictive control (NMPC) framework alongside a global wind turbine path planner is proposed to achieve distance-optimal coverage for wind turbine inspection. Unlike traditional MPC formulations, visual tracking NMPC (VT-NMPC) is designed to track an inspection surface, instead of a position and heading trajectory, thereby circumventing the need to provide an accurate predefined trajectory for the drone. An additional capability of the proposed VT-NMPC method is that by incorporating inspection requirements as visual tracking costs to minimize, it naturally achieves the inspection task successfully while respecting the physical constraints of the drone. %Unlike the traditional MPC formulations, the designed visual tracking NMPC (VT-NMPC) method facilitates a desired relative pose between the drone and the inspection surface on the wind turbine rotor blades. An additional capability of the proposed VT-NMPC method is its direct dependence on inspection surfaces, thereby circumventing the need to provide a position and heading trajectory for the drone.
+Multiple simulation runs and real-world tests demonstrate the efficiency and efficacy of the proposed automated inspection framework, which outperforms the traditional MPC designs, by providing full coverage of the target wind turbine blades as well as its robustness to changing wind conditions. The implementation codes\footnote{\url{https://www.github.com/open-airlab/VTNMPC-Autonomous-Wind-Turbine-Inspection}} are open-sourced.
+
+\end{abstract}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{INTRODUCTION}
+
+
+
+%Wind turbine blades operate in harsh working conditions, being subjected to high centrifugal loads, erosion, lightning strikes, and bird hits. Therefore, their condition needs to be consistently monitored by performing regular inspections. Traditionally, human operators conduct visual inspections, which are expensive and underlie significant risks, where workers are suspended high above the ground. Consequently, piloted drones are deployed due to lower operating costs and reduced downtime of turbines by performing faster inspection \cite{NLR}. However,  manual inspections rely on the skills and experience of the pilot. As such, a need for an automated inspection framework, which eliminated the need for a skilled human pilot is evident.
+
+Wind turbine blades operate in harsh working conditions, underlying exposure to high centrifugal loads, erosion, lightning strikes, and bird hits. Thus, their condition needs consistent monitoring via regular inspections. Traditionally, human operators conduct arduous visual inspections, which are expensive and underlie significant risks, as the inspectors are suspended high above the ground. Consequently, piloted drones are deployed due to lower operating costs and reduced downtime of turbines by performing faster inspection \cite{NLR}. However, manual inspections heavily rely on pilots' experience and skills. Hence, the need for an automated inspection framework that substitues a skilled human pilot is evident.
+
+There are several challenges in the automated drone-based inspection of wind turbine blades. One of them is maintaining a specific distance from the blades’ surface. A large distance negatively affects image resolution, while being too close involves the risk of crashing into the blade, especiallty when exposed to strong winds.
+Another challenge is that the drone should be perpendicular to the blades’ surface for an optimal view angle of the region of interest. This challenge underlies two aspects: (i) obtaining the relative viewing angle to the surface gets tricky for a trajectory with desired position and heading attributes, and (ii) maintaining the desired relative view requires consistent rejection of operational disturbances from the controller.
+
+
+
+
+
+The core of the proposed methodology is the underlying surface trajectory -- comprising of an optimal sequence of inspection surfaces -- that replaces an explicit position and heading trajectory for the drone. Such a novel approach essentially circumvents closely tracking a predefined trajectory that is no longer appropriate to achieve full inspection coverage due to operational disturbances. To start with, a global distance-optimal sequence of inspection surfaces is obtained via a greedy search-based optimization strategy over each wind turbine blade surface. Next, a novel \ac{VT-NMPC} method is proposed which manipulates the drone's pose to precisely cover each inspection surface. Owing to the well-crafted objective function, the \ac{VT-NMPC} method allows the drone to consistently correct its relative pose to the blade's surface, thus maintaining the desired distance and optimal viewing angle to the inspected turbine blade. %The efficacy of the proposed inspection framework is manifested over realistic Gazebo simulations, wherein the entire testing environment is accurately modeled with reality, including wind. 
+The contributions of this work are as follows:
+
+
+\begin{itemize}
+    \item %An automated, optimal, wind turbine blades inspection framework, where time optimality is achieved by utilizing a time-optimal coverage path planner.
+    An automated wind turbine inspection framework that renders end-to-end inspection by taking turbines' global position and dimensions as inputs.
+ 
+  %  \item An efficient and distance-optimal path planner that finds the optimal sequence of surfaces to visit based on a graph representation of the wind turbine.
+
+    \item A novel \ac{NMPC} method with visual tracking objectives, rendering an optimal relative drone's pose to the inspection surface at all times. 
+    
+    %enabling the drone to maintain an optimal relative pose to the inspection surface at all times.  
+     %\item \hl{Implementation and analysis of the proposed method on an in-house built drone to demonstrate its applicability in a real-world inspection scenario..}
+    \item Implementation and analysis of the proposed method
+on a customized drone to demonstrate its real-world applicability.
+
+\end{itemize}
+
+
+\begin{figure*}
+    \centering
+    % \includegraphics[width=0.47\textwidth]{Autonomous_Robots/figures/abstract.pdf}
+    % \includesvg[width=0.98\textwidth]{Autonomous_Robots/figures/abstract_svg.svg}
+    \includegraphics[width=1\textwidth]{Autonomous_Robots/figures/abstract_vtmpc_1.pdf}
+    \caption{Overview of the automated inspection framework modules. The user specifies the dimensions and location of the turbines and the output is the motor commands for the drone. The model generation and global planning are calculated pre-flight (offline), while the optimization and control are performed onboard (online).} 
+    \label{fig:abstract}
+\end{figure*}
+
+
+The rest of this paper is organized as follows: Section \ref{sec:RelatedWork} introduces the state-of-the-art inspection methods. Section \ref{sec:methodology} presents the problem formulation and illustrates the proposed automated inspection framework. The mathematical model of the inspection drone is presented in Section \ref{sec:robot} followed by the \ac{VT-NMPC} problem formulation in Section \ref{sec:design}. The simulation results are presented in Section \ref{sec:results}, followed by real-world implementation experiments in Section \ref{sec:results_r}. Finally, some conclusions are drawn from this work in Section \ref{sec:conclusion}.
+
+
+\section{Related Work}
+\label{sec:RelatedWork}
+
+%\subsection{Inspection Path Planning}
+
+%Path planning is the problem of finding the best path connecting an initial pose to a desired pose, subject to certain constraints. In the context of inspection, path planning usually requires additional constraints imposed on the path, such that the inspection task is achieved. Performing the inspection successfully, usually means that the inspection vehicle needs to have traversed certain points along the path, and/or have covered certain areas using the on-board sensors. 
+
+%There are different approaches in which this problem is tackled in the literature. The methods can be broadly divided into two main categories: model based methods, and model free methods. Model based methods require a prior knowledge of the geometry and dimensions of the structure being inspected. This information, for example, can be provided in the form of a point cloud, as  in \cite{CPP}, or a triangular mesh representation of the structure \cite{SIP}. Even though these methods are usually computationally expensive, this is not a significant disadvantage when the environment is considered static. This is because in static environments, such as in wind farms, the computation need only to be performed once at the beginning of the inspection and the computed path remains unchanged throughout the inspection. 
+
+
+
+
+%On the other hand, model free methods, do not exploit existing information about the structure being inspected or the environment. These methods rely on on board sensors for navigation and planning. Some of these methods create a model of the structure during inspection, such as in \cite{plan3d}\cite{3dmodeling}\cite{aarhus}. This online model generation process is usually computationally heavy, thus usually infeasible to be applied in real-time. However, these methods have the advantage of being more general in their application and robust against uncertainty in the model, as the 3-D model is generated, and updated on the fly. Other model free methods that do not generate a 3-D model of the inspected structures are usually more efficient. Mostly these methods use classic computer vision algorithms to detect and track features on the turbine \cite{Parlange_Msc}\cite{stokkeland}. Being computationally light comes at the disadvantage that they are more sensitive to the quality of the images and the lighting conditions, making them less reliable. A more comprehensive review of different path planning methods for inspection and coverage can be found here\cite{coverage_survey}\cite{survey}. 
+% Another set of emerging methods are learning based techniques, that utilize neural networks for detecting and tracking the turbine or parts of it.
+%\subsection{Vision Based Control}
+
+%\subsection{Inspection path planning}
+
+%Path planning is the problem of finding the best path connecting an initial pose to a desired pose, subject to certain constraints. In the context of inspection, path planning usually requires additional constraints imposed on the path, such that the inspection task is achieved. Performing the inspection successfully, usually means that the inspection vehicle needs to have traversed certain points along the path, and/or have covered certain areas using the on-board sensors. 
+
+%There are different approaches in which this problem is tackled in the literature. The methods can be broadly divided into two main categories: model based methods, and model free methods. Model based methods require a prior knowledge of the geometry and dimensions of the structure being inspected. This information, for example, can be provided in the form of a point cloud, as  in \cite{CPP}, or a triangular mesh representation of the structure \cite{SIP}. Even though these methods are usually computationally expensive, this is not a significant disadvantage when the environment is considered static. This is because in static environments, such as in wind farms, the computation need only to be performed once at the beginning of the inspection and the computed path remains unchanged throughout the inspection. 
+
+
+
+
+%On the other hand, model free methods, do not exploit existing information about the structure being inspected or the environment. These methods rely on on board sensors for navigation and planning. Some of these methods create a model of the structure during inspection, such as in \cite{plan3d}\cite{3dmodeling}\cite{aarhus}. This online model generation process is usually computationally heavy, thus usually infeasible to be applied in real-time. However, these methods have the advantage of being more general in their application and robust against uncertainty in the model, as the 3-D model is generated, and updated on the fly. Other model free methods that do not generate a 3-D model of the inspected structures are usually more efficient. Mostly these methods use classic computer vision algorithms to detect and track features on the turbine \cite{Parlange_Msc}\cite{stokkeland}. Being computationally light comes at the disadvantage that they are more sensitive to the quality of the images and the lighting conditions, making them less reliable. A more comprehensive review of different path planning methods for inspection and coverage can be found here\cite{coverage_survey}\cite{survey}. 
+% Another set of emerging methods are learning based techniques, that utilize neural networks for detecting and tracking the turbine or parts of it.
+
+
+
+
+%\subsubsection{Vision based control}
+Several approaches tried to address the problems of state estimation, planning, and control for aerial vehicles in challenging outdoor scenarios \cite{jakob,micha,aruco}. For autonomous wind turbine inspection, trajectory-tracking-based approaches are proposed in the literature wherein an optimal waypoint sequence comprising of 3D position and heading, is generated beforehand \cite{CPP,3dmodeling,SIP}. Howbeit, disturbances such as wind render the predefined trajectory insufficient to achieve full coverage of the inspection area.
+Alternatively, other solutions, \cite{mohit,lidar} generate the inspection trajectory on the fly by utilizing relative distance measurements. The main limitation of these methods is the global suboptimality of the generated trajectory. Additionally, distance-optimality is a desired feature for an automated wind turbine inspection framework because of the limited battery life of the drones.
+
+Other approaches, such as  \Ac{VS} methods provide a trajectory that allows the drone to maintain a collision-free sight to a given point of interest. For instance, in \cite{target_aware}, an optimal trajectory for a quadrotor is obtained by solving a nonlinear optimization problem, followed by the trajectory tracking via \ac{NMPC}. Another method that provides an optimal trajectory by developing a path parameterization algorithm for quadrotors, considering their limited \ac{FOV}, is proposed in \cite{mit}. %Also, a trajectory optimization algorithm for quadrotors that jointly optimizes aggressiveness and feature co-visibility in a known environment is proposed in \cite{differentialflatness}.
+As such, all these \ac{VS} methods treat the trajectory generation and tracking as separate tasks. Conversely, a more efficient way is to generate the trajectory as part of the control problem. This approach is illustrated in \cite{VS_MPC}, %wherein they design a linear MPC that combines trajectory tracking and \ac{VS}-based velocity goals to control the quadrotor. 
+wherein they design a linear MPC that renders trajectory tracking while generating {\ac{VS}}-based velocity profiles to navigate the quadrotor.
+Another work based on a similar principle is illustrated in \cite{falanga2018pampc}, where the \ac{PAMPC} method is proposed. This method adds a cost to the problem formulation of \ac{NMPC} to maintain a target within the \ac{FOV}-center while minimizing image blur. %Additionally, recent work in \cite{PCMPC} introduces \ac{FOV} constraints to keep a suspended load visible at all times. %The aforementioned methods are able to locally plan to adjust the pose of the drone such that it achieves a certain predefined visual goal. However, they are not sufficient on their own to achieve inspection goals, such as finding the global time-optimal path or achieving total coverage of the turbine blades. Thus in this work, a hierarchical framework is developed, where a global time-optimal path planner is executed offline, which is then fed to the VT-NMPC for local planning. Local planning is achieved through introducing visual tracking costs defined in the VT-NMPC, which ensures that the drone will aim to satisfy the inspection requirements, even under wind disturbances and uncertainties in the environment. In the next section, this inspection framework is presented along with its sub-modules. An overview of the automated inspection framework is presented in Fig. \ref{fig:abstract}. 
+%In the proposed automated inspection framework, \hl{we develop a time-optimal graph based global planner that computes the shortest inspection path over the whole wind turbine. In contrast to the model-based structural planner in \cite{SIP}, the developed path planner exploits the structure of the wind turbine, which allows the reduction of the nodes on the graph to 24, which significantly decreases the computation time. This reduction of dimensional allows the utilization of an optimal greedy search based method for solving the Traveling Salesman Problem (TSP), instead of Lin-Kernighan heuristic, which doesn't guarantee optimality.}
+%\hl{the developed planner employs a greedy search-based strategy th, thus significantly expediting the planning process.} 
+%\textcolor{red}{We may mention another problem with SIP that our planner solves.}
+%Subsequently, the generated inspection sequence is forwarded to the visual tracking {\ac{NMPC}}, which aims to keep the inspection point centered within the {\ac{FOV}}. In this part, we address the control and local planning problem jointly using a MPC similar to \cite{falanga2018pampc, VS_MPC}. The main difference that distinguishes the proposed VT-NMPC method from {\ac{PAMPC}} is the optimization problem which is formulated using {\ac{PBVS}} methodology, in contrast to an {\ac{IBVS}} formulation adopted by {\ac{PAMPC}}. As such, the {\ac{PBVS}} formulation allows the inspection point to be outside the {\ac{FOV}}, which is an essential requirement since we cannot guarantee that the drone will be facing the turbine all the time.%\subsection{Remarks on chosen approach}
+%In our proposed method, a model-based structural path planning method, namely \cite{SIP} is chosen to provide the inspection input. This path planning method was chosen because it gives the optimal order to visit the points we want to inspect with minimal time. Then we introduce a local trajectory generation, where we address the control and trajectory generation problem jointly, similar to \cite{falanga2018pampc, VS_MPC}, with the aim of keeping the inspection point of interest centered within \ac{FOV}. In this part, we introduce the visual tracking \ac{NMPC}. The method was chosen to be implemented using a \ac{NMPC} for its many advantages. 
+
+%\ac{NMPC} has the advantage that it has superior performance in tracking and stability compared to other methods, especially under wind disturbances, as shown in \cite{NLMPC_eth}. Furthermore, it introduces non-linearity in the model, objectives, and constraints, this adds flexibility compared to the linear \ac{MPC}. Our \ac{NMPC} method is different from \cite{falanga2018pampc} as we formulate our problem as a \ac{PBVS} instead of an \ac{IBVS}. The \ac{PBVS} formulation allows us to have the point of view to be initially outside the \ac{FOV}. This is an essential requirement since we cannot guarantee that the drone will be facing the turbine all the time. 
+
+%In the proposed automated inspection framework, we address the control and trajectory generation problem jointly, similar to \cite{falanga2018pampc, VS_MPC}. \hl{We develop a time-optimal graph based global planner that computes the shortest inspection path over the whole wind turbine. In contrast to the model-based structural planner in \cite{SIP}, the developed path planner exploits the structure of the wind turbine, which allows the reduction of the nodes on the graph to 24, which significantly decreases the computation time. This reduction of dimensional allows the utilization of an optimal greedy search based method for solving the Traveling Salesman Problem (TSP), instead of Lin-Kernighan heuristic, which doesn't guarantee optimality.}
+%\hl{the developed planner employs a greedy search-based strategy th, thus significantly expediting the planning process.} 
+%\textcolor{red}{We may mention another problem with SIP that our planner solves.}
+%Subsequently, the generated inspection sequence is forwarded to the visual tracking {\ac{NMPC}}, which aims to keep the inspection point centered within the {\ac{FOV}}. The main difference that distinguishes the proposed VT-NMPC method from {\ac{PAMPC}} is the optimization problem which is formulated using {\ac{PBVS}} methodology, in contrast to an {\ac{IBVS}} formulation adopted by {\ac{PAMPC}}. As such, the {\ac{PBVS}} formulation allows the inspection point to be outside the {\ac{FOV}}, which is an essential requirement since we cannot guarantee that the drone will be facing the turbine all the time.
+
+The above methods plan a local path that fulfills a predefined visual goal rather than resulting in a global inspection trajectory. Therefore, they are insufficient on their own to realize all inspection-related goals, such as finding a global distance-optimal path and achieving total coverage of the inspection surface. In the next section we present our hierarchical inspection framework, wherein an offline distance-optimal planner results in a global trajectory, followed by the VT-NMPC method rendering local planning. %The VT-NMPC is formulated as a PBVS method, being defined in the cartesian frame, thus making it simpler and more intuitive. Moreover, the underlying visual tracking costs in the VT-NMPC method ensure that the drone will satisfy the inspection requirements even under operational disturbances such as wind.
+\section{Automated Inspection Framework}
+\label{sec:methodology}
+The turbine blades need to be inspected in two phases. In the first phase, the wind turbine rests in an inverted Y configuration, wherein the top blade is oriented vertically upward, while the other two are at a $120$ degree angle from the vertical. In order to inspect the surfaces pointing towards the ground, the wind turbine is rotated $120$ degrees, and a re-planning is performed on the last two surfaces. The inspection framework is demonstrated for a Vestas V100, having tower height ($t_h$) of $120$m, blade length ($b_l$) of $50$m, and blade width ($b_w$) of $3$m (See Fig. \ref{fig:abstract}).
+%Besides, each inspection surface needs to be within the \ac{FOV} during inspection to facilitate full coverage. %As such, an onboard Zenmuse X7 camera model is selected that delivers high quality and high-resolution images with an integrated lens mount, rendering ease of switching between four available lenses. %\cite{x7}. Additionally, a $35$mm lens is selected, which is expected to provide the maximum possible magnification without the surfaces being outside the \ac{FOV}.
+%As such, the relative distance between the drone and inspection surface needs to be close enough to achieve good quality images yet far enough to avoid a collision.
+%Next, we illustrate the proposed inspection framework. 
+An overview of the automated inspection framework is presented in Fig. \ref{fig:abstract}.
+
+
+
+\subsection{Triangular Mesh Generation}
+
+
+
+First, a simplified triangular mesh representation of the turbine blades is created. For this purpose,  wind turbine dimensions, $b_l$, $b_w$, and $t_h$, are given as inputs. Three cuboids of dimensions $b_l$ $\times$ $b_w$ $\times$ $\frac{b_w}{3}$ are then created with a $120^{\circ}$ relative angle between them. The cuboids represent the turbine blades in a simplified form, wherein each cuboid comprises right-angle triangular elements on each surface.  This simplified model overestimates the blade's width as it does not account for the tapering towards the tip. However, introducing this simplification facilitates generating a model of any commercial wind turbine, irrespective of design or size, thus rendering the proposed method generic. It should be noted that the mesh generation process can be customized to support any desired initial wind turbine configuration, and is not limited to the Y configuration. %The resulting wind turbine model essentially comprises the matrices that contain the vertex positions of the triangular mesh elements and the corresponding surface normals are subsequently input to the global path planner.
+
+%\includegraphics[ scale=1]{figures/SystemOverview1.pdf}
+
+
+\subsection{Wind Turbine Inspection Path Planner}
+
+%A time-optimal, graph based global planner is proposed, that computes the shortest inspection path over the whole wind turbine. 
+%Next, we illustrate the time-optimal path planner. The function of this planner is to find the time-optimal order of points for the drone to inspect, based on the generated \ac{STL} model from the earlier step. The \ac{STL} model of the turbine, consists of 12 surfaces in total, 4 for each blade. The triangles that make up the mesh are first grouped into these 12 surfaces by using the surface normal and the centroid position of each triangle. For each group created, two nodes are defined, one at each end of the surface. Thus a graph structure is created based on the surfaces as shown in Fig. \ref{fig:planner}. Next, for the created graph, the ordered list of nodes to visit is computed, by solving the \ac{TSP}. Since the dimensions of the graph is reduced to a relatively small number of nodes (24), a greedy search algorithm is implemented to solve the \ac{TSP}, which guarantees optimality. 
+ 
+ %To make sure that the drone is path is along the blade's surface, and that the obtained path does not contain jumps from one surface to another, an additional condition is introduced to the search algorithm. 
+ %One requirement on the path produced is that once one surface is visited through a node, we need to move along the surface such that we inspect the whole surface, until we reach the other node on the surface and exit to find the next surface to inspect. 
+ 
+ 
+%\hanote{ One requirement which is imposed on the path, is that once a surface is visited through a node, the leaving node needs to assigned to the other node on the same surface. This ensures that the drone inspects one surface at a time, and that it does not jump between surfaces. Finally, the ordered list of intermediate points and corresponding normals between the nodes are found by using linear line fitting and interpolation. Similar to \cite{SIP}, the proposed path planner uses a \ac{STL} model of the turbine for computing the time-optimal path. However, this method exploits the wind turbines structure, where the graph is created based on surfaces, instead of individual triangles. This simplification allows the reduction of the nodes on the graph by several orders of magnitude, thus significantly decreasing the computation time. Another advantage that the simplified representation brings is that it allows applying an exact optimal search method, instead of the heuristic method (Lin-Kernighan heuristic) that was applied in \cite{SIP}, which doesn't guarantee optimality}. %Additionally, it allows the utilization of an optimal greedy search based method for solving the TSP, instead of Lin-Kernighan heuristic, that was used by \cite{SIP}, which means that we are guaranteed op.
+% A high level overview of the algorithm is provided in the pseudo code here \ref{alg:shortest}.
+%We then apply a greedy search based optimization strategy to find the shortest path that passes through all nodes, with a constraint, if we first connect to a node on another surface, the next connection on the path needs to be to the other node on the surface, such that we always continue on the same surface once we visit it. 
+%Next, we illustrate the time-optimal path planner. 
+
+
+
+
+
+In essence, the function of this planner is to obtain a distance-optimal sequence of inspection points, which are the centers of each triangular mesh surface, utilizing the generated simplified mesh model. For this purpose, the path-planning algorithm underlies three steps: Clustering, ordering, and interpolation. Within the clustering step, each triangular element from the wind turbine model is grouped into different surfaces based on its centroid location and value of the surface normal. The wind turbine model then consists of twelve clusters (surfaces) in total, four for each blade. Then, in the second step, two nodes are defined for each cluster or blade surface, whereby the nodes are located at each end of the surface (root and tip). Thus, a graph structure is created by connecting each node, as shown in Fig.~\ref{fig:planner}, where the edge length connecting the nodes is the cost to be minimized. Subsequently, the ordered list for the node is obtained via solving a \ac{TSP}, with a constraint that renders the entry and exit node to always belong to the same cluster. This constraint facilitates sequential surface inspection while ensuring that the drone does not jump between surfaces. Since the generated graph comprises a relatively small number of nodes ($24$), we adopt a brute force algorithm to solve the \ac{TSP}, thus guaranteeing distance optimality. Finally, the ordered list of intermediate points and corresponding normals between the nodes are found via linear line fitting and interpolation techniques. A very simplified version of the wind turbine-specific path planner algorithm is provided as pseudocode in Algorithm \ref{alg:1}.
+Similar to \cite{SIP}, the proposed path planner uses a mesh generated model of the turbine for computing the distance-optimal path. However, this work exploits the wind turbine structure, wherein the graph is created based on surfaces rather than individual triangles. This simplification reduces the number of nodes by several orders of magnitude, thus significantly lowering the computation time. 
+Yet, the simplification compromises the generality as a universal planner, restricting it to only wind turbine inspection.%Another advantage of the simplified representation is its ability to accommodate an exact optimal search method instead of the Lin-Kernighan heuristic method in \cite{SIP}. Consequently, the \jsnote{distance} optimality of the obtained solution can be guaranteed by the proposed planner in this paper. 
+While  \cite{SIP} is a general planner for any structure, the output of the planner is not compatible with the proposed controller. The output from \cite{SIP} is the reference point of the inspection drone, while the proposed planner and controller are working with reference of the inspection point on the mesh surface. One could project the drone's reference point onto the inspection mesh, but as \cite{SIP} computes optimal position by utilizing the FOV of the camera, there is no direct correlation between the projected drone references points and the inspection point. In conclusion, a new planning method was needed in order to fully utilize the potential of the proposed controller. 
+
+
+
+
+\begin{figure}
+    \centering
+   
+    \includegraphics[width=0.5\textwidth]{Autonomous_Robots/figures/planner.pdf}
+    \caption{%Time-optimal path planner which utilizes the structure of the wind turbine to create a graph based search algorithm. A node (green) is placed at the end of each surface of the blade. A graph networks is thus created between the nodes. A thick black edges represent a connection between the nodes of the same surface (group).
+   A topological representation of our graph-based search algorithm for distance-optimal path planner. A node (green) is placed at the end of each blade's surface, which are all connected by (blue) edges to form a graph. The goal is to find the sequence of nodes to visit that minimizes the total distance traveled while satisfying the imposed constraints. }
+    
+    \label{fig:planner}  
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%\begin{algorithm}
+%\caption{Shortest path trajectory generation}
+%\begin{algorithmic}[1]
+
+%\Function{Trajectory}{Mesh, starting\_position} 
+%\State $groups \leftarrow$ grouping(mesh) 
+%\State $end\_nodes \leftarrow$ find\_end\_nodes(groups)
+%\State $end\_nodes\_o \leftarrow$ end\_nodes\_o(end\_nodes)
+%\State $[\mathbf{n},\mathbf{p}] \leftarrow$ interpolate(end\_nodes\_o)
+
+
+%For{group in $grps$:}
+
+%\EndFor
+        %\For{\texttt{g in new\_groups}}
+        %\State \texttt{result.append(g)}
+      %\EndFor
+
+%\EndFunction
+%\end{algorithmic}
+%\end{algorithm}
+
+
+
+
+%\begin{algorithm}
+%\caption{Grouping the elements by surface}
+%\begin{algorithmic}[1]
+
+%\Function{grouping}{$faces,normals$}       
+%    \State $grps \leftarrow$ group according to normals
+ %   \State $lwst \leftarrow$ size of group with lowest amount of faces
+    
+     %\For{group in $grps$:}
+      %  \State $new\_group \leftarrow$ split group into size of lwst and a rest grp using KMeansConstrained
+        %\For{\texttt{g in new\_groups}}
+        %\State \texttt{result.append(g)}
+      %\EndFor
+      %\EndFor
+
+%\EndFunction
+%\end{algorithmic}
+%    \label{alg:shortest}  
+
+%\end{algorithm}
+
+
+
+
+
+%\begin{algorithm}
+%\caption{Find shortest route}
+%\begin{algorithmic}[1]
+
+%\Function{grouping}{$faces,normals$}       
+%    \State $grps \leftarrow$ group according to normals
+%    \State $grps \leftarrow$ sort grp by z-value for all grp in grps
+    
+    %\State $lwst \leftarrow$ size of group with lowest amount of faces
+    
+%     \For{group in $grps$:}
+%        \State nodes.append(grp[0]) 
+%        \State nodes.append(gpr[len(grp)-1])
+%    \EndFor
+
+%     \For{i in len($grps$)}
+%     \For{j in len($grps$)} 
+ %          \State $edge\_cost[i][j] \leftarrow$ $dist(nodes[i], nodes[j])$
+ %           \EndFor
+ %     \EndFor
+  %    \State $current\_node \leftarrow$ node with min distance to start\_node
+  %    \State $current\_dist \leftarrow$ dist(current\_node, start\_node)
+   %    \State $seen\_nodes \leftarrow list$
+    %   \State $node\_order \leftarrow list$
+     %   \State $global\_best\_dist \leftarrow inf$
+      % \State $resulting\_dist, resulting\_order = jump\_to\_node(current\_node, current\_dist,$ \\ $seen\_nodes,node\_order, global\_best_\dist, edges) $
+                                                
+
+     %   \State \texttt{result.append(g)}
+
+      
+      
+     % \EndFor
+
+%\EndFunction
+%\end{algorithmic}
+%    \label{alg:shortest}  
+
+%\end{algorithm}
+
+
+
+%\begin{algorithm}
+%\caption{Find shortest route}
+%\begin{algorithmic}
+
+%# Set visited on entering node:
+ %  \State $visited[current\_node] \leftarrow$  1
+ %  \State $node\_order.append(current\_node)$
+    
+%    # set visited on leaving node:
+  %	\State $leaving\_node \leftarrow$ $current\_node$ - (($current\_node$ mod 2)*2-1)
+   % \State $visited[leaving\_node] \leftarrow 1$
+   % \State $node\_order.append(leaving_node)$
+%    $current_dist \leftarrow$ $current\_dist$ + $edges[current\_node, leaving\_node]$
+   	
+ %  	\State $state \leftarrow$ $hash(leaving\_node + visited) $
+%\end{algorithmic}
+ %   \label{alg:jumptonode}  
+
+%\end{algorithm}
+
+
+\begin{comment}
+
+
+% \begin{algorithm}
+% \label{alg:1}
+% \caption{Wind turbine time-optimal path planner}
+% \begin{algorithmic}
+% %# Set visited on entering node:
+%   \State $grps \leftarrow$ group elements by normals $\&$ centroid location
+%     \label{alg:1}
+% %# Set visited on e
+%   \State $grps \leftarrow$ sort elements by z-value
+%   %\For{group in $grps$}    
+% %        \State order elements  by the  by z- value 
+        
+%  %   \EndFor
+    
+ 
+%     \State $nodes \leftarrow$ Find the  nodes of each group/surface 
+
+%     \While{creating the tour, T}
+%     \If {visiting a new group} 
+%       \State $current\_node \leftarrow$ assign entering node
+%       \State $leaving\_node \leftarrow$ assign leaving node
+%     \EndIf
+%   \If {distance(T) $<$ $shortest\_distance$}
+%     \State $best\_tour \leftarrow$ T 
+%     \State $shortest\_distance \leftarrow$ distance(T)
+%     \EndIf
+%     \EndWhile
+%     \While{there are more permutations of T }
+%     \State generate a new permutation of T 
+%     \EndWhile
+%     \State $intermediate\_points \leftarrow$ line fitting and interpolation 
+    
+% \end{algorithmic}
+%  %   \label{alg:jumptonode}  
+
+% \end{algorithm}
+\end{comment}
+
+
+
+
+\begin{algorithm} 
+\caption{Wind turbine specific path planner}
+\label{alg:1}
+\begin{algorithmic}
+%# Set visited on entering node:
+   \State \textbf{A) Create the graph (clustering)}
+   \State $groups \leftarrow$ group elements by normals $\&$ centroid location
+   % \label{alg:1}
+%# Set visited on e
+   \State $groups \leftarrow$ sort elements in each group by z-value
+%\new   
+\State \textbf{B) Solve the TSP via brute force (ordering)}
+   % \While{creating the tour, T}
+   %    \State $enter\_node \leftarrow$ closest node to previous leaving node(if not visited)
+    %   \State $leave\_node \leftarrow$ the other node in the same group
+%    \EndWhile
+   
+   
+   %While there is more permutations of T do:
+	%# generate a new permutations T:
+
+   
+    \While{there are more permutations of the tour, T }
+    %\For{group in $grps$} 4
+%    \newline
+%    \Comment{generate a new permutation of T}
+        \State T = []
+        \State shuffle groups
+        \For{$group$ in $groups$}  
+        \State		T append one of end nodes in $group$
+		\State	T append other end node in $group$
+		\EndFor
+		\If{T is not new}
+		\State  continue
+		\EndIf
+		\If {distance(T) $<$ $shortest\_distance$}
+            \State $best\_tour \leftarrow$ T 
+            \State $shortest\_distance \leftarrow$ distance(T)
+        \EndIf
+    \EndWhile
+
+
+    \State \textbf{C) Find intermediate points (interpolation)}
+    \State $intermediate\_points \leftarrow$ line fitting and interpolation 
+    
+\end{algorithmic}
+ %   \label{alg:jumptonode}  
+
+\end{algorithm}
+
+
+
+
+%The generated model is then used by the path planner to provide information on the order that we need to inspect these areas. The surface normals of the areas are then calculated from the model, and the centroid of each area and are fed as an input to the VT-NMPC, which has the function of ensuring visibility of the surface being inspected through satisfying the costs specified in the objective function.
+
+% The global planner is based on the structural inspection path planner \cite{SIP}. This is a model based planner that can be used to provide a time-optimal path for inspecting structures based on a triangular mesh representation of the structure (representing the structure surface by interconnected mesh areas). It finds the optimal sequence of positions $x,y,z$ as well as the corresponding yaw angles, for a drone to inspect a given structure. This is done through a two step procedure, first optimizing the view point positions and then the yaw angle for each area in the mesh.
+
+% The viewpoints position optimization objective is formulated in quadratic form, with the an objective of minimizing the distance between each viewpoint and its neighbouring view point. The optimization is subject to constraints, such as distance from the inspected area, incidence angles and FOV constraints, in order to ensure visibility of the inspected area. The second optimization step is about finding the yaw angle that is able view the area being inspected from the corresponding view point, which is calculated from the first optimization step.
+
+% In our inspection framework, we don't use the view points obtained from the optimization directly as an input to the MPC. For each viewpoint, we find the closest surface from our wind turbine model. Thus we know the order of the surfaces to visit. Also, we only use the first optimization step from the global planner, since the control of the yaw angle will be based on the position of the surface being inspected. This is done so that the desired yaw angle is dynamically changing based on the relative position of the drone and the surface being inspected, thus making it more robust. 
+
+%Next, the generated turbine model is given to a global path planner that obtains a sequence to time-optimally inspect the triangular meshes. 
+
+%The incorporated global path planner is based on the structural inspection path planner proposed in \cite{SIP}. In essence, it is a model-based planner that provides a time-optimal path for inspecting structures based on their triangular mesh representation (representing the structure surface by interconnected mesh areas). Eventually, the planner results in a time-optimal trajectory containing 3D viewpoint positions and the corresponding yaw angles for the drone to follow. 
+
+%Overall, the optimal trajectory is computed through a two-step procedure. Firstly, it optimizes the viewpoint positions by formulating a quadratic cost that minimizes the distance between each viewpoint and its neighbor. Also, the optimization problem is subjected to constraints, namely distance from the inspected area, incidence angles, and \ac{FOV} constraints, facilitating proper visibility. The second optimization step computes the yaw angle that ensures the visibility of the inspected area from the corresponding viewpoint, calculated in the first step.
+
+%In contrast to the solution in \cite{SIP}, we do not directly utilize the obtained viewpoints trajectory from the above optimization problem. Rather, we fetch a sequence to visit the inspection surfaces by finding the corresponding closest surface to each viewpoint. Besides, we only use the first optimization step from the global planner, since the designed \ac{VT-NMPC} method implicitly controls the yaw angle based on the current relative position of the drone to the inspection surface, rendering it robust to operational disturbances. Note that any inspection surface is represented by its centroid \textbf{p} and normal \textbf{n}. Hence, the output from the global planner is an inspection point trajectory, which is obtained by connecting the centroids of the inspection surfaces.
+
+%A limitation of this method is that, as it is, it doesn't allow pitching as a degree of freedom. This means that for our turbine with inclined surfaces, the method will fail to converge. Therefore, we reformulate the problem to allow inspection of the inclined surfaces. This is done by removing the FOV constraints from the optimization process and discarding the yaw angle optimization step. The output of the algorithm is then only the positions of the viewpoints and the corresponding coordinates of the vertices area to be inspected. Through the knowledge of the coordinates of the area, we have information on which direction that the drone needs to be pointing to. This information  will then be used as a input to our controller for local planning.
+
+%We create an automatic STL generator of a turbine based on the turbines dimensions to automatically provide the input STL to the planner. Since the global planner path is dependant on the mesh size of the structure, the output path is jerky and sometimes has too sharp turns. Therefore the output points of the path planner is interpolated before being provided to the controller. 
+
+
+% \begin{table}[H]
+% \centering
+% \begin{tabular}{|c|c|c|}
+% \hline
+% Method                        & Distance (m) & Avg Process time (ms) \\
+% \hline\hline
+% SIP\cite{SIP} & 484.99   & 8344             \\
+% \hline
+% Our Planner                   & 484.84   & 540             \\
+% \hline
+% \end{tabular}
+% \caption{Comparison between SIP and wind turbine specific planner projected out 7m from the mesh.}}
+% \label{table:sipvsour}
+% \end{table}
+\subsection{Visual Tracking Nonlinear Model Predictive Control }
+
+
+
+
+% Nonlinear model predictive controller is an optimization based control method that is becoming extensively popular for robotic applications \cite{mpc_survey,Mohit2017Receding,Mehndiratta2019,quadplux}. A MPC calculates control actions using a constrained optimization and a model-based prediction. Based on the current desired surface to inspect and the state measurement, the MPC calculates the desired inputs to the PID controller, which are the desired attitude rates and thrust. The surface to be inspected is represented by its centroid \textbf{p} and normal \textbf{n}. The MPC provides visual coverage of the inspected structure by satisfying visual tracking costs that are specified in the objective function \ref{eq:NMPC1}.
+
+% Unlike other MPC methods, the proposed method doesn't require a prior knowledge of the desired position that the drone needs to be in\cite{falanga2018pampc}. This has two advantages. First of all, the way points are not always available for an inspection problem, and its usually easier to provide the surface being inspected as an input. Secondly, safety can be ensured between way points, as the MPC is regularly minimizing a distance objective between the surface its inspecting and the drone. 
+
+An NMPC is an optimization-based control method that is commonly preferred for robotic applications {\cite{mpc_survey, Mohit2017Receding, Mohitacc2018, Mehndiratta2019,quadplux,tilt,mohit_fault_tolerant_c,mohit_3dprint,tractor, kraus_mpc, arm_mpc}}. It calculates control actions utilizing constrained optimization and a model-based prediction. In this work, based on the given inspection point trajectory and the state measurements, the designed \ac{VT-NMPC} method calculates the desired attitude rates and thrust, which are given as inputs to the PID controller performing the actuator control. Moreover, the \ac{VT-NMPC} method facilitates visual coverage of the inspected structure by satisfying some visual tracking costs that are specified later in Section \ref{sec:design}.
+Unlike other MPC controllers, the designed \ac{VT-NMPC} method does not require the desired position trajectory for the drone. Note that the proposed VT-NMPC is a generic inspection controller and is not limited to wind turbine inspection. The proposed method has two advantages. Firstly, the waypoints are not always available for an inspection problem, whereas it is straightforward to provide the inspection surface's position as input. Secondly, safety is ensured throughout the flight, as the \ac{VT-NMPC} method consistently optimizes the objective of keeping the drone at a specific distance from the inspection surface. 
+
+
+
+%Another feature that distinguishes the proposed method is the heading cost \eqref{eq:heading_function}, is formulated using {\ac{PBVS}} methodology, in contrast to an {\ac{IBVS}} formulation adopted by {\ac{PAMPC}}. For \ac{IBVS} methods, projecting the point of interest onto the image plane might lead to an offset in the desired heading angle when the point of interest is behind the drone. \ac{PBVS} methods, on the other hand, do not suffer from this limitation which is a crucial advantage since the drone is not guaranteed to be facing the turbine at all times. 
+%The {\ac{PBVS}} formulation allows the inspection point to be outside the {\ac{FOV}}, which is an essential requirement, since the drone is not guaranteed to be facing the turbine at all times.  
+
+%Thus the View point optimization problem is formulated as follows:
+%\begin{equation}
+%     \begin{aligned}
+%\min_{g^k} \quad & (g^k-g^{k-1}_{p})(g^k-g^{k-1}_{p})+(g^k-g^{k-1}_{s})(g^k-g^{k-1}_{s})\\
+%&\quad +(g^k-g^{k-1})(g^k-g^{k-1})\\
+%\textrm{s.t.} \quad &n_ig^k\geq n^T_ix_i     \\
+%  &a^T_ng^k\geq a_nx_1+d_{min}   \\
+%  &-a^T_ng^k\geq -a_nx_1-d_{max}    \\
+%\end{aligned}
+%\end{equation}
+
+%\begin{figure}%
+%    \centering
+%    \hspace*{-1.6cm}
+%    \subfloat[\centering label 1]{{\includegraphics[width=5.6cm]{figures/GP.jpg} }}%
+%    \qquad
+%    \hspace*{-2.2cm}
+%    \subfloat[\centering label 2]{{\includegraphics[width=5.6cm]{figures/TG.png} }}%
+%    \caption{Global Planner and Trajectory Generator}%
+%    \label{fig:example}%
+%\end{figure}
+
+\section{Inspection drone}\label{sec:robot}
+%An off-the-shelf quadrotor platform DJI Matrice 100 having an x-configuration was selected to be the drone used to demonstrate our method. It is equipped with a front-facing Zenmuse x7 camera. %\cite{x7}.
+%Additionally, a Pixhawk flight controller %\cite{px4}is mounted onboard to control it in the ROS environment. Next, 
+We present the dynamic model of the utilized quadrotor in Newton-Euler format \cite{deepmodel_mohit}, while replacing Euler angles with quaternion. The translational kinematics is obtained using the transformation from body frame ($\mathcal{F}_B$) to Earth-fixed frame ($\mathcal{F}_E$) as follows:
+%
+\begin{align} \label{eq:kin_tilt}
+	& \left[ \begin{array}{c} \dot{x} \\ \dot{y} \\ \dot{z} \end{array} \right] = R_{EB} \left[ \begin{array}{c} u \\ v \\ w \end{array} \right],
+\end{align}
+%
+where $x$, $y$, $z$ represent the translational position that is defined in frame $\mathcal{F}_E$, while $u$, $v$, $w$ are the translational velocities and are defined in the frame $\mathcal{F}_B$ and, finally, $R_{EB}$ represents the rotation matrix between frames $\mathcal{F}_E$ and $\mathcal{F}_B$, %which can be written in quaternion form as follows:
+%
+% \begin{align} 
+% 	R_{EB} &= \nonumber \\
+% 	& \hspace{-0.9cm} \left[ \begin{array}{ccc} 1 - 2q_y^2 - 2q_z^2 &  2(q_x q_y - q_w q_z) & 2(q_x q_z+q_w q_y)  \\
+%     2(q_xq_y+q_wq_z) & 1 - 2q_x^2 - 2q_z^2 & 2(q_y q_y-q_w q_x) \\
+%     2(q_xq_z-q_wq_y) & 2(q_y q_z+q_w q_x) & 1 - 2q_x^2 - 2q_y^2 \end{array} \right], 
+% \end{align}
+%
+associated with the unit quaternion vector $\mathbf{q}_{EB}=q_x, q_y, q_z, q_w$. The rigid-body dynamic equations in the body-fixed coordinate are given as follows, assuming the quadrotor to be a point mass such that all the forces act at the center of gravity.
+%
+\begin{subequations} \label{eq:force}
+\begin{align}
+	\dot{u} &= r v - w q + 2 g (q_x  q_z - q_w  q_y), \label{eq:force_x} \\
+	\dot{v} &= p w - r u - 2 g (q_y  q_z + q_w  q_x),  \label{eq:force_y} \\
+	\dot{w} &= q u - p v - g (1 - 2 q_x  q_x - 2  q_y  q_y)  + \frac{1}{m} T, \label{eq:force_z} 
+\end{align}
+\end{subequations}
+%
+where $p$, $q$, $r$ are the angular body rates defined in the body frame, $T$ is the total thrust force generated by the drone's propellers in the body frame, and $m$ is the quadrotor's total mass. Additionally, the following represents the relation between the global angular rates in $\mathcal{F}_E$ and the body rates in $\mathcal{F}_B$:
+%
+\begin{subequations} \label{eq:rates}
+\begin{align}
+	\dot{q_x} &= 0.5 (p q_w + r q - q q_z), \\
+    \dot{q_y} &= 0.5  (q q_w - r q_x + p q_z), \\
+    \dot{q_z} &= 0.5 (r q_w + q q_x - p q_y), \\
+    \dot{q_w} &= 0.5 (-p q_w - q q_y - r q_z).
+\end{align}
+\end{subequations}
+%
+
+%Finally, the lumped nonlinear dynamic model of the aerial robot at high-level can be written in a discretized form as:
+Finally, we can rewrite the lumped nonlinear dynamic model of the quadrotor at a high level in its discretized form as follows:
+%
+\begin{align} \label{eq:model_eqs}
+    \mathbf{x}_{k+1} = \mathtt{f_d}(\mathbf{x}_k,\mathbf{u}_k),  \quad
+   % \mathtt{z}_k = \mathtt{h}(\mathtt{x}_k,\mathtt{u}_k),
+\end{align}
+%
+where $\mathbf{x} \in \mathbb{R}^{10}$ and $\mathbf{u} \in \mathbb{R}^{4}$, are the state and control vectors and they comprise of:
+\begin{align}
+    \mathbf{x} &= [x,y,z,u,v,w, q_x,q_y,q_z,q_w]^T, \quad  \\
+    \mathbf{u} &= [p,q,r,T]^T.
+\end{align}
+The state function is denoted by $\mathtt{f_d}(\cdot,\cdot)$: $\mathbb{R}^{10} \times \mathbb{R}^{4} \rightarrow \mathbb{R}^{10}$.
+
+
+\section{Proposed VT-NMPC Formulation}
+\label{sec:design}
+% \subsection{Problem Formulation} 
+%  We introduce here our NMPC formulation, with non linear costs and constraints, which utilizes a least-square problem formulation in discrete-time:
+
+The least-square objective of the proposed \ac{VT-NMPC} with nonlinear costs and constraints can be formulated in discrete time as follows:
+
+%
+\begin{subequations} \label{eq:NMPC}
+\begin{align}
+	\minimize_{\mathbf{x}_k,\mathbf{u}_k} \; & \frac{1}{2} \Biggl\{\sum_{k = 0}^{N_c-1} \left( \mathcal{C}_{h}
+	+\mathcal{C}_{{d}} +\mathcal{C}_{{r}} + \mathcal{C}_{{o}} + \mathcal{C}_{\mathbf{x}^*}+ \mathcal{C}_{\mathbf{u}}\right) + \mathcal{C}_{N_c} 
+	\Biggr\} \label{eq:NMPC1} \\
+	\textrm{s.t.} \; & \mathbf{x}_{k+1} = \mathtt{f_d}(\mathbf{x}_k,\mathbf{u}_k), \hspace{0.5cm} k \in [0, N_c-1],  \label{eq:NMPC2} \\
+    & \mathbf{u}_{k,\textrm{min}} \leq \mathbf{u}_k \leq \mathbf{u}_{k,\textrm{max}}, k \in [0, N_c-1], \label{eq:NMPC4}
+\end{align}
+\end{subequations}
+%
+where the terms $\mathbf{u}_{k,\textrm{min}} \leq \mathbf{u}_{k,\textrm{max}} \in \mathbb{R}^{4}$ in \eqref{eq:NMPC4}, specify the lower and upper bounds on the controls, respectively. The terms inside the summation in \eqref{eq:NMPC1} together account for the stage cost. Amongst them, the first four costs, namely $\mathcal{C}_{h}$, $\mathcal{C}_{d}$, $\mathcal{C}_{r}$, $\mathcal{C}_{o}$ represent the cost associated with visual tracking objective and are expressed in the following form: 
+%
+\begin{align} 
+	\mathcal{C}_{h} &= (h_k - h^{\textrm{ref}})^T\mathrm{w}_{h}(h_k - h^\textrm{ref}), \label{eq:NMPC1_stageCostVisual_head} \\
+	\mathcal{C}_{d} &= (d_k - d_k^{\textrm{ref}})^T\mathrm{w}_{d}(d_k - d^{\textrm{ref}}),  \label{eq:NMPC1_stageCostVisual_dist} 
+	\\
+	\mathcal{C}_{r} &= (r_k - r_k^{\textrm{ref}})^T\mathrm{w}_{r}(r_k - r^{\textrm{ref}}),  \label{eq:NMPC1_stageCostVisual_roi}
+	\\
+	\mathcal{C}_{o} &= (o_k - o_k^{\textrm{ref}})^T\mathrm{w}_{o}(o_k - o^{\textrm{ref}}),  \label{eq:NMPC1_stageCostVisual_oi}
+\end{align}
+%
+The first visual tracking cost, $\mathcal{C}_{h}$ essentially controls the heading of the drone, which penalizes the deviation of the inspection area's centroid from the drone's \ac{FOV}-center. Accordingly, a heading function $h$ is formulated as a dot product between a vector representing the forward direction of the drone in the Earth-fixed frame and a vector $\mathbf{a}$ that connects the drone to the center of the inspection area in the X-Y plane, as illustrated in Fig.~\ref{fig:methodoverview}. Consequently, the heading function is expressed as follows:
+%
+\begin{align}\label{eq:heading_function}
+    h &= (R_{EB} \; \mathbf{x}_B)\cdot \mathbf{a}_{xy},
+\end{align}
+%
+where the vector $\mathbf{x}_B = [1, 0, 0]^T$, and $\mathbf{a}_{xy} = [a_{x}, a_{y}, 0]^T$ reflects a vector comprising the $x-y$ components of the original vector $\mathbf{a}$, which is given as:
+%
+\begin{equation}\label{eq:a}
+    \mathbf{a} = \begin{bmatrix}
+           a_{x} \\
+           a_{y} \\
+           a_{z}  
+         \end{bmatrix}
+    = \begin{bmatrix}
+           p_{x}-x \\
+           p_{y}-y \\
+           p_{z}-z  
+         \end{bmatrix}.
+\end{equation}
+%
+where $\mathbf{p} = [p_x, p_y, p_z]^T$ refers to the center of the inspection area. Moreover, the reference value for the heading function $h^\textrm{ref}$ is set to $1$ so that the two vectors are aligned.  
+
+The second visual tracking cost, $\mathcal{C}_{d}$ controls the position of the drone such that the drone stays within a specified radius from the center point $\mathbf{p}$. This cost penalizes the deviation of the current Euclidean distance ($d$) from its specified reference value ($d^\textrm{ref}$). Also, the Euclidean distance is calculated in the X-Y plane as follows:
+\begin{align}\label{eq:euc_dist}
+    d &= \| \mathbf{a}_{xy}\|.
+\end{align}
+The reference Euclidean distance $d^\textrm{ref}$ is the distance that the user desires to maintain from the wind turbine for safety. In this work, $d^{\textrm{ref}}$ is set to $7$m, which has been the de-facto reference distance in the literature for wind turbine inspection \cite{lidar2,stokkeland,ICUAS2020}. 
+The third visual tracking cost, $\mathcal{C}_{r}$ ensures that the drone stays within the desired region of interest, which is maintaining a specific distance from the inspection surface along its surface-normal in the X-Y plane. The region of interest function $r$ is calculated by taking the dot product of the vector $\mathbf{a}_{xy}$ and the normal vector to the surface being inspected:
+%
+\begin{align}\label{eq:roi_functon}
+    r &= \mathbf{a}_{xy}\cdot \mathbf{n},
+\end{align}
+%
+where the normal vector is given by $\mathbf{n} = [n_x, n_y, 0]^T$. The reference distance to be maintained ($r^\textrm{ref}$) is set equal to $d^{\textrm{ref}}$, i.e., $r^{\textrm{ref}}$ = $d{^\textrm{ref}}$ = 7m. It is to be noted that, the region of interest function $r$ together with the distance function $d$ guide the drone to the desired position -- at a specified distance from the inspection surface centroid --, while aligning with the positive direction of the surface-normal. \\
+%\begin{remark}
+%\hanote{In Fig. \ref{fig:methodoverview}, $d$ and $r$ are depicted for minimizing the cost functions  \ref{eq:NMPC1_stageCostVisual_dist} and \ref{eq:NMPC1_stageCostVisual_roi} respectively, which corresponds to $d = d^{\textrm{ref}}$ \& $r = d^{\textrm{ref}}$. Graphically this corresponds to a circle of radius  $d^{\textrm{ref}}$ around the centre of the point to inspect $\mathbf{p}$ and a line at a distance $d^{\textrm{ref}}$ in the direction of the surface normal $\mathbf{n}$. The intersection point of the minimum of both functions (the circle and the line) is aligned with the surface normal, and thus minimizing the respective cost functions drives the drone to the desired position relative to the inspection surface.} 
+%\end{remark}
+The final visual tracking cost, $\mathcal{C}_{o}$ comprises of an orthogonality function $o$ (visually depicted in Fig.~\ref{fig:methodoverview}), which is defined as the magnitude of the orthogonal projection of the vector $\mathbf{a}$ on the surface normal $\mathbf{n}$, and is expressed as follows:
+%
+\begin{align}\label{eq:orth_functon}
+    o &= \|(\mathbf{a}-(\mathbf{a}\cdot \mathbf{n} )\mathbf{n})\|,
+\end{align}
+%
+in essence, the role of this cost is to align the drone with the surface normal, hence, $o^{\textrm{ref}}$ is set to $0$. The last two stage costs in \eqref{eq:NMPC1} are the costs associated with states and control, penalizing the deviations of the predicted states and control trajectories from their references. They are given as follows:
+%
+\begin{align} \label{eq:NMPC1_stageCostStateControl}
+	\mathcal{C}_{\mathbf{x}^{\textrm{*}}} &= (\mathbf{x}_k^{\textrm{*}} - \mathbf{x}_k^{\textrm{* ref}})^T\mathbf{W}_{\mathbf{x}^{\textrm{*}}}(\mathbf{x}_k^{\textrm{*}} - \mathbf{x}_k^{\textrm{* ref}}), \\
+	\mathcal{C}_{\mathbf{u}} &= (\mathbf{u}_k - \mathbf{u}_k^{\textrm{ref}})^T\mathbf{W}_{\mathbf{u}}(\mathbf{u}_k - \mathbf{u}_k^{\textrm{ref}}),
+\end{align}
+%
+where $\mathbf{x}^{\textrm{*}} = [u,v,w, q_x,q_y]^T \in \mathbf{x}$. The following trajectories are selected for a smooth response from the drone:
+%
+\begin{align} 
+	\mathbf{x}^{\textrm{* ref}} &= \mathbf{x}_{N_c}^{\textrm{* ref}} =  \left[u_r,v_r,w_r,0,0 \right]^T, \label{eq:ref_x_NMPC} \\ 
+	\mathbf{u}^{\textrm{ref}} &=  \left[0,0,0, mg \right]^T. \label{eq:ref_u_NMPC}
+\end{align}
+%
+The weights defined in the stage cost are given by $ \mathrm{w}_{h} \in \mathbb{R}^{1 \times 1} $, $\mathrm{w}_{d} \in \mathbb{R}^{1 \times 1}$, and $  \mathrm{w}_{r} \in \mathbb{R}^{1 \times 1} $, $ \mathbf{W}_{\mathbf{x}^{\textrm{*}}} \in \mathbb{R}^{5 \times 5} $, $  \mathbf{W}_{\mathbf{u}} \in \mathbb{R}^{4 \times 4}$. The weight matrices associated with state and control costs are selected to be diagonal and positive-(semi) definite matrices. 
+Finally, the second component in \eqref{eq:NMPC1} refers to the terminal cost which is given by: 
+%
+\begin{align} \label{eq:NMPC1_terminalCost}
+	& \mathcal{C}_{\mathbf{N_c}} = (\mathbf{x}_{N_c}^{\textrm{*}} - \mathbf{x}_{N_c}^{\textrm{* ref}})^T\mathbf{W}_{N_c}(\mathbf{x}_{N_c}^{\textrm{*}} - \mathbf{x}_{N_c}^{\textrm{* ref}}).
+\end{align}
+%
+The above cost penalizes the finite nature of the prediction horizon, which caters to the stability of the overall optimization problem. Herein, $ \mathbf{W}_{N_c} \in \mathbb{R}^ {5 \times 5} $ is the corresponding positive-(semi) definite weight matrix which is also selected as diagonal. 
+\begin{figure}
+    \centering
+    % \includegraphics[width=0.48\textwidth]{figures/VTMPC_c.png}
+    % \includesvg[width=0.49\textwidth]{Autonomous_Robots/figures/methodology_less.svg}
+    \includegraphics[width=0.5\textwidth]{Autonomous_Robots/figures/vtmpc_overview_1.pdf}
+    \caption{Graphical depiction of the visual costs for the VT-NMPC for inspecting a surface of normal $\mathbf{n}$. The intersection between the line $r=r^\textrm{ref}$ , the circle $d=d^\textrm{ref}$ and the normal vector $\mathbf{n}$ represent the optimal position that the drone should attain during inspection relative to the surface. }
+    %\caption{Top view of a drone using \ac{VT-NMPC} method for inspection two surfaces, 1 and 2. The two surfaces are defined by the centroid position $\mathbf{p}_1$ and $\mathbf{p}_2$ and the the surface normal  $\mathbf{n}_1$ and $\mathbf{n}_2$. The Visual Tracking costs work together to achieve a desired pose,  $\mathbf{x}_1$ and $\mathbf{x}_2$, relative to the points $\mathbf{p}_1$ and $\mathbf{p}_2$ respectively.}
+    %The drone starts at $t_0$ at a distance $d_0$ and having an orientation defined by the local forward vector $\mathbf{x}_b$. The desired orientation is defined by vector  $\mathbf{a}$. $t_0<t<t_1$ and $t_1<t<t_2$ defines the transient region, where the input surface has changed and the MPC  tries to satisfy the cost functions $h, d, r$ until it reaches the desired position at at $t=t_1$ and $t=t_2$. At $t_1$ and $t_2$ the drone has reached steady state, where the cost functions are minimized. At these time instances, the orientation is aligned perfectly with vector $\mathbf{a}_1$ and the position is at the intersection between the corresponding \ac{ROI} defined by the function $r$ and the desired distance $D$.} 
+    \label{fig:methodoverview}  
+\end{figure}
+In terms of the implementation of the \ac{VT-NMPC} method, the weight matrices are selected based on the method proposed in \cite{deepmodel_mohit}. The incorporated active exploration approach renders automated tuning of the controller weights based on the drone’s performance during tuning trials. The method essentially utilizes an intelligent trial-and-error-based strategy that utilizes retrospective knowledge to improve the next set of controller weight attempts, balancing exploration and exploitation in an automated fashion. Accordingly, the following weights are achieved:
+%
+\begin{align*}
+    \mathrm{w}_h &= 80, \; \mathrm{w}_d = 30, \mathrm{w}_r = 25, \mathrm{w}_o = 60\\ 
+	\mathbf{W}_{\mathbf{x}^{\textrm{*}}} &= \textrm{diag}(0.3,0.3,1,80,80) \\
+	\mathbf{W}_{\mathbf{u}} &= \textrm{diag}(1,1,0.25,0.03), \mathbf{W}_{N_c} =1.5\mathbf{W}_{\mathbf{x}}.
+\end{align*}
+%
+Additionally, the following constraints are imposed on the control input to obtain a smooth response,
+%
+\begin{align} 
+    -100\ (^{\circ}/\textrm{s}) \leq & \; p, q, r \leq 100\ (^{\circ}/\textrm{s}), \label{eq:const_rates} \\
+    0.3mg\ \text{(N)} \leq & \quad T \quad \leq 2mg\ \text{(N)}. \label{eq:constT}
+\end{align}
+%
+
+%ACADO \cite{acado}, along with qpOASES solver \cite{qpoases}, are used for the implementation of the NMPC. It is capable of transcribing system dynamics with both single and multiple shooting integration schemes. Moreover, it generates C++ code, which then can be compiled while utilizing the accelerators and optimizers available \cite{acado2}. Therefore, it can run very efficiently and is suitable for real-time implementation. The optimization problem of \ac{NMPC} is solved utilizing the direct multiple shooting method with a shooting grid size of $0.01$s, to enable real-time feasibility. A direct solution was chosen as it can account for both inequality and equality constraints. A prediction horizon of 30($N_c = 30$) and the sampling time was set to $0.01$s.+9
+\subsection{Implementation Details}
+The optimization problem underlying the \ac{VT-NMPC} is solved by utilizing the direct multiple shooting method with a shooting grid size of $0.01$s, to enable real-time feasibility. Direct solution methodology is adopted over the indirect methods, as the former can account for both inequality and equality constraints. Subsequently, the resulting discretized optimal control problem (OCP) reduces to a sequential quadratic program which is further solved via the generalized Gauss-Newton method with the help of a special real-time iteration (RTI) scheme proposed in \cite{DIEHL2002577}. Moreover, ACADO toolkit \cite{acado}, along with qpOASES solver %\cite{qpoases} %\cite{qpoases}
+is utilized as the solution platform for solving the OCP in \eqref{eq:NMPC}
+as it incorporates the direct multiple shooting method and the RTI approach altogether. Additionally, the prediction horizon $N_c = 30$ and a sampling time of $0.01$s for computational tractability.
+%As the solution platform, ACADO toolkit \cite{acado} along with qpOASES solver \cite{qpoases} is utilized in this work, which incorporates the direct multiple shooting method and the RTI approach altogether for solving OCP in \eqref{eq:NMPC}. The ACADO toolkit is an open-source C++ based software environment that is capable of transcribing system dynamics with both single and multiple shooting integration schemes. Moreover, it generates tailored (well structured to avoid redundant computations), self-contained C-codes, which then can be compiled while utilizing the accelerators and optimizers available \cite{acado2}. Therefore, it can run very efficiently and is suitable for real-time implementation.
+
+
+%%%%%%%%%%%%%%%%%%%%%%   BEGIN DELETE IF NOT USE FULL    %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %
+% \begin{align} \label{eq:NMPC1_stageCost}
+% 	& \mathcal{C}_{h} = (h_k - h^{\textrm{ref}})^T\mathbf{W}_{h}(h_k - h^\textrm{ref}), \\
+% 	& \mathcal{C}_{d} = (d_k - d_k^{\textrm{ref}})^T\mathbf{W}_{d}(d_k - d^{\textrm{ref}}), 
+% 	\\
+% 	& \mathcal{C}_{r} = (d_k - d_k^{\textrm{ref}})^T\mathbf{W}_{r}(r_k - r^{\textrm{ref}}), \\
+%  	& \mathcal{C}_{\mathbf{x}^{*}} = (\mathbf{x}_k^{*} - \mathbf{x}_k^{\textrm{* ref}})^T\mathbf{W}_{\mathbf{x}^{*}}(\mathbf{x}_k^{*} - \mathbf{x}_k^{\textrm{* ref}}), \\
+% 	& \mathcal{C}_{\mathbf{u}} = (\mathbf{u}_k - \mathbf{u}_k^{\textrm{ref}})^T\mathbf{W}_{\mathbf{u}}(\mathbf{u}_k - \mathbf{u}_k^{\textrm{ref}}),
+% \end{align}
+% %
+% %The first two terms ensures that the predicted states ($\mathbf{x}_k$) and control ($\mathbf{u}_k$) trajectories follow their references, $\mathbf{x}_k^{\textrm{ref}}$ and $\mathbf{u}_k^{\textrm{ref}}$, respectively. While
+% %the third and fourth terms represent the point to view aware cost. The first of these terms penalize the difference of the drone from the desired heading, while the second is added for stability.
+
+
+
+% The first 3 terms represent the visual tracking cost and are defined by the functions $h, d$ and $r$ respectively. The $\mathcal{C}_{\mathbf{x}^*}$ represent the cost on $\mathbf{x}^{*}$, which is a subset of the state vector $\textbf{x}$. It includes $u, v, w$ as well as $q_x$ and $q_y$. The reference values are set to 0 for $u,v,w$ and $q_x$ and $q_y$ are set to 0. $\mathcal{C}_{\mathbf{u}}$ is the cost on the control input $\mathbf{u}$. Its function is it ensure a smooth and stable response. For the angular velocities, reference value is set to 0, while the reference thrust $T^{ref}$ is set to be equal to the weight of the quadrotor.  
+
+% The weight matrices defined in the stage-cost are given by $ \mathbf{W}_{h} \in \mathbb{R}^{1 \times 1} $, $\mathbf{W}_{d} \in \mathbb{R}^{1 \times 1}$,$  \mathbf{W}_{r} \in \mathbb{R}^{1 \times 1} $,$   \mathbf{W}_{\mathbf{x}^{*}} \in \mathbb{R}^{5 \times 5} $, $  \mathbf{W}_{\mathbf{u}} \in \mathbb{R}^{4 \times 4}$, 
+% which are diagonal and positive-(semi)  definite matrices. 
+
+% The second component in \eqref{eq:NMPC1} gives the terminal cost which is given by: 
+% \begin{align} \label{eq:NMPC1_terminalCost}
+% 	& \mathcal{C}_{\mathbf{N_c}} = (\mathbf{x}_{N_c} - \mathbf{x}_{N_c}^{\textrm{ref}})^T\mathbf{W}_{\mathbf{N_c}}(\mathbf{x}_{N_c} - \mathbf{x}_{N_c}^{\textrm{ref}}),
+% \end{align}
+
+
+% The function of this term is to penalize the finite nature of the prediction horizon, which makes the computation of the cost more stable. Here, $ \mathbf{W}_{N_c} \in \mathbb{R}^ {7 \times 7} $ is the corresponding positive-(semi)definite weight matrix which is also selected as diagonal. Additionally, the terms $\mathbf{x}_{k,\textrm{min}} \leq \mathbf{x}_{k,\textrm{max}} \in \mathbb{R}^{7}$ and $\mathbf{u}_{k,\textrm{min}} \leq \mathbf{u}_{k,\textrm{max}} \in \mathbb{R}^{4}$ in \eqref{eq:NMPC4}, specify the lower and upper bounds on the states and controls, respectively.  
+
+
+
+% \subsection{Visual Tracking Cost Functions} 
+% $h$ is the heading function, its goal is to control the heading of the drone such that the centroid of the area we are currently inspecting is centred inside the drone's field of view. 
+
+
+
+
+
+% The function $h$ is mathematically formulated as a dot product between the vector representing the forward direction of the drone in earth frame, and the vector \textbf{a}, which is a vector connecting the drone to the centre of the area being inspected \textbf{p}. \textbf{a} is there fore given by:
+
+% \begin{equation}\label{eq:n}
+%     \textbf{a} = \begin{bmatrix}
+%           p_{x}-x \\
+%           p_{y}-y \\
+%           p_{z}-z  
+%          \end{bmatrix},
+% \end{equation}
+
+% We can then calculate then $h$ as follows:
+
+% \begin{equation}\label{eq:s}
+% \begin{multlined}
+% h= (R_{EB}\mathbf{x_b})\cdot \textbf{a}=(1 - 2 q_z q_z)a_x + 2(q_w q_z) a_y ,
+% \end{multlined}
+% \end{equation}
+
+% where $\textbf{x}_\textrm{b}$ is the forward facing vector of the drone in body frame and has components $[1, 0, 0]$. The reference value for the heading function $h^\textrm{ref}$ is set 1 so that the two vectors are aligned.  
+% On the other hand, the distance function $d$ is the euclidean distance between the centre area $\textbf{p}$. Its function is to keep the drone within a desired radius, $d^\textrm{ref}$ to the area being inspected. It is calculated as the norm of \textbf{a} as shown here:
+% \begin{equation}\label{eq:s}
+% \begin{multlined}
+% d = \| \mathbf{a}\|,
+% \end{multlined}
+% \end{equation}
+
+
+% The final visual tracking function is $r$, which has the function of keeping the drone within a desired region of interest. Together with the distance function $d$, they guide the drone centre to the desired position, which is to be aligned with the surface normal, in the positive direction of the normal, and at the desired distance from the surface centroid. The function $r$ is calculated by taking the dot product of \textbf{a} and \textbf{n}, where \textbf{n} is the normal of the surface being inspected. $r^\textrm{ref}$ should be set as the desired distance from the surface being inspected. The region of interest function $r$ is shown here:
+
+
+
+% \begin{equation}\label{eq:s}
+% \begin{multlined}
+% r = \mathbf{a}\cdot \textbf{n}\\= a_xn_x+ayn_y,
+% \end{multlined}
+% \end{equation}
+% Figure \ref{fig:methodoverview} shows how different cost function contribute to controlling the drones pose to the desired position and how the variables are defined. 
+
+%%%%%%%%%%%%%%%%%%%%%%   END DELETE IF NOT USE FULL    %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\begin{subequations} \label{eq:NMPC}
+%\begin{align}
+%	\minimize_{\mathbf{\dot{x}}_k,\mathbf{u}_k} \; & \frac{1}{2}\sum_{k = 0}^{N_c-1}\sum_{i = 1}^{n} \mathcal{C}_{\mathbf{i}}(\mathbf{x},\mathbf{u})   
+%	 \label{eq:NMPC1} \\
+%	\textrm{s.t.} \quad & 	 \mathbf{x}_{W} = \mathbf{v}_{B}\odot \mathbf{q}_{WB},\label{eq:model1} \\
+%     & 	 \mathbf{v}_{B} = \Lambda_1 \mathbf{v}_{B}+ \mathbf{g}\odot \mathbf{q}_{WB} + \mathbf{T},  \label{eq:model2} \\
+%          & 	  \mathbf{q}_{WB} = \frac{1}{2} \Lambda_2 (\Omega_B) \cdot \mathbf{q}_{WB},  \label{eq:model3} \\
+%    & \mathbf{u}_{k,\textrm{min}} \leq \mathbf{u}_k \leq \mathbf{u}_{k,\textrm{max}}, \hspace{0.5cm} k \in [0, N_c-1]. \label{eq:NMPC4}
+%\end{align}
+%\end{subequations}
+
+%The dynamics of the quadrotor, shown in equations \ref{eq:model1}, \ref{eq:model2} and \ref{eq:model3} are modeled in quaternions. This  representation is more computationally efficient and doesn't suffer from gimbal lock, when compared to Euler angles representation. More information about the mathematics of quaternions and using them for drone modeling can be found here \cite{quat1}\cite{quat2}.   
+
+%The quaternion that represents the rotation from the body to the world frame is given by $\mathbf{q}_{wb} = [q_x q_y q_z q_w]$. Multiplying a vector by a quaternion $\mathbf{q}_{wb}$ as shown in equation \ref{eq:model1} and \ref{eq:model2} is equivalent to rotating this vector by using the rotation matrix $\textbf{R}_{bw}$ \ref{eq:R}.
+
+%\begin{frame}
+%\footnotesize
+%\setlength{\arraycolsep}{2.5pt} % default: 5pt
+%\medmuskip = 1mu % default: 4mu plus 2mu minus 4mu
+
+
+%\begin{equation}\label{eq:R}
+
+%\textbf{R}_{bw}=
+
+%\begin{bmatrix}
+%1 - 2q_y^2 - 2q_z^2 &  2(q_x q_y - q_w q_z) & 2(q_x q_z+q_w q_y)  \\
+%2(q_xq_y+q_wq_z) & 1 - 2q_x^2 - 2q_z^2 & 2(q_y q_y-q_w q_x) \\
+%2(q_xq_z-q_wq_y) & 2(q_y q_z+q_w q_x) & 1 - 2q_x^2 - 2q_y^2 \\
+%\end{bmatrix}
+%,
+%\end{equation}
+
+%\end{frame}
+
+
+
+
+%The state vector $\mathbf{x}$ \in \mathbb{R}^{10}$ consists of the vectors $\mathbf{p}_W$, $\mathbf{v}_W$ and $\mathbf{q}_{WB}$. $\mathbf{x}_W$ \in \mathbb{R}^{3}$ is the x, y and z coordinates of the drone in the global frame. $\mathbf{v}_B$ \in \mathbb{R}^{3}$ is the drone velocity defined in the body frame, with components u,v, w. $\mathbf{g}$ \in \mathbb{R}^{3}$ is the gravity vector defined the global frame. $\mathbf{T}$ \in \mathbb{R}^{3}$ is the thrust vector defined the body frame. The Matrix $\mathbf{\Lambda}_1 \in \mathbb{R}^{3} \times \mathbb{R}^{3}$and $\mathbf{\Lambda}_2 \in \mathbb{R}^{4} \times \mathbb{R}^{4}$ are the angular velocity matrices and are given by 
+%equations \ref{eq:w1} and \ref{eq:w2} respectively.
+
+
+
+
+%\begin{equation}\label{eq:w1}
+
+%\textbf{\Lambda}_1=
+%\begin{bmatrix}
+%0 &  -w_x & -w_y & -w_z  \\
+%w_x &  0 & w_z & -w_y \\
+%w_y &  -w_z & 0 & w_x \\
+%w_z &  w_y & -w_x & 0 \\
+%\end{bmatrix}
+%,
+%\end{equation}
+
+%\begin{equation}\label{eq:w2}
+
+%\textbf{\Lambda}_2=
+%\begin{bmatrix}
+%0 &  w_z & -w_y   \\
+%-w_x &  0 & w_x \\
+%w_y &  -w_z & 0  \\
+%\end{bmatrix}
+%,
+%\end{equation}
+
+
+
+
+
+ %The control inputs $\mathbf{u}= [$\dot{\phi}$  \dot{\theta} \dot{\psi} T]$ \in \mathbb{R}^{4} represents yaw pitch and roll rates, and respectively. and throttle in the body frame. Both the global and body reference frames are right handed. The stage cost given in equation \eqref{eq:NMPC1} represents the objective function to be minimized. They are quadratic cost functions and take the general form of
+%\begin{align} \label{eq:NMPC1_stageCost}
+% 	 \mathcal{C} = (\mathbf{\dot{s}}_k - \mathbf{\dot{s}}_k^{\textrm{ref}})^T\mathbf{W}_{\mathbf{\dot{s}}}(\mathbf{\dot{s}}_k - \mathbf{\dot{s}}_k^{\textrm{ref}}), 
+%\end{align}
+
+
+%The first two terms ensures that the predicted states ($\mathbf{x}_k$) and control ($\mathbf{u}_k$) trajectories follow their references, $\mathbf{x}_k^{\textrm{ref}}$ and $\mathbf{u}_k^{\textrm{ref}}$, respectively. While the third and fourth terms represent the point to view aware cost. The first of these terms penalize the difference of the drone from the desired heading, while the second is added for stability.
+
+
+
+%The corresponding state and control weight matrices are given by $\mathbf{W}_{\mathbf{x}} \in \mathbb{R}^{6 \times 6} $, $ \mathbf{W}_{\mathbf{u}} \in \mathbb{R}^{4 \times 4}, $ $ \mathbf{W}_{\mathbf{s}} \in \mathbb{R}^{1 \times 1},  \mathbf{W}_{\dot{\mathbf{s}}} \in \mathbb{R}^{1 \times 1}, $ which are diagonal and positive-(semi)  definite matrices. 
+%The second component in \eqref{eq:NMPC1} gives the terminal cost which is given by: 
+%\begin{align} \label{eq:NMPC1_terminalCost}
+%	& \mathcal{C}_{\mathbf{N_c}} = (\mathbf{x}_{N_c} - \mathbf{x}_{N_c}^{\textrm{ref}})^T\mathbf{W}_{\mathbf{N_c}}(\mathbf{x}_{N_c} - \mathbf{x}_{N_c}^{\textrm{ref}}),
+%\end{align}
+%The function of this term is to penalize the finite nature of the prediction horizon, which makes the computation of the cost more stable. Here, $ \mathbf{W}_{N_c} \in \mathbb{R}^ {6 \times 6} $ is the corresponding positive-(semi)definite weight matrix which is also selected as diagonal. 
+
+ %$\mathbf{s}_k$ is a mathematical term that defines the cost function and is described in the next section for all the cost functions. $\mathbf{W}_s$ is the weight matrix and is symmetric.
+%Finally, the terms $\mathbf{x}_{k,\textrm{min}} \leq \mathbf{x}_{k,\textrm{max}} \in \mathbb{R}^{10}$ and $\mathbf{u}_{k,\textrm{min}} \leq\mathbf{u}_{k,\textrm{max}} \in \mathbb{R}^{4}$ in \eqref{eq:NMPC4}, specify the lower and upper bounds on the states and controls, respectively.  
+%It is to be noted that $\mathbf{x}_{0}$ is taken as the current state measurement for initializing the OCP at each sampling time.
+
+ 
+
+%The state vector $x$ defined here is given by $x= [x, y, z, u , v,w]^T$ and the control vector $u = [\phi, \theta, \Psi, F_z]^T$.
+
+
+
+
+
+
+%wherein $x_r$, $y_r$, $z_r$ and $u_r$, $v_r$, $w_r$ are the position and velocity references, respectively, and $\phi_r,\theta_r,\psi_r$ and $p_r,q_r,r_r$ are the attitude and angular rate references, respectively, that are commanded by the navigation algorithm.
+
+
+%\subsection{Cost definition}
+ 
+ %Our stage cost consists of four terms $\mathbf{C}_H$,$\mathbf{C}_D$,$\mathbf{C}_{RI}$ and $\mathbf{C}_U$.
+ %$\mathbf{C}_H$ is responsible for adjusting the heading of the drone to be aligned along the centre of the area being inspected at the current time instant. $\mathbf{C}_D$ and $\mathbf{C}_{RI}$ together are responsible for controlling the position of the drone so that its in a position perpendicular to the area to be inspected. $\mathbf{C}_D$ moves the drone towards the centre of the area by minimizing the euclidean distance between the drone's position and the centre of the area being inspected.  While $\mathbf{C}_{RI}$ keeps the drone at a safe distance from the surface and within the region of interest (RI). Finally $\mathbf{C}_{U}$ is the cost on the control action $\mathbf{u}$ to ensure smooth and stable motion of the drone. For each term we define a cost term $\mathbf{s}$
+%that represents the mathematical formulation of this cost and reference value $\mathbf{s}_{ref}$. 
+ %We present the similarity cost term $s$ and its time derivative $\dot{s}$. This term measures the similarity between the vector representing the desired direction that the drone should take and the current drone direction. The purpose of adding this term is to allow the drone to maintain visibility of the area we are inspecting at the current time instant as shown in figure \ref{fig:obj}. 
+ 
+
+ 
+% \subsubsection{Mathematical formulation of the cost terms}
+%\subsubsection{Mathematical formulation of feedback terms in the cost functions}
+% Given a vector $\mathbf{p}$ = [$p_x,p_y,p_z$], which defines the centre coordinates of area of the area of interest. We define the vector $\textbf{a}$, which is the vector connecting the centre of the drone to the point of interest. It is given by the following relation  (\ref{eq:n})
+ 
+%\begin{equation}\label{eq:n}
+%    \textbf{a} = \begin{bmatrix}
+%           p_{x}-x \\
+%           p_{y}-y \\
+%           p_{z}-z  
+%         \end{bmatrix},
+%\end{equation}
+
+%This vector represents the direction that the drone should attain in order to have the most visibility of the area being inspected. The vector representing the current heading of the drone is the body x-axis ($\textbf{f}_b$). We apply a transformation $\textbf{R}_{WB}$, to the body fixed x-axis, $\textbf{x}_b$, to get vector $\textbf{b}_1$, which has components its in the global coordinate system ($X,Y,Z$). 
+
+
+%\begin{equation}\label{b1}
+%    \textbf{f}_w=\textbf{R}_{bw}\textbf{f}_{b} , 
+%\end{equation}
+
+%This rotation is given by the matrix $\textbf{R}_{bw}$ define in equation (\ref{eq:R}). 
+%$\textbf{R}_{bw}$ uses a Z-X-Y Euler angles convention \cite{vijay}, with roll ($\phi$), pitch($\theta$) and yaw($\psi$). 
+
+
+
+
+
+ % We can then define $\mathbf{s}_{H}$ as the dot product between the rotated body x-axis and the vector $\textbf{a}$. The full expression is given in equation (\ref{eq:s}). 
+%\begin{equation}\label{eq:s}
+%\begin{multlined}
+%s_h= \mathbf{x_b}\cdot \textbf{a}\\
+
+% =(1 - 2 q_z q_z - 2 q_z q_z)a_x + 2(q_x q_y + q_w q_z) a_y ,
+%\end{multlined}
+%\end{equation}
+
+%We divide the expression by $\| \mathbf{a}\|$ to keep the value $-1<s_H<1$, where 1 means the drone is heading directly towards the point of interest, and -1 means that we are facing the opposite direction.  
+%The cost term $\mathbf{s}_D$  is calculated to be the norm of $\mathbf{a}$.  $\mathbf{s}_{RI}$ is the dot product between $\mathbf{a}$ and $\mathbf{n}$ and its function is to guide the drone to the front side of the area being inspected. Finally $\mathbf{s}_{Ui}$ is equal to control control inputs, and is used to stabilize the drone trajectory.
+
+%\begin{equation}\label{eq:s}
+%\begin{multlined}
+%s_D = \| \mathbf{a}\|,
+%\end{multlined}
+%\end{equation}
+
+
+%\begin{equation}\label{eq:s}
+%\begin{multlined}
+%s_{RI} = \mathbf{a}\cdot \textbf{n}\\= a_xn_x+ayn_y,
+%\end{multlined}
+%\end{equation}
+
+%\begin{equation}\label{eq:s}
+%\begin{multlined}
+%s_U_i = u_i,
+%\end{multlined}
+%\end{equation}
+%Figure shows how the costs work together for inspecting an areea
+%\\
+
+
+%\begin{figure}
+%    \centering
+%    \includegraphics[width=0.5\textwidth]{figures/VTMPC.png}
+%    \caption{Objectives description} 
+%    \label{fig:obj}
+%\end{figure}
+
+%\begin{equation}\label{eq:sd}
+%\begin{multlined}
+%\dot{s}=\frac{1}{\norm{\bf{n}}} \Bigg[\dot{\phi}\Big[(s\phi s\theta n_3+c\phi c\psi s\theta)n_2\Big]
+%\\
+
+%-\dot{\psi}\Big[(c\theta s\psi)+(c\psi s\phi s\theta )n_1 - c\psi c\theta 
+%- (s\phi s\psi s\theta) n_2\Big]\\
+%-\dot{\theta}\Big[(c\psi s\theta)+(c\theta s\phi s\psi )n_1
+%+ s\psisin\theta 
+%- (c\psi c\theta s\phi) n_2+
+%c\phi c\theta n_3
+%\Big] \Bigg],
+%\end{multlined}
+%\end{equation}
+
+%This term is added to the formulation to stabilize the objective and prevent oscillation of the drone about the point of interest. To achieve this $\dot{s}_{ref}$ is set to $0$.
+%\subsection{Coverage Criteria}
+%In order to evaluate our method for inspection in terms of coverage, we propose a criteria for measuring coverage of a given area being inspected. This method  calculates the area that the drone is actually seeing of the surface being inspected, and dividing this by the known area of the surface, we get a measure of the coverage. The visibility $V$ of an area $S$,  is given by equation \ref{eq:coverage}. 
+
+
+%\begin{equation}\label{eq:coverage}
+%    V=\frac{l}{W},
+%\end{equation}
+
+%Where $W$ is the width of the blade and $l$ is the visible length. The method is demonstrated in figure \ref{fig:coverage}. This method assumes that the point being inspected is on the same level of the drone, thus we can use the yaw angle to represent the orientation of the drone. Given a drone pose in 2D ($x,y,\psi$), FOV angle ($\gamma$), surface pose ($\textbf{p},\alpha$) and surface length $L$, we start by calculating the equations of line $\textbf{L}_0, \textbf{L}_1$,$\textbf{L}_2$ and $\textbf{T}$ and corresponding intersection points $\textbf{P}_0, \textbf{P}_1$ and $\textbf{P}_2$. Next we swap the values of $\textbf{P}_1$ and $\textbf{P}_2$ if needed such that $\textbf{P}_1$ is closest to $\textbf{T}_1$ and $\textbf{P}_2$ is closest to $\textbf{T}_2$. %We then proceed to calculate the vectors $\textbf{a}_0$, $\textbf{a}_1$, $\textbf{a}_2$ and $\textbf{t}_1$,$\textbf{t}_2$ as shown in the algorithm \ref{alg:1}, which are used to determine which case we need to consider in order to calculate the length of  of the inspected target within FOV. 
+%This length is given by $l$ and there are 5  different cases which can occur. The cases are shown in table \ref{table:1}.% and corresponding algorithm \ref{alg:2} which is presented in the appendix \\
+
+
+%\begin{figure}\label{b1}
+%    \centering
+%    \includegraphics[width=0.35\textwidth]{figures/coverage.png}
+%    \caption{The figure shows a top view of the drone doing an inspection of blade of width $W$. The length $l$ represents the intersection of the FOV with the surface of the blade and is used as criteria to measure the visibility of the area being inspected with centre $\textbf{p}$ and points $\textbf{T}_1$ and $\textbf{T}_2$ represents the edges of the blade. This situation represents case 3 where the length $l =|\textbf{P}_2-\textbf{P}_2|$}
+%    \label{fig:coverage}
+%\end{figure}
+
+%7*5
+%\begin{table}
+
+% \hline
+% Case1 & $P_1$ and $P_2$ are on one side outside of inspected surface $T_1$ and $T_2$ & $l=0$ \\
+% \hline
+% Case2  &  $P_2$ and $P_1$ are both between $T_1$ and $T_2$  & $l=|P_2-P_1|$  \\
+%  \hline
+% Case3  &  $P_1$ is out of the inspected surface and $P_2$ is within the inspected surface & $l=|P_2-T_1|$  \\
+%  \hline
+% Case4  &  $P_2$ is out of the inspected surface and $P_1$ is within the inspected surface  & $l=|P_1-T_1|$  \\
+%  \hline
+% Case5  &  Both $P_2$ and $P_1$ are out of the inspected surface  & $l=|T_2-T_1|$  \\
+%\hline
+
+
+%\caption{Cases for Visibility calculation}
+%\label{table:1}
+%\end{table}
+%Case1: $P_1$ and $P_2$ are on one side outside of inspected surface $T_1$ and $T_2$, this corresponds to zero coverage.
+%\begin{center}
+%$l=0$
+%\end{center}
+%Case2: $P_2$ and $P_1$ are both between $T_1$ and $T_2$.
+%\begin{center}
+%$l=|P_2-T_1|$
+%\end{center}
+%Case3: $P_1$ is out of the inspected surface and $P_2$ is within the inspected surface
+%\begin{center}
+%$l=|P_2-T_1|$
+%\end{center}
+%Case4:
+%$P_2$ is out of the inspected surface and $P_1$ is within the inspected surface
+%\begin{center}
+%$l=|P_1-T_1|$
+%\end{center}
+%Case5: Both $P_2$ and $P_1$ are out of the inspected surface
+%\begin{center}
+%$l=|T_2-T_1|$
+%\end{center}
+
+
+
+
+
+
+
+
+%\begin{algorithm}
+%\If{$isContentMethod(\mathcal{M})$}{
+%  $URI \leftarrow getURI(SubCG, \mathcal{M})$\;
+%  \If{$URI \in \mathcal{P}_c$}{% Don't use `\If(..)`
+%    $Permission \leftarrow getPermission(URI, \mathcal{P}_c)$\;
+%    $\mathcal{B}.add(Permission, URI, Entrypoints)$ \;
+%  }
+%}
+%\end{algorithm}
+
+
+
+
+
+
+
+
+
+
+
+
+%\begin{figure}
+%    \centering
+%    \includegraphics[width=0.5\textwidth]{figures/windfarm.png}
+%    \caption{\textcolor{red}{Placeholder! this needs to be changed or removed.}}
+%\end{figure}
+
+%For testing the proposed method, a photo-realistic simulation environment of a conventional wind farm scenario is developed in Unreal Engine 4 \cite{web:unrealengine}. A wind farm is a very demanding environment in regards to wind speed and turbulence. Therefore, a simulation of the wind turbine's effect on the surrounding environment is performed to reproduce these demands in the simulation environment. The result of this simulation is then used to compute a 3D grid representation of the average wind speed and turbulence intensity as seen in Fig \ref{fig:airsim_windfarm}.A combination of Pixhawk software-in-the-loop and AirSim is chosen to simulate the physics and base control of the UAV.
+
+\section{Simulations}
+%VTNMPC no-wind: 100%
+%VTNMPC wind 3m : 100\%
+%VTNMPC wind 4.5 : 99.4\%
+
+%NMPC no-wind:    100\%
+%NMPC wind  3m/s: 95.4\%
+%NMPC wind 4.5m/s:  84.9\%
+\label{sec:results}
+
+
+%The proposed method is evaluated in a wind turbine inspection scenario in a Gazebo simulation environment. The automated framework can be found through the following link:\textbf{ https://github.com/open-airlab/VT-NMPC\_Autonomous\_Wind\_Turbine\_Inspection}. %\cite{gazebo}. %The inspection surfaces centroids $\mathbf{p}$ and normals $\mathbf{n}$ are sequentially input to the \ac{VT-NMPC} at a rate of 8 points per second. For straight edges, point are input 10cm apart, as for inclined surfaces, points are input 5cm apart. Finally for regions where the surface is changing, the points are distance of 2cm is between consecutive input points.  A reference velocity is specified, for straight edges, this is the velocity of the point, which equivalent to distance between two consecutive points divided by the rate of input of points. When there is a change in surface, a circular velocity profile in provided with a magnitude of 0.8 m/s. Wind is then modeled in the wind farm by applying a wind profile given in \cite{mohit}. We use the same function however, we apply velocities instead of forces to the inspection drone.  Wind is applied in the y-direction with a magnitude of 3.25 m/s, standard deviation of 0.5m/s and time period of 10s.
+%A sinusoidal wind profile is applied in the simulation %\cite{rotors} 
+%in the y-direction with a time period of $10$s and standard deviation of $0.5$m/s. %The time varying function is obtained from \cite{mohit}, replacing the forces in x, y and z directions with wind velocities. 
+%Simulations are conducted at three wind levels: No wind, a mean wind speed of 4m/s and a mean wind speed of $7$m/s. For brevity, the plots are only shown for $4$m/s mean wind speeds.    %\textbf{add link to video when ready}
+%The efficacy of the method is compared and contrasted to the PAMPC \cite{falanga2018pampc} and the conventional NMPC. Both the PAMPC and NMPC follow a reference trajectory consisting of reference positions, while the NMPC uses reference yaw angle, and the PAMPC uses the point to be inspected as reference. The input reference positions are calculated as an offset from the point to view, at a distance equal to $d^{\mathrm{ref}}$ in the direction of the surface normal, while the reference yaw angle is precomputed based on the surfaces normal $\mathbf{n}$. The performance of all three methods is evaluated in terms of safety, coverage and inspection quality. Safety is evaluated as the distance the drone maintains from the surface being inspected. Secondly, coverage, which is the ability to view all the triangular mesh elements that comprise the turbine model is calculated. Finally, the inspection images quality is evaluated. The obtained 3-D trajectory of the drone using different methods is shown in Fig. \ref{3d}. The drone's average speed during the trajectory for all methods was around 0.7 m/s.
+
+This section demonstrates the results of a wind turbine inspection scenario conducted in a Gazebo simulation environment. A sinusoidal wind disturbance with a time period of $10$s and a standard deviation of $0.5$m/s is applied in the y-direction to further model a wind farm environment. The results are obtained for three different mean wind speed levels, namely, $0$m/s, $4$m/s, and $7$m/s. Note that only the plots for $4$m/s mean wind speed are presented for brevity. 
+The efficacy of the proposed VT-NMPC method is compared with the PAMPC \cite{falanga2018pampc} and the conventional NMPC. Both the PAMPC and NMPC follow a reference trajectory consisting of 3-D positions. Besides, the NMPC requires the reference yaw angle, while the PAMPC uses the inspection point as a reference. The reference position trajectory is obtained as an offset from the inspection point, at a distance equal to $d^{\mathrm{ref}}$ in the direction of the surface normal, while the reference yaw angle is precomputed based on the surfaces' normal $\mathbf{n}$. The performance of all three methods is evaluated in terms of three metrics, i.e., safety, coverage, and inspection quality. The obtained results are summarized in Table~\ref{table:sim}.  Safety implies the distance from the inspection surface that the drone maintains. Coverage illustrates the ability to view all the triangular mesh elements that underly the turbine model. Inspection quality refers to the quality of the obtained images. The obtained 3-D trajectory of the drone using different methods is shown in Fig. \ref{3d}. Note that the drone's average speed during the inspection is around $0.7$m/s.
+
+\begin{figure}[]
+\centering
+\includegraphics[width=.5\textwidth]{figures/3D_traj.pdf}
+\caption{Obtained optimal 3-D trajectory of the drone during inspection using the proposed novel VT-NMPC, traditional NMPC and PAMPC.}\label{3d}
+\end{figure}
+% Safety implies the distance from the inspection surface that the drone maintains. Coverage illustrates the ability to view all the triangular mesh elements that underly the turbine model. Inspection quality refers to the quality of the obtained images. Note that the drone's average speed during the inspection is around $0.7$m/s. 
+
+%Moreover, the implementation codes\footnote{\url{https://www.github.com/open-airlab/VTNMPC-Autonomous-Wind-Turbine-Inspection}} and the video\footnote{\url{https://www.youtube.com/watch?v=AOGz0HoicwA}} depicting the simulation tests are released. The obtained results are summarized in Table~\ref{tab:compare}.
+% 
+
+%\begin{figure}[]
+%\centering
+%\includegraphics[width=.5\textwidth]{figures/3D_traj.pdf}
+%\caption{Obtained optimal 3-D trajectory of the drone during inspection using the proposed novel VT-NMPC, traditional NMPC and PAMPC.}\label{3d}
+%\end{figure}
+
+
+
+
+
+
+
+\subsection{Safety Metric}
+
+First, a safety region requirement is defined as a boundary from the desired reference, $d^{ref}$, in the positive and negative direction. A 1-meter range (safety margin) is selected, beyond which the drone is considered to be violating this requirement. Accordingly, the safety metric is calculated as follows:
+
+\begin{equation}
+    \text{safety metric (SM)} = 
+    \begin{cases}
+      100\%, &   |d - d^{ref}| < \text{safety margin}\\
+      0, & \text{otherwise}
+    \end{cases}
+    \label{eq:safety}
+\end{equation}
+which is then averaged over the entire trajectory. 
+ The VT-NMPC, PAMPC, and NMPC manage to maintain comparable distances on average with $7.03$m, $7.07$m, and $7.06$m respectively. Nevertheless, the amplitude of fluctuations for the VT-NMPC is significantly lower than the NMPC and PAMPC, obtaining a minimum distance of $6.15$m compared to $5.84$m for the PAMPC and $5.63$m for the NMPC.
+
+ The ability of the VT-NMPC to maintain the desired distance compared to the other two methods can be attributed to the inclusion of distance cost in \eqref{eq:NMPC1_stageCostVisual_dist}.  In essence, it explicitly penalizes the distance from the inspection surface compared to the other two which are tracking-error driven, i.e., separately minimizes the error in $x$, $y$, and $z$ components.
+
+
+
+
+\subsection{Coverage}
+During the inspection, it is required that all surface areas of the parts being inspected are to be captured by the drone's camera. We use the triangular mesh of the generated wind turbine model to measure coverage by checking whether each triangle that comprises the model has been viewed. 
+For each time instance along the trajectory, we check the triangles that are within \ac{FOV} of the drone by projecting its vertices onto the drone's image plane using a pinhole camera projection. 
+Subsequently, we calculate the coverage as the ratio between the total number of viewed triangles to the total number of triangles.
+A $100\%$ coverage is achieved by all the three methods with $0$m/s wind condition. When introducing a wind speed of $4$m/s, both the VT-NMPC and PAMPC maintain a $99.8\%$ coverage value, while the NMPC's coverage reduces to $91.6\%$. 
+The presence of the visual feedback in the vision-based control methods (VT-NMPC and PAMPC) allows the drone to maintain high coverage for all the three wind levels. 
+ 
+\begin{table}
+    \centering
+    \begin{tabular}{|C{2.0cm}|C{1.5cm}|C{1.5cm}|C{1.5cm}|C{1.5cm}|C{5.5cm}| }
+        \cline{2-4}
+        \multicolumn{1}{c|}{} & \textbf{NMPC} & \textbf{PAMPC} & \textbf{VT-NMPC} \\
+\hline
+        Coverage &  $91.6\%$ & $ 99.8\%$ & $\textbf{100\%}$ \\
+        \cline{2-4}
+        %& [m/s] & $\mathbf{7}$ & $0.772$ & $\cellcolor{green!0!white!\colorful}0.998$ & $0.995$ \\
+        \hline
+        
+        \multirow{1}{*}{Safety (SM)}  %& avg & $7.07$ & $7.07$ & $\cellcolor{green!100!white!\colorful}7.03$ \\
+        %\cline{3-6}
+          & $75.0\%$ &$84.7\%$ &  $\textbf{100\%}$ \\
+       %\cline{2-4}  
+        \hline        
+         \multirow{1}{*}{Quality (CM)}     & $98.5\%$ & $\textbf{99.9\%}$ & 
+        $\textbf{99.9\%}$ \\
+        \hline
+    \end{tabular}
+    \caption{Simulation results for the defined performance indices. Tests were conducted at a wind speed of 4 m/s.}
+    \label{table:sim}
+\end{table} 
+ 
+ 
+ 
+ 
+\subsection{Inspection Quality }
+
+
+
+An additional requirement is the quality of the images collected throughout the inspection operation. The wind turbine blade should be always centered within the image frame.
+This criterion is evaluated by the centering metric (CM), which is calculated as $\mathrm{CM} = h$, where $h$ is the heading function defined in \eqref{eq:heading_function}. As can be seen in Table~\ref{table:sim}, high average values for CM are achieved for vision-based control methods, i.e., $99.9\%$ for the VT-NMPC and the PAMPC.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%%%table 2
+\begin{comment}
+\begin{table}[h]
+    \centering
+    \caption{Table2 }
+    \label{tab:compare}
+    \begin{subtable}[h]{0.5\textwidth}
+        \centering
+        \caption{Coverage}    
+        \begin{tabular}{C{2cm}|C{1.2cm}|C{1.2cm}|C{1.2cm}| }
+            \cline{2-4}
+            & \multicolumn{3}{c|}{\textbf{Mean Wind Speed [m/s]}} \\
+            \cline{2-4}
+            & $\mathbf{0}$& $\mathbf{4}$ & $\mathbf{7}$ \\
+            \hline
+            \multicolumn{1}{|c|}{\textbf{VT-NMPC}} & $100\%$  & $99.8\%$    & $99.4\%$\\
+            \hline
+            \multicolumn{1}{|c|}{\textbf{PAMPC}} & $100\%$  & $99.9\%$  & $99.8\%$\\
+            %\hline
+            %\multicolumn{1}{|c|}{\textbf{PAMPC}} & $100\%$  & $99.8\%$  & $97.1\%$\\
+            \hline
+            \multicolumn{1}{|c|}{\textbf{NMPC}} & $100\%$  & $91.6\%$  & $77.2\%$\\
+            \hline
+
+        \end{tabular}
+        \label{tab:week1}
+    \end{subtable}\\
+    \vspace{0.2cm}
+    %
+    \begin{subtable}[h]{0.5\textwidth}
+        \caption{Safety}
+        \centering
+        \begin{tabular}{C{2cm}|C{1.5cm}|C{1.3cm}|C{1.4cm}| }
+            \cline{2-4}
+            & \textbf{Mean [m]} & \textbf{Min [m]} & \textbf{Max [m]} \\
+            \hline
+            \multicolumn{1}{|c|}{\textbf{VT-NMPC}} & $7.03$ & $6.15$ & $7.95$ \\
+            \hline
+            \multicolumn{1}{|c|}{\textbf{PAMPC}} & 7.07  &5.84 & 8.22 \\
+            \hline
+            \multicolumn{1}{|c|}{\textbf{NMPC}} & $7.06$  & $5.63$ & $8.31$ \\
+            \hline
+        \end{tabular}
+        \label{tab:week2}
+     \end{subtable}\\
+    \vspace{0.2cm}
+    %
+     \begin{subtable}[h]{0.5\textwidth}
+        \caption{Inspection quality}
+        \centering
+        \begin{tabular}{C{2cm}|C{1.0cm}|C{1.0cm}|C{1.0cm}|C{1.0cm}| }
+            \cline{2-5}
+            & \multicolumn{2}{c|}{\textbf{$\mathrm{CM}$}} & \multicolumn{2}{c|}{\textbf{$\mathrm{ODM}$}} \\
+            \cline{2-5}
+            & \textbf{Mean} & \textbf{Min} & \textbf{Mean} & \textbf{Min} \\
+            \hline
+            \multicolumn{1}{|c|}{\textbf{VT-NMPC}} & $0.999$ & $0.989$ & $0.915$ & $0.781$ \\
+            \hline
+             \multicolumn{1}{|c|}{\textbf{PAMPC}} &0.996 & 0.970 &0.856  & 0.533\\
+            \hline
+            \multicolumn{1}{|c|}{\textbf{NMPC}} & $0.985$ & $0.877$ & $0.864$ & $0.533$ \\
+            \hline
+        \end{tabular}
+        \label{tab:week3}
+     \end{subtable}
+\end{table}
+
+\end{comment}
+
+
+
+% \begin{figure}[ht]
+%   \centering
+%     \begin{algorithm}[H]
+%       %\SetAlgoLined
+%   \textbf{Input:} $Coverage \%$ $=\{\mathbf{n}, \mathbf{V},\mathbf{x}\}$\\
+%     %\hspace*{\algorithmicindent} \textbf{Output:} $\mathcal{L} = \{l_1, l_2, ... \}$ \\
+%       \While{$\mathcal{O}$ available}
+%       {
+%         $\mathcal{O} \leftarrow$ vector of sensor observations at t\\
+%         $\boldsymbol{V} \leftarrow$ infer location $P(\mathcal{V}| \mathcal{O}, \lambda)$\\
+%         \eIf{$s_t == S1$}
+%         {
+%             %$\Gamma \leftarrow$ vector of weak oracle labels at t\\
+%             %$\lambda^* \leftarrow$ estimate likelihood %$\mathcal{L}(\lambda|\Gamma)$\\
+%           %  $e(t) \leftarrow$ compare $\boldsymbol{V}$ with $\Gamma$\
+%         }
+
+
+%       }
+%       \caption{Proposed Algorithm}
+%       \label{algo}
+%     \end{algorithm}
+%   \vspace{-4ex}
+% \end{figure}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%\begin{figure}
+ %    \centering
+ %    \begin{subfigure}[b]{0.5\textwidth}
+ %        \centering
+ %        \includegraphics[width=\textwidth]{figures/visual_costs.jpg}
+ %        \caption{Visual costs variation throughout the trajectory}
+ %        \label{fig:costs}
+ %    \end{subfigure}
+ %    \hfill
+ %    \begin{subfigure}[b]{0.5\textwidth}
+ %        \centering
+ %        \includegraphics[width=\textwidth]{figures/KKT.jpg}
+ %        \caption{KKT tolerance }
+ %        \label{fig:kkt}
+ %    \end{subfigure}
+ %    \hfill
+    % \begin{subfigure}[b]{0.5\textwidth}
+    %     \centering
+     %    \includegraphics[width=\textwidth]{figures/normals.jpg}
+     %    \caption{Plot of surface normal $n_x, n_y, n_z$}
+     %    \label{fig:normals}
+     %\end{subfigure}
+     %   \caption{Cost function plots and variation with surface normals}
+ %       \label{fig:objectives}
+%
+% \end{figure}
+%\begin{figure}[h]
+%\centering
+%\includegraphics[width=.5\textwidth]{figures/delta_n.jpg}
+%\caption{delta n}\label{deltan}
+%\end{figure}
+
+
+
+
+
+%\vspace{2mm}\fcolorbox{red}{lightgreen}{%
+%    \parbox{0.9\linewidth}{%
+%    Point to elaborate on:
+%    \begin{itemize}
+%        \item Describing the figure
+%        \item How many surfaces were not visible/inspected.
+%        \item Why did some of them were left. --  maybe in the new generated trajectory, it won't be a problem --. \item time of coverage
+%        \item AFTER COMPARISON ADDED: how does our method contrast with the competitors.
+%    \end{itemize}
+%    }%
+%} 
+
+
+%\vspace{2mm}\fcolorbox{red}{lightred}{%
+%    \parbox{0.9\linewidth}{%
+%    Point to elaborate on:
+%    \begin{itemize}
+%        \item Describing the figure
+%        \item Mentioning what the boundaries are and how did you selected these numbers? (for eg. required for good quality images)
+%        \item The maintained distance always in between the boundaries even while changing the sides.
+%        \item Smoothness is not good (might improve).
+    
+%        \item AFTER COMPARISON ADDED: how does our method contrast with the competitors.
+    
+%    \end{itemize}
+%    }%
+%} 
+
+
+
+
+
+
+%\vspace{2mm}\fcolorbox{red}{lightgreen}{%
+%    \parbox{0.9\linewidth}{%
+%    Point to elaborate on:
+%    \begin{itemize}
+%        \item Individual cost plot (Plot in Logarithmic scale): 
+%        \begin{list}
+%            \item Why is C_r dominating?
+%            \item Although C_r increases while changing sides, it quickly comes down signifying the stability of the formulated cost.
+%            \item Say that C_h is always zero -> following the goal.
+%            \item Comment on when does C_d increase? Follows similar pattern to C_r - Why?
+%        \end{list}
+%         \item Two subplot for KKT and obj. (KKT Plot in Logarithmic scale): 
+%        \begin{list}
+%            \item Comment on what does KKT imply? Get idea from Autonomous Robots Journal.
+%            \item Increases mostly during shifting from one side to another. Which is as expected. Also, link it to the objective.
+%        \end{list}
+%        \item AFTER COMPARISON ADDED: how does our method contrast with the competitors.
+    
+%    \end{itemize}
+%    }%
+%}
+
+
+
+
+
+%The visual costs plots are shown in Fig. \ref{fig:costs}.  $C_r$ and $C_d$ show significant peaks. There are a total of 6 peaks during the inspection trajectory, corresponding to the instances of changing the inspection side. Changing the inspection side results in a rapid change in the surface's normal direction\ref{fig:normals}, which results in changing the objective. The cost rapidly decreases due to the drone adjusting its pose relative to the surface. The fourth and fifth peaks last longer due to the continuous shift of the region of interest as the surface normal's lie on an inclined surface ($n_z >$ 0). The heading cost is kept near zero value at all times since the drone heading can be readily adjusted by controlling the yaw rate $\dot{\psi}$. The objective function is heavily influenced by the value of $C_r$ as it has a dominating influence compared to the other cost functions.
+%Fig. \ref{fig:kkt} and show the \ac{KKT} error plot which measures the optimality of the solution obtained by the \ac{NMPC}. The \ac{KKT} error remains at relatively low values, below 50, except at the turns where we observe a sudden peak. 
+
+
+%\fcolorbox{red}{lightgreen}{%
+%    \parbox{0.9\linewidth}{%
+%         Point to elaborate on:
+%  \begin{itemize}
+%       \item Individual cost plot (Plot in Logarithmic scale): 
+%     
+%        \item Why is $C_r$ dominating?
+%        \item Although $C_r$ increases while changing sides, it quickly comes down signifying the stability of the formulated cost.
+%         \item Say that $C_h$ is always zero -> following the goal.
+%        \item Comment on when does $C_d$ increase? Follows similar pattern to $C_r$ - Why?
+%        \item Two subplot for KKT and obj. (KKT Plot in Logarithmic scale): 
+%        \item Comment on what does KKT imply? Get idea from Autonomous Robots Journal.
+%         \item Increases mostly during shifting from one side to another. Which is as expected. Also, link it to the objective.
+%        \item AFTER COMPARISON ADDED: how does our method contrast with the competitors.
+    
+%  \end{itemize}
+   %
+    %
+%}
+%}
+
+\section{Real-World Experiments} \label {sec:results_r}
+
+%To further compare the proposed visual tracking model predictive controller against other model predictive controllers, we ran the three methods onboard a small, custom made autonomous quadrotor. (add link to video) 
+% Add image of the drone and the cage
+% Describe the test setup (wind tunnel , wind velocities (5m/s), scaling of the turbine, drone trajectory , speed) }
+
+\subsection{Experimental Setup}
+
+%To further study the proposed method under real-world conditions, we carry out experiments in which a quadrotor is tasked to inspect an imaginary horizontal turbine blade of $2 \times 5$ (m) laying on the ground. A blowing tunnel is used to provide disturbances with a wind speed of $5$ (m/s) reflecting the realistic conditions in common wind turbine inspections. A customized small quadrotor platform, having a total mass of 1090g and the rotor-to-rotor diagonal dimension of $250$ mm, is developed in-house. The drone is equipped with an Nvidia Jetson TX2 running our software system onboard. The robot's localization is provided externally by a Vicon motion capture system. For low-level control mapping from thrust and body rates to rotor speeds, a Pixhawk-based autopilot board is utilized as an interface between the ROS-based MPC controller software and the drone hardware. Readers are encouraged to watch the accompany video of such an experiment at \hanote{add link to video}
+
+%To further analyze the proposed inspection framework, we conducted real-world experiments in an indoor setting. A customized small-scale quadrotor, having a total mass of $1090$g and a rotor-to-rotor diagonal dimension of $250$ mm, is developed in-house. The drone is equipped with an Nvidia Jetson TX2 onboard computer that runs the trajectory generation and VT-NMPC codes online. Also, a Pixhawk flight controller running the PX4 firmware renders the controller mapping from thrust and body rates to rotor speeds. In terms of the experimental setup, the drone is tasked with inspecting a single turbine blade of the turbine inspected in Section \ref{sec:results}, scaled by a factor of 1/10, 1/10, and 1/15 in x, y and z dimensions respectively due to testing space limitation. Additionally, a blowing tunnel is incorporated that provides disturbances with a wind speed of $4$ (m/s) reflecting the realistic conditions in common wind turbine inspections. Readers are encouraged to watch the accompanying video of such an experiment at
+
+%To further analyze the proposed inspection framework, we conduct real-world experiments in an indoor setting equipped with a Vicon motion capture system. 
+
+%The real-world experiments are conducted in a motion capture system environment having 16 cameras. It is important to note that the use of this system is consistent across all methods and should not have affected the presented comparative study. To cater to the limited testing volume of the available motion capture system, we conduct real-world experiments on the scaled-down trajectory for a single blade. Nevertheless, the testing environment is still close to what the drone would experience in real-world scenarios. Besides, it also validates the real-time feasibility of the presented framework on real hardware.  Additionally, a blowing tunnel is incorporated to provide disturbances with a wind speed of $4$ (m/s), reflecting the operational conditions during wind turbine inspections.
+
+
+
+The real-world experiments are conducted in a motion capture system environment having 16 cameras. It is important to note that the use of this system is consistent across all methods and should not have affected the presented comparative study. Additionally, a blowing tunnel is incorporated to provide disturbances with a wind speed of $4$ (m/s), reflecting the operational conditions during wind turbine inspections.\textbf{}
+As such, we develop in-house a small-scale quadrotor, having a total mass of $1090$g and a rotor-to-rotor diagonal dimension of $250$ mm. The drone is equipped with an Nvidia Jetson TX2 onboard computer that runs the trajectory generation and VT-NMPC codes online. Also, a Pixhawk flight controller running the PX4 firmware renders the controller mapping from thrust and body rates to rotor speeds. In terms of the experimental setup, the drone is tasked with inspecting a single blade of the turbine inspected in Section VI. Besides, the blade is scaled by a factor of $1/10$, $1/10$, and $1/15$ in x, y, and z dimensions, respectively, and $d^{\mathrm{ref}}=0.5$m is set, to cater to the limited testing space. %Moreover, readers are encouraged to watch the accompanying video of such an experiment
+%\footnote{\url{https://youtu.be/HbRiSAYXraY}}.
+
+
+
+% \begin{figure*}[t!]
+%      \centering
+%     \begin{subfigure}[t]{0.32\textwidth}
+%         \raisebox{-\height}{\includegraphics[width=\textwidth]{Autonomous_Robots/figures/abs_error.pdf}}
+%         \caption{A plot of the absolute error in the distance from the blade. The fluctuations observed are due to the wind disturbance applied. $d^\textrm{ref}$ is specified as $0.5$m.}
+%          \label{fig:distance_r}
+%     \end{subfigure}
+%     \hfill
+%     \begin{subfigure}[t]{0.32\textwidth}
+%         \raisebox{-\height}{\includegraphics[width=\textwidth]{Autonomous_Robots/figures/cm.pdf}}
+%         \caption{A plot of the centering metric (CM) vs. time. VT-NMPC consistently tracks the centre of the inspected surface area, even under wind disturbance, as opposed to PAMPC and NMPC.}
+%         \label{fig:cm_r}
+%     \end{subfigure}
+%     \hfill
+%     \begin{subfigure}[t]{0.32\textwidth}
+%         \raisebox{-\height}{\includegraphics[width=\textwidth]{Autonomous_Robots/figures/odm.pdf}}
+%         \caption{A plot of the orthogonality of the drone with respect to the surface.}
+%         \label{fig:odm_r}
+%     \end{subfigure}
+%     \caption{Metrics plot for a single run for the three controllers during real-world tests.}
+%     \label{fig:real_tarj}
+%     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%second row
+% \end{figure*}
+
+\subsection{Experimental Results}
+%The proposed method and other MPC baselines are evaluated in similar setups. The trajectories obtained from real-time experiments are used to compare the methods in terms of the metrics defined in Section \ref{sec:results} and plotted in Fig \ref{fig:real_tarj}. A more comprehensive statistical analysis where multiple experimental runs are conducted. %The obtained metrics for a single run are shown in Fig. \ref{fig:real_tarj}. %\cref{fig:distance_r,fig:cm_r,fig:odm_r}.
+
+Next, we present the experimental results, wherein the proposed VT-NMPC method and the baselines are evaluated in a similar setting to the simulation study. As such, the tracked trajectories from the three methods are utilized to compute the defined metrics, i.e., safety, coverage, and inspection quality. 
+
+
+%\subsubsection{Metrics Evaluation}
+
+\begin{figure}[]
+\centering
+\includegraphics[width=.45\textwidth]{Autonomous_Robots/figures/distance_real.pdf}
+\caption{A plot of the distance from the blade throughout the trajectory, showing the upper and lower safety margins and the reference ($d^{ref}$). }  \label{fig:distance_r}
+\end{figure}
+
+
+\begin{figure}[]
+\centering
+\includegraphics[width=.45\textwidth]{Autonomous_Robots/figures/cm.pdf}
+\caption{A plot of the centering metric (CM) vs. time. VT-NMPC consistently tracks the center of the inspected surface area, even under wind disturbance, as opposed to PAMPC and NMPC.}  \label{fig:cm_r}
+\end{figure}
+
+
+For the specific experimental run, the obtained coverage values from the VT-NMPC, PAMPC, and conventional NMPC are $100\%$, $90\%$, and $96\%$, respectively. This validates the superiority of the added visual tracking costs within the VT-NMPC method. Then, to illustrate the safety metric, the resulting absolute distance error throughout the trajectory is shown in Fig.~{\ref{fig:distance_r}}. Note that a safety margin of 10cm is selected in real-world experiments due to the limited testing area. As can be seen, the proposed VT-NMPC method on average maintains the lowest error to the reference in comparison to the baselines. Accordingly, it enables the drone to stay within the safety limits for 98\% of the run time, even for such a small safety margin. It may be worth noting that for a marginal increase of 5cm in the safety margin, an SM = 100\% is realized for the VT-NMPC method, while the other competitors still violate the limits for substantial run time. The centering metric performance can be observed in Fig.~{\ref{fig:cm_r}}. As visualized, the real-world results manifest a dominating performance of VT-NMPC compared to the PAMPC and conventional NMPC. One may note a performance drop for the PAMPC method in the real-world results. This is attributed to the conservative tuning of the perception cost, which otherwise resulted in instability. The main reason for this behavior is the complexity of the perception cost, which also has the possibility of a division by zero during the projection step. Furthermore, the computational effort is measured for the three controllers. The execution time is lowest for the conventional NMPC (5 milliseconds), followed by VT-NMPC (10 milliseconds), then PAMPC (13 milliseconds), implying that the benefits of vision-based MPC methods come at an additional computational burden. Nevertheless, the proposed VT-NMPC method does show a 30\% performance improvement over the baseline PAMPC, which can be attributed to the simplicity of its visual costs. 
+
+
+
+%The centering metric shows the of our proposed heading cost, compared to the perception cost proposed in \cite{falanga2018pampc}.The proposed perception cost leads to a faster response and smaller offset in the desired heading from the drone. 
+
+
+
+
+
+
+
+% \subsubsection{Statistical Analysis}
+
+
+% To account for the real-world operational stochasticity, three experimental runs for the controllers are recorded. 
+% Accordingly, the obtained metrics are summarized in Table~{\ref{table:stats}}, along with a boxplot depicted in Fig.~{\ref{fig:box}}. Note that, to obtain a consistent scaling with other metrics, a distance accuracy metric (1 - distance error) is utilized in the statistical results.
+% As seen in the table, the VT-NMPC method achieves almost full coverage, which is a crucial requirement in the inspection task, while the other methods fail. Note that, the drone's ability to maintain the inspection area centered within the FOV eventually guarantees coverage provided the drone maintains a certain distance from the turbine. Overall, the results manifest that the proposed VT-NMPC method outperforms all the other metrics without compromising the ODM. Moreover, it can be observed that VT-NMPC maintains the lowest standard deviation, which signifies consistent performance under operational uncertainties, and eventually reflects the robustness of the proposed method.
+
+
+
+% \begin{figure}
+% \centering
+% \includegraphics[width=0.5\textwidth]{Autonomous_Robots/figures/fig_boxPlot_metrics}
+% \caption{Box plot showing the performance of the three methods after multiple real-world experimental runs. The proposed VT-NMPC performs better in CM, distance accuracy, and coverage without compromising ODM.} }\label{fig:box}
+% \end{figure}
+
+
+
+
+
+
+
+
+
+
+
+
+
+\begin{table}
+\centering
+    \label{tab:compare}
+    \begin{tabular}{|C{2.0cm}|C{1.5cm}|C{1.5cm}|C{1.6cm}| }
+    
+        \cline{2-4}
+        \multicolumn{1}{c|}{} & \textbf{NMPC} & \textbf{PAMPC} & \textbf{VT-NMPC} \\
+        \cline{1-4}
+        \hline
+        Coverage   & $98.0\% $ & $91.0\%$ & $\textbf{99.8\%}$ \\
+        \hline
+        \multirow{1}{*}{Safety (SM)}  &  $43.0\%$ & $89.9\%$ &$\textbf{98.0\%}$\\
+        \hline
+        \multirow{1}{*}{Quality (CM)}  & $97.0\% $ & $90.8\%$ & $\textbf{99.5\%} $ \\
+        \hline
+    \end{tabular}
+    \caption{Statistical analysis of the experimental results. For each metric, the average values in percentage are calculated based on three experimental runs. $d^\textrm{ref}$ is specified as $0.5$m and the safety margin is 0.1 m.
+    %The experiments are conducted at $4$ m/s wind speed and with $d^{\mathrm{ref}}=0.5$m.
+    }
+    \label{table:stats}
+\end{table} 
+
+
+\section{Conclusions}
+\label{sec:conclusion}
+
+
+%In this work, a novel wind turbine blade inspection framework and model predictive controller are presented. After conducting multiple simulations and real-world tests, it can be concluded that the proposed VT-NMPC method shows improvements to the existing MPC methods in several aspects. When compared to the PAMPC, the term that controls the heading is simpler in terms of implementation and computation and shows better performance in achieving coverage and high inspection quality. Moreover, the VT-NMPC method shows promising improvements in obtaining better image quality by maintaining an optimal pose relative to the surface. This presents potential benefits gained from using a reference surface in the MPC formulation rather than a reference pose for inspection.  Even though this method is developed for wind turbine inspection, it can also be extended to a wider variety of inspection tasks by replacing the wind turbine-specific path planner.  
+
+%As part of future work, we intend to collaborate with a wind turbine manufacturer to conduct outdoor testing of the proposed framework. 
+
+In this work, an automated wind turbine inspection framework incorporating a novel NMPC method with visual tracking objectives is presented. Multiple simulations and real-world tests validated that the proposed VT-NMPC method outperforms traditional MPC methods in several aspects. When compared to the PAMPC, the heading-control term is more intuitive, facilitating easier implementation, and shows better performance in achieving full coverage and high inspection quality. Moreover, the VT-NMPC method shows promising improvements in obtaining better image quality by maintaining an optimal relative pose to the inspection surface. Besides, the proposed method infers a potential benefit of directly incorporating the reference surface's pose in the MPC formulation rather than utilizing a position trajectory for the drone during inspection. It is worth noting that even though the proposed method is exclusive to wind turbine inspection, it can be extended to a broader inspection spectrum by replacing the wind turbine-specific path planner.
+As part of future work, we intend to collaborate with a wind turbine manufacturer to conduct outdoor testing of the proposed framework.
+
+
+\section{Acknowledgement}
+{
+This work is supported by EIVA a/s and Innovation Fund Denmark under grants 2040-00032B and 2035-00052B. The authors would like to thank Peter Harling Lykke for his support during the real-world experiments. Furthermore, the authors would further like to acknowledge Upteko Aps for bringing the use-case challenge.
+}
+
+
+
+
+
+
+
+
+
+
+
+
+\bibliography{refs.bib}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\addtolength{\textheight}{-12cm}   % This command serves to balance the column lengths
+                                  % on the last page of the document manually. It shortens
+                                  % the textheight of the last page by a suitable amount.
+                                  % This command does not take effect until the next page
+                                  % so it should come on the page before the last. Make
+                                  % sure that you do not shorten the textheight too much.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}

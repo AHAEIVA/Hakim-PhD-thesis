@@ -1,0 +1,201 @@
+\documentclass{IEEEtran}
+\IEEEoverridecommandlockouts                             
+\hyphenation{op-tical net-works semi-conduc-tor}
+
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+%\usepackage{acronym}
+\usepackage{blindtext}
+\usepackage[nolist]{acronym}
+\usepackage[table, dvipsnames]{xcolor}
+\usepackage[pdftex]{graphicx} % graphics package
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\usepackage{caption}
+\usepackage{xcolor}
+\usepackage{soul}
+\captionsetup{compatibility=false}
+\usepackage{subcaption}
+\usepackage{array} % for defining custom column types
+\usepackage{amssymb} %we added the package to the document
+\usepackage[bottom]{footmisc}
+\usepackage{booktabs}
+\usepackage{amsthm}
+\graphicspath{{figures/}} % declare the path where graphic files are
+\DeclareGraphicsExtensions{.pdf,.jpg,.png} % grafic files extensions
+\usepackage{amsmath} % math package for split
+\usepackage{amsfonts} % math package for fonts
+\usepackage{mathtools} % math package for tools like prescript
+\usepackage{tikz} % figure package
+\usetikzlibrary{shapes,arrows,fit,calc,positioning,automata,backgrounds}
+%\usepackage{dblfloatfix} % figure package for positioning figures on the bottom
+\usepackage{color} % colors package
+\usepackage{multirow} % multiple rows in table
+\usepackage{hhline} % separator in 
+\usepackage{booktabs}
+\usepackage[bookmarks=false, breaklinks]{hyperref} % hyperlink package
+\usepackage{enumerate} % enumerate package
+\usepackage{epstopdf} % package to include eps. files
+\usepackage{dsfont}
+\usepackage{textcomp}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{siunitx} % package for international system units
+\usepackage{cite}   % for compact citations, i.e. [1, 2]
+\usepackage{diagbox}    % for making slash cell in a table
+\usepackage{pdfpages}   
+\usepackage{breqn}
+\usepackage{svg}
+\usepackage{multicol}
+\svgpath{{images/svg/}} % <- using \svgpath to avoid warning
+\colorlet{Green1}{green!90!}
+\colorlet{Green2}{green!60!}
+\colorlet{Green3}{green!40!}
+\colorlet{Green4}{green!20!}
+\colorlet{Green5}{green!10!}
+
+% Used in order to break URL into smaller sections when seeing / or -
+\usepackage{url}
+\def\UrlBreaks{\do\/\do-}
+\usepackage{breakurl}
+
+%% ORCID
+\RequirePackage{tikz} % For \foreach used for Orcid icon
+% Make Orcid icon
+\newcommand{\orcidicon}{\includegraphics[width=0.32cm]{images/orcid/logo-orcid.eps}}
+
+% Define link and button for each author
+\foreach \x in {A, ..., Z}{%
+\expandafter\xdef\csname orcid\x\endcsname{\noexpand\href{https://orcid.org/\csname orcidauthor\x\endcsname}{\noexpand\orcidicon}}
+}
+
+\newcommand{\orcidauthorA}{0000-0001-5387-7613} % Add \orcidA{} behind the author's Hakim
+\newcommand{\orcidauthorB}{0000-0003-3581-9481} % Add \orcidB{} behind the author's Olaya
+\newcommand{\orcidauthorC}{0000-0002-1609-5783} % Add \orcidC{} behind the author's name  Halil
+\newcommand{\orcidauthorD}{0000-0002-7742-6996} % Add \orcidD{} behind the author's name  Jonas
+\newcommand{\orcidauthorE}{0009-0002-0445-8126} % Add \orcidE{} behind the author's name  Yury
+\newcommand{\orcidauthorF}{0000-0002-7143-8777} % Add \orcidF{} behind the author's name  Erdal
+
+
+
+
+
+\definecolor{Bookcolor}{HTML}{00F9DE}
+\definecolor{darkgreen}{rgb}{0.0, 0.5, 0.0}
+\definecolor{gray}{gray}{0.9}
+\definecolor{lightgray}{rgb}{0.86, 0.86, 0.86}
+
+\makeatletter
+\def\@citex[#1]#2{\leavevmode
+\let\@citea\@empty
+\@cite{\@for\@citeb:=#2\do
+{\@citea\def\@citea{,\penalty\@m\ }%
+\edef\@citeb{\expandafter\@firstofone\@citeb\@empty}%
+\if@filesw\immediate\write\@auxout{\string\citation{\@citeb}}\fi
+\@ifundefined{b@\@citeb}{\hbox{\reset@font\bfseries ?}%
+\G@refundefinedtrue
+\@latex@warning
+{Citation `\@citeb' on page \thepage \space undefined}}%
+{\@cite@ofmt{\csname b@\@citeb\endcsname}}}}{#1}}
+\makeatother
+
+
+\newcommand{\HP}[1]{\textcolor{blue}{[HP: #1]}}
+\newcommand{\HIU}[1]{\textcolor{red}{[HIU: #1]}}
+\newcommand{\KA}[1]{\textcolor{orange}{[KA: #1]}}
+\newcommand{\EK}[1]{\textcolor{magenta}{[EK: #1]}}
+\newcommand{\JFS}[1]{\textcolor{darkgreen}{[JFS: #1]}}
+\newcommand{\note}[1]{\textcolor{red}{[NOTE: #1]}}
+
+\DeclareMathOperator*{\minimize}{{min}}
+\DeclareMathOperator*{\maximize}{{max}}
+
+\newcommand{\bm}[1]{\mathbf{#1}}
+
+\newcommand{\orcidauthorA}{0000-0002-7742-6996} % Add \orcidA{} behind the author's name
+\newcommand{\orcidauthorB}{0000-0002-7143-8777} % Add \orcidB{} behind the author's name
+\begin{acronym}
+    % \acro{CAMAP}{conflict-aware multi-agent planner}
+
+    \acro{MPC}{model predictive control}
+    \acro{GP}{Gaussian process}
+    \acroplural{GP}[GPs]{Gaussian processes}
+    \acro{AUV}{Autonomous underwater vehicle}
+    \acro{MHE}{moving horizon estimator}
+    \acro{ASGP}{adaptive sparse Gaussian process}
+    \acro{EKF}{extended kalman filter}
+    \acro{ROV}{remotely operated vehicle}
+    \acro{DF-GP}{dynamic forgetting Gaussian process}
+    \acro{IMU}{inertial measurement unit}
+    \acro{DVL}{doppler velocity log}
+    \acro{NED}{North-EastDown}
+    \acro{RTI}{real-time iteration}
+    \acro{NN}{neural network}
+    \acro{OCP}{optimal control problem}
+    \acro{LP}{linear program}
+%    \acro{AUVs}{Autonomous underwater vehicles}
+    \acro{ASGP}{adaptive sparse gaussian process}
+    
+\end{acronym}
+
+
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+
+\usepackage{amsthm}
+
+\newtheorem{remark}{Remark}
+
+    
+\begin{document}
+\title{ Empowering Autonomous Underwater Vehicles Using Learning-based Model Predictive Control With Dynamic Forgetting Gaussian Processes}
+
+
+\author{Abdelhakim Amer, \IEEEmembership{Graduate Student Member, IEEE}, Mohit Mehndiratta, Yury Brodskiy and Erdal Kayacan, \IEEEmembership{Senior Member, IEEE}
+% <-this % stops a space
+\thanks{Submitted on July 5, 2024. This research receives support from Innovation Fund Denmark grant number 2040-00032B and EIVA a/s.}
+
+\thanks{A. Amer is with the Artificial Intelligence in Robotics Laboratory (AiR Lab), Department of Electrical and Computer Engineering, Aarhus University, 8000 Aarhus C, Denmark {\tt\small abdelhakim@ece.au.dk}.}
+
+\thanks{Mohit Mehndiratta is with GIM Robotics, Espoo, Finland, {\tt\small mohit.mehndiratta@gimrobotics.fi}.}
+
+
+ \thanks{    Y. Brodskiy is with EIVA a/s, 8660 Skanderborg, Denmark. {\tt\small ybr@eiva.com.}}   
+ 
+ \thanks{E. Kayacan is with the Automatic Control Group (RAT), Department of Electrical Engineering and Information Technology, Paderborn University, Paderborn, Germany. {\tt\small erdal.kayacan@uni-paderborn.de}.}%
+}
+
+\maketitle
+\begin{abstract}
+
+\input{sections/abstract}
+\end{abstract}
+\IEEEpeerreviewmaketitle
+
+\begin{IEEEkeywords}
+Autonomous underwater vehicle (AUV), model
+predictive control (MPC), learning-based control, model learning, Gaussian processes (GPs), trajectory tracking.
+\end{IEEEkeywords}
+
+
+\input{sections/1-introduction} % 1 page
+
+\input{sections/2-related_work} % 1 page
+
+\input{sections/3-model} % 1.5 pages
+\input{sections/4-mpc} % 0.5 pages
+\input{sections/5-dynamic_forgetting-gp} % 0.25 page
+\input{sections/6-simulations} % 0.25 page
+%\input{sections/7-real-time-expirements} % 0.25 page
+\input{sections/7-conclusion} % 0.25 page
+
+\bibliographystyle{IEEEtran}
+
+\bibliography{References.bib}
+
+\end{document}

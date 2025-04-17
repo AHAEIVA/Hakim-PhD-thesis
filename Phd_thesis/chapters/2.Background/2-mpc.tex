@@ -1,0 +1,234 @@
+% Assuming Chapter/Section numbering continues from previous context
+\section{Overview of Model Predictive Control}
+
+Model Predictive Control (MPC) is an advanced control strategy that leverages a dynamic model of the system to predict its future behavior and optimize control actions over a finite time period, known as the prediction horizon ($T_p$). At each control cycle, MPC solves an online optimization problem to find a sequence of future control inputs that minimize a predefined cost function, subject to constraints on the system's states and inputs.
+
+A key characteristic of MPC is its receding horizon approach. Although an entire sequence of future control inputs is computed, only the first input in the sequence is applied to the system over the next sampling interval ($\delta$). At the subsequent time step, the system's state is measured or estimated, and the prediction horizon shifts forward. The optimization problem is then solved again with this updated information, providing feedback and adapting to changing conditions.
+
+For underwater vehicles, MPC offers significant benefits:
+\begin{itemize}
+    \item \textbf{Constraint Handling:} Systematically incorporates operational limits, such as maximum thruster forces (represented as limits on generalized forces $\vect{\tau}$), velocity restrictions, or safe operating areas, directly into the control problem formulation.
+    \item \textbf{Predictive Capability:} Anticipates future system behavior, allowing proactive control actions in response to reference trajectory changes or predictable disturbances.
+    \item \textbf{Optimality:} Balances competing objectives, such as precise trajectory tracking versus minimizing control effort, through the design of the cost function.
+    \item \textbf{Nonlinearity Handling:} Can explicitly utilize the nonlinear dynamic models (as derived previously, e.g., in Section \ref{sec}), capturing complex hydrodynamic effects more accurately than linear controllers.
+\end{itemize}
+
+\subsection{The MPC Algorithm Formulation}
+The core MPC algorithm involves repeatedly solving an optimal control problem. Let the system state be $\vect{x} = [\vect{\eta}^T, \vect{\nu}^T]^T \in \mathbb{R}^{12}$ (combining position/orientation and velocities), and the control input be the generalized force/moment vector $\vect{\tau} \in \mathbb{R}^6$. The continuous-time dynamics are $\dot{\vect{x}} = f(\vect{x}, \vect{\tau})$, representing the vehicle's equations of motion.
+
+The optimization problem solved at time $t$ is typically formulated as:
+
+\begin{mini!}|s| % Using amsmath's aligned within a mini environment for structure
+{\substack{\vect{\bar{\tau}}(\cdot) \\ \text{over } [t, t+T_p]}} % Optimization variable
+{J = \int_t^{t+T_p} L(\vect{\bar{x}}(\sigma), \vect{\bar{\tau}}(\sigma)) \, d\sigma + E(\vect{\bar{x}}(t+T_p))} % Cost function
+{\label{eq:mpc_opt}} % Label for the optimization problem
+{} % Empty alignment point
+\addConstraint{\dot{\vect{\bar{x}}}(\sigma)}{\!\!=\! f(\vect{\bar{x}}(\sigma), \vect{\bar{\tau}}(\sigma))}{\quad \forall \sigma \in [t, t+T_p]} % System dynamics
+\addConstraint{\vect{\bar{x}}(t)}{\!\!=\! \vect{x}(t)}{} % Initial condition (current state)
+\addConstraint{\vect{\bar{\tau}}(\sigma)}{\!\!\in\! \mathbb{T}}{\quad \forall \sigma \in [t, t+T_p]} % Input constraints
+\addConstraint{\vect{\bar{x}}(\sigma)}{\!\!\in\! \mathbb{X}}{\quad \forall \sigma \in [t, t+T_p]} % State constraints
+\end{mini!}
+Here:
+\begin{itemize}
+    \item $\vect{\bar{x}}(\sigma)$ and $\vect{\bar{\tau}}(\sigma)$ are the predicted state and control trajectories over the prediction horizon $[t, t+T_p]$.
+    \item $\vect{x}(t)$ is the current measured or estimated state.
+    \item $L(\cdot, \cdot)$ is the stage cost, often quadratic: $L(\vect{x}, \vect{\tau}) = \|\vect{x} - \vect{x}_{ref}\|_{\mat{Q}}^2 + \|\vect{\tau}\|_{\mat{R}}^2$, penalizing deviations from a reference $\vect{x}_{ref}$ and control effort, weighted by matrices $\mat{Q} \succeq 0$ and $\mat{R} \succ 0$.
+    \item $E(\cdot)$ is the terminal cost, often quadratic: $E(\vect{x}) = \|\vect{x} - \vect{x}_{ref}(t+T_p)\|_{\mat{P}}^2$, penalizing the predicted state deviation at the end of the horizon, weighted by $\mat{P} \succeq 0$. (Note: $\mat{P}$ is often chosen based on stability considerations, but can be set to zero if stability is not explicitly enforced via terminal cost).
+    \item $\mathbb{T}$ and $\mathbb{X}$ represent the sets of admissible control inputs and states, respectively (e.g., $\vect{\tau}_{min} \leq \vect{\bar{\tau}} \leq \vect{\tau}_{max}$).
+\end{itemize}
+The MPC control loop is summarized in Algorithm \ref{alg:mpc_loop}.
+
+\begin{algorithm}[H]
+\caption{MPC Control Loop}
+\label{alg:mpc_loop}
+\begin{algorithmic}[1]
+    \State At time $t$, measure or estimate the current state $\vect{x}(t)$.
+    \State Solve the optimal control problem \eqref{eq:mpc_opt} to obtain the optimal control sequence $\vect{\bar{\tau}}^*(\sigma)$ for $\sigma \in [t, t+T_p]$.
+    \State Apply only the first part of the optimal control input, $\vect{\tau}_{MPC}(t) = \vect{\bar{\tau}}^*(t)$, to the system (or as input to a lower-level control allocation if used) over the interval $[t, t+\delta)$.
+    \State Wait until the next sampling time $t+\delta$. Set $t \leftarrow t+\delta$ and go back to Step 1.
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Discretization for Numerical Solution}
+The continuous-time optimal control problem \eqref{eq:mpc_opt} must be discretized to be solved numerically. The prediction horizon $T_p$ is divided into $N$ intervals of length $\Delta t = T_p/N$. A common approach is to assume piecewise constant control inputs over each interval:
+\begin{equation}
+    \vect{\tau}(t) = \vect{\tau}_k \quad \text{for} \quad t \in [t_k, t_{k+1}), \quad k = 0, \dots, N-1
+\end{equation}
+where $t_k = t + k\Delta t$. The continuous state dynamics $\dot{\vect{x}} = f(\vect{x}, \vect{\tau})$ are discretized using a numerical integration method (e.g., Euler, Runge-Kutta) to obtain a discrete-time prediction model:
+\begin{equation}
+    \vect{x}_{k+1} = f_d(\vect{x}_k, \vect{\tau}_k)
+\end{equation}
+For instance, using the 4th-order Runge-Kutta (RK4) method:
+\begin{equation}
+    \vect{x}_{k+1} = \vect{x}_k + \frac{\Delta t}{6}(\mat{k}_1 + 2\mat{k}_2 + 2\mat{k}_3 + \mat{k}_4)
+\end{equation}
+where $\mat{k}_1 = f(\vect{x}_k, \vect{\tau}_k)$, $\mat{k}_2 = f(\vect{x}_k + \frac{\Delta t}{2}\mat{k}_1, \vect{\tau}_k)$, etc.
+The cost function integral is approximated by a sum:
+\begin{equation}
+    J_d = \sum_{k=0}^{N-1} L_d(\vect{x}_k, \vect{\tau}_k) + E(\vect{x}_N)
+\end{equation}
+where $L_d(\vect{x}_k, \vect{\tau}_k) \approx \int_{t_k}^{t_{k+1}} L(\vect{\bar{x}}(\sigma), \vect{\tau}_k) \, d\sigma$, often simplified to $L_d = \Delta t \left( \|\vect{x}_k - \vect{x}_{ref,k}\|_{\mat{Q}}^2 + \|\vect{\tau}_k\|_{\mat{R}}^2 \right)$.
+
+\subsection{Solving the Optimization Problem}
+Discretization transforms the optimal control problem into a Nonlinear Program (NLP). The decision variables are the sequence of control inputs $\vect{T}_U = \{\vect{\tau}_0, \dots, \vect{\tau}_{N-1}\}$.
+
+\subsubsection{Direct Methods}
+Direct methods treat both the control inputs $\vect{T}_U$ and the resulting state sequence $\vect{T}_X = \{\vect{x}_1, \dots, \vect{x}_N\}$ as optimization variables (with $\vect{x}_0 = \vect{x}(t)$ fixed). The discretized dynamics $ \vect{x}_{k+1} = f_d(\vect{x}_k, \vect{\tau}_k) $ are enforced as equality constraints. The NLP takes the form:
+\begin{equation}
+\begin{aligned}
+\min_{\vect{T}_U, \vect{T}_X} \quad & \sum_{k=0}^{N-1} L_d(\vect{x}_k, \vect{\tau}_k) + E(\vect{x}_N) \\
+\text{s.t.} \quad & \vect{x}_{k+1} = f_d(\vect{x}_k, \vect{\tau}_k), \quad k=0, \dots, N-1 \\
+& \vect{\tau}_k \in \mathbb{T}, \quad k=0, \dots, N-1 \\
+& \vect{x}_k \in \mathbb{X}, \quad k=1, \dots, N \\
+& \vect{x}_0 = \vect{x}(t)
+\end{aligned}
+\end{equation}
+This structured NLP can be solved using general-purpose NLP solvers.
+
+\subsubsection{Sequential Quadratic Programming (SQP)}
+SQP is a common iterative method for solving NLPs. At each iteration $k$, it approximates the NLP by a Quadratic Program (QP) obtained by linearizing the constraints and using a quadratic approximation of the Lagrangian function. The QP subproblem typically looks like:
+\begin{equation}
+\begin{aligned}
+\min_{\Delta\vect{z}} \quad & \frac{1}{2}\Delta\vect{z}^T \mat{H}_k \Delta\vect{z} + \vect{g}_k^T \Delta\vect{z} \\
+\text{s.t.} \quad & \mat{A}_{eq,k} \Delta\vect{z} = \vect{b}_{eq,k} \\
+& \mat{A}_{ineq,k} \Delta\vect{z} \leq \vect{b}_{ineq,k}
+\end{aligned}
+\end{equation}
+where $\Delta\vect{z}$ represents the step change in the optimization variables (e.g., $\vect{T}_U, \vect{T}_X$), $\mat{H}_k$ approximates the Hessian of the Lagrangian, $\vect{g}_k$ is the gradient of the objective function, and $\mat{A}_{eq,k}, \mat{A}_{ineq,k}$ are Jacobians of the constraints, all evaluated at the current iterate $\vect{z}_k$. Solving this QP yields a search direction $\Delta\vect{z}$, and the next iterate is found using a line search.
+
+% \subsection{Implementation Considerations}
+% Implementing MPC effectively involves several practical aspects:
+
+% \subsubsection{Real-Time Computation} % Kept this subsubsection title
+% Solving the optimization problem online at each sampling instant $\delta$ requires significant computational power, especially for fast systems or long horizons. Techniques to enable real-time MPC include:
+% \begin{itemize}
+%     \item \textbf{Efficient Solvers:} Using structure-exploiting optimization algorithms (e.g., interior-point methods, active-set methods tailored for MPC).
+%     \item \textbf{Warm-Starting:} Initializing the solver at time $t+\delta$ with the shifted optimal solution from time $t$.
+%     \item \textbf{Reducing Complexity:} Using techniques like move blocking (keeping control input constant over several steps) or shortening the prediction horizon $T_p$. A common rule of thumb suggests $T_p$ should cover the dominant dynamics, e.g., 5-10 times the vehicle's main time constant.
+%     \item \textbf{Constraint Softening:} Relaxing constraints slightly using penalty terms if the problem becomes infeasible, ensuring the solver always returns a (possibly suboptimal) solution.
+% \end{itemize}
+
+% \subsubsection{Other Considerations} % Combined stability mention here
+% Beyond computational performance, ensuring the stability of the closed-loop system is a crucial aspect of practical MPC design, particularly when dealing with nonlinear dynamics and constraints. While rigorous stability guarantees often involve specific choices of terminal costs and constraints, these theoretical aspects are complex and depend heavily on the system and controller tuning. For this overview, we acknowledge stability as an important factor to consider during implementation and validation, although detailed analysis methods are not covered here.
+
+% --- Optional: Combine Implementation Considerations into one subsection ---
+\subsection{Implementation Considerations}
+Implementing MPC effectively on a marine robot involves addressing several practical aspects.
+
+Firstly, \textbf{real-time computation} is critical. Solving the optimization problem online at each sampling instant $\delta$ demands significant computational resources. Common techniques to achieve real-time performance include: using efficient, structure-exploiting optimization solvers; warm-starting the solver at time $t+\delta$ with the shifted solution from time $t$; reducing problem complexity via methods like move blocking (keeping control inputs constant over several steps) or adjusting the prediction horizon $T_p$ (which typically needs to be long enough to capture relevant dynamics); and potentially using constraint softening to handle occasional infeasibility gracefully.
+
+Secondly, while the receding horizon nature provides feedback, \textbf{closed-loop stability} is not automatically guaranteed, especially for nonlinear systems with constraints. Ensuring stability is an important consideration in practical MPC design and tuning. Although formal methods exist (often involving specific choices for the terminal cost $E(\cdot)$ and potentially terminal constraints), they add complexity and are beyond the scope of this introductory overview. Stability performance in practice often needs to be verified through extensive simulation and experimental testing.
+
+
+% \subsubsection{Control Allocation}
+% The MPC controller typically computes the desired generalized forces and moments $\vect{\tau}_{MPC} \in \mathbb{R}^6$. These must then be distributed among the available actuators (e.g., $n$ thrusters). This is the thruster allocation problem, often solved as a separate, computationally cheaper optimization problem at each step:
+% \begin{equation} \label{eq:thruster_alloc}
+% \begin{aligned}
+% \min_{\vect{T}} \quad & \|\mat{B}\vect{T} - \vect{\tau}_{MPC}\|^2 + \epsilon \|\vect{T}\|^2 \\ % Added regularization
+% \text{s.t.} \quad & \vect{T}_{min} \leq \vect{T} \leq \vect{T}_{max}
+% \end{aligned}
+% \end{equation}
+% where $\vect{T} \in \mathbb{R}^n$ is the vector of individual thruster commands (denoted $\vect{u}_{thr}$ previously), $\mat{B}$ is the $6 \times n$ thrust configuration matrix (from Section \ref{sec}), and $\vect{T}_{min}, \vect{T}_{max}$ are the saturation limits. A small regularization term ($\epsilon > 0$) can be added for robustness. This is typically a constrained least-squares problem, often solved using fast QP solvers.
+
+
+% \section{Model Predictive Control}
+
+% \subsection{What is model predictive control?}
+% Model Predictive Control (MPC) is an advanced control strategy that uses a dynamic model of the system to predict future behavior and optimize control actions. For underwater vehicles, MPC solves an optimal control problem over a finite prediction horizon at each sampling instant. The controller computes a sequence of control inputs that minimize a cost function while respecting constraints on states and inputs.
+
+% The distinguishing feature of MPC is its receding horizon implementation: although the optimization computes a sequence of future control actions, only the first control input is applied to the system. At the next sampling instant, the entire optimization process repeats with updated state information, creating a closed-loop feedback system.
+
+% MPC offers several advantages for underwater vehicle control: systematic constraint handling for thruster limitations and operational boundaries; anticipatory action allowing proactive response to reference changes and disturbances; multi-objective optimization balancing tracking performance and energy consumption; and explicit integration of the nonlinear hydrodynamic model.
+
+
+% \subsection{MPC Algorithm}
+% The Model Predictive Control (MPC) algorithm for underwater vehicles follows these key steps:
+
+% \begin{algorithm}[H]
+% \caption{MPC Control Loop}
+% \begin{algorithmic}[1]
+% \State Measure current state $\mathbf{x}(t)$
+% \State Solve finite-horizon optimal control problem:
+% \begin{align*}
+% \min_{\bar{\mathbf{u}}} J &= \int_t^{t+T_p} \left(\|\bar{\mathbf{x}}-\mathbf{x}_{ref}\|_{\mathbf{Q}}^2 + \|\bar{\mathbf{u}}\|_{\mathbf{R}}^2\right)d\tau + \|\bar{\mathbf{x}}(t+T_p)\|_{\mathbf{P}}^2 \\
+% \text{s.t.} \quad & \dot{\bar{\mathbf{x}}} = f(\bar{\mathbf{x}},\bar{\mathbf{u}}) \\
+% & \bar{\mathbf{x}}(t) = \mathbf{x}(t) \\
+% & \bar{\mathbf{u}}(\tau) \in \mathbb{U}, \ \bar{\mathbf{x}}(\tau) \in \mathbb{X}
+% \end{align*}
+% \State Apply $\mathbf{u}_{MPC}(t) = \bar{\mathbf{u}}^*(t)$ for $[t, t+\delta]$
+% \State Update $t \leftarrow t+\delta$ and repeat
+% \end{algorithmic}
+% \end{algorithm}
+
+% \subsection{Discretization of the Control Problem}
+% The continuous optimal control problem requires discretization for numerical solution. Let $\Delta t = T_p/N$ be the time step for horizon $T_p$ divided into $N$ intervals. The control inputs are parameterized as piecewise constant signals:
+
+% \begin{equation}
+% \mathbf{u}(t) = \mathbf{u}_k \quad \text{for} \quad t \in [t_k, t_{k+1}), \quad k = 0,...,N-1
+% \end{equation}
+
+% States are discretized using numerical integration (e.g., Runge-Kutta 4th order):
+
+% \begin{equation}
+% \mathbf{x}_{k+1} = \mathbf{x}_k + \frac{\Delta t}{6}(\mathbf{k}_1 + 2\mathbf{k}_2 + 2\mathbf{k}_3 + \mathbf{k}_4)
+% \end{equation}
+
+% where $\mathbf{k}_i$ are intermediate derivatives computed from the vehicle dynamics $f(\cdot)$. This transforms the original problem into a nonlinear program with decision variables $\{\mathbf{u}_0,...,\mathbf{u}_{N-1}\}$ and state sequence $\{\mathbf{x}_0,...,\mathbf{x}_N\}$.
+
+% \subsection{Solution Methods}
+% \subsubsection{Direct Transcription}
+% The discretized problem can be solved through direct transcription methods:
+
+% \begin{equation}
+% \begin{aligned}
+% \min_{\mathbf{U},\mathbf{X}} &\sum_{k=0}^{N-1} \left(\|\mathbf{x}_k-\mathbf{x}_{ref}\|_{\mathbf{Q}}^2 + \|\mathbf{u}_k\|_{\mathbf{R}}^2\right) + \|\mathbf{x}_N\|_{\mathbf{P}}^2 \\
+% \text{s.t.} \quad & \mathbf{x}_{k+1} = f_d(\mathbf{x}_k,\mathbf{u}_k) \\
+% & \mathbf{u}_{min} \leq \mathbf{u}_k \leq \mathbf{u}_{max} \\
+% & \mathbf{x}_0 = \mathbf{x}(t)
+% \end{aligned}
+% \end{equation}
+
+% where $\mathbf{U} = [\mathbf{u}_0^\top ... \mathbf{u}_{N-1}^\top]^\top$ and $\mathbf{X} = [\mathbf{x}_0^\top ... \mathbf{x}_N^\top]^\top$.
+
+% \subsubsection{Sequential Quadratic Programming}
+% The nonlinear program is solved iteratively using SQP:
+
+% \begin{equation}
+% \begin{aligned}
+% \min_{\Delta\mathbf{z}} \ & \frac{1}{2}\Delta\mathbf{z}^\top \mathbf{H}_k\Delta\mathbf{z} + \mathbf{g}_k^\top\Delta\mathbf{z} \\
+% \text{s.t.} \ & \mathbf{A}_{eq}\Delta\mathbf{z} = \mathbf{b}_{eq} \\
+% & \mathbf{A}_{ineq}\Delta\mathbf{z} \leq \mathbf{b}_{ineq}
+% \end{aligned}
+% \end{equation}
+
+% where $\mathbf{z} = [\mathbf{U}^\top \mathbf{X}^\top]^\top$ contains all optimization variables.
+
+% \subsection{Implementation Considerations}
+% \subsubsection{Real-Time Computation}
+% Critical implementation aspects include:
+% \begin{enumerate}
+% \item Warm-starting the solver with previous solutions
+% \item Using move blocking to reduce decision variables
+% \item Implementing constraint softening for infeasible scenarios
+% \item Balancing prediction horizon length ($T_p \approx 5-10\tau$, where $\tau$ is vehicle time constant)
+% \end{enumerate}
+
+% \subsubsection{Stability Guarantees}
+% Closed-loop stability is ensured through:
+% \begin{equation}
+% E(\mathbf{x}_N) = \mathbf{x}_N^\top\mathbf{P}\mathbf{x}_N \ \text{with} \ \mathbf{P} \succ 0 \ \text{satisfying} \ \mathbf{A}_d^\top\mathbf{P}\mathbf{A}_d - \mathbf{P} \prec -\mathbf{Q}
+% \end{equation}
+
+% where $\mathbf{A}_d$ is the linearized discrete-time system matrix. Terminal constraints $\mathbf{x}_N \in \mathcal{X}_f$ may be added to guarantee stability.
+
+% \subsubsection{Thruster Allocation}
+% The computed generalized forces $\boldsymbol{\tau} \in \mathbb{R}^6$ are distributed to thrusters via:
+
+% \begin{equation}
+% \begin{aligned}
+% \min_{\mathbf{u}_{thr}} & \|\mathbf{B}\mathbf{u}_{thr} - \boldsymbol{\tau}\|^2 \\
+% \text{s.t.} \ & \mathbf{u}_{min} \leq \mathbf{u}_{thr} \leq \mathbf{u}_{max}
+% \end{aligned}
+% \end{equation}
+
+% where $\mathbf{B}$ is the thruster configuration matrix.

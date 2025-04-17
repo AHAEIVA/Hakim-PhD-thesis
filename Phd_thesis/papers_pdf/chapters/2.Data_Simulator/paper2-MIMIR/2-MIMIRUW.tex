@@ -1,0 +1,131 @@
+
+\begin{figure*}
+\centering
+\Large
+\resizebox{.97\textwidth}{!}{\begin{tabular}
+{p{.1cm}c@{\hspace{.7mm}}c@{\hspace{2mm}}c@{\hspace{.7mm}}c@{\hspace{2mm}}c@{\hspace{.7mm}}c@{\hspace{2mm}}c@{\hspace{.7mm}}c@{\hspace{2mm}}c@{\hspace{.7mm}}c@{\hspace{.7mm}}c}
+
+ & \multicolumn{2}{c}{SeaFloor} & \multicolumn{2}{c}{SeaFloor\_Algae} &  \multicolumn{2}{c}{OceanFloor} &  \multicolumn{2}{c}{SandPipe} & Aqualoc & AURORA & Caves \\ 
+ 
+\rotatebox[origin=c]{90}{Front} 
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper2-mimir/sample/SeaFloor/2/cam0/1662122146122420480.jpg}} 
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper2-mimir/sample/SeaFloor/2/cam0/1662122117711814400.jpg}}
+
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper2-mimir/sample/Algae/2/cam0/1662120311850779648.png}}
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper2-mimir/sample/Algae/2/cam0/1662120293679392000.png}}
+
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper2-mimir/sample/OceanFloor/1light/1662129827676694528.png}}
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper2-mimir/sample/OceanFloor/1light/1662129858769357824.png}}
+
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper2-mimir/sample/SandPipe/0light/1662121590663360768.png}}
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper2-mimir/sample/SandPipe/0light/1662121655893752320.png}}
+& N/A & N/A & N/A \\
+%%%%%%%%%%%%%%%%%%%%%
+\rotatebox[origin=c]{90}{Bottom} 
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper2-mimir/sample/SeaFloor/2/cam2/1662122143467363840.png}} 
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper2-mimir/sample/SeaFloor/1/cam2/1662015350438563584.png}}
+
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper2-mimir/sample/Algae/0/cam2/1662064557047761152.png}}
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper2-mimir/sample/Algae/2/cam2/1662120285510217728.png}}
+
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper2-mimir/sample/OceanFloor/0light/cam2/1662135916039288320.png}}
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper2-mimir/sample/OceanFloor/1light/cam2/1662129863407456768.png}}
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper2-mimir/sample/SandPipe/0light/cam2/1662121597485506304.png}}
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper2-mimir/sample/SandPipe/0dark/1662064010719974144.png}} 
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.187\linewidth]{figs/paper2-mimir/sample/aqualoc/aqualoc-min.jpg}} 
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.179\linewidth]{figs/paper2-mimir/sample/AURORA/aurora-min.jpg}} 
+& \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.199\linewidth]{figs/paper2-mimir/sample/caves/frame_006160-min.png}} 
+\end{tabular}}
+\caption[Sample images for each of MIMIR-UW's environments]{Sample images for each of MIMIR-UW's environments. For recreating the underwater visual effects, the environments include; water distortion, floating particles, caustics, bubbles, fishes, rock formations, and reefs. In contrast to other underwater datasets like Aqualoc, Caves, and AURORA, MIMIR-UW provides a front camera view and pipe inspection elements. The absence of front camera images is indicated as not available (N/A).}
+\label{mimir:fig:sampleMIMIRimgs}
+\end{figure*}
+
+
+\section{MIMIR-UW - The multipurpose dataset}
+\label{section:mimiruw}
+\begin{table}[b!]
+\caption{Practical aspects about MIMIR-UW.}
+\centering
+\footnotesize
+\label{mimir:table:mimirpractical}
+\begin{tabular}{ c  c c c cc }
+\toprule
+Environment & Sequence & Duration [s] & Path length [m] &  \#frames & \#poses \\ %\cline{3-18}
+\midrule
+\multirow{3}{*}{SeaFloor}    & track0 & 120.840 & 238.623 & 2847 & 19927 \\
+                                & track1 & 89.693  & 191.460 & 2030 & 14204  \\
+                                & track2 & 109.157 & 244.969 & 2537 & 17754  \\
+\midrule
+\multirow{3}{*}{SeaFloor Algae} 
+                                & track0 & 125.823 & 249.013  & 2934 & 20538 \\
+                                & track1 & 89.753 & 186.586  & 2076 & 14526  \\
+                                & track2 & 107.696 & 245.851 & 2489 & 17418  \\
+\midrule
+\multirow{3}{*}{Ocean floor}
+                                & track0\_light & 107.843 & 226.698  & 2421 & 16944 \\
+                                & track0\_dark & 107.603 & 227.482  & 2404 & 16825 \\
+                                & track1\_light & 279.132 & 714.786  & 6263 & 43837 \\
+\midrule
+\multirow{2}{*}{Sandpipe}
+                                & track0\_dark & 120.891 & 298.885  & 2741 & 19185 \\
+                                & track0\_light  & 117.810 & 294.957  & 2605 & 18230  \\
+\bottomrule
+
+\end{tabular}
+\end{table}
+\subsection{Data collection}
+
+The proposed dataset is collected from four underwater environments created in Unreal Engine 4, referred to as "SeaFloor", "SeaFloor Algae", "OceanFloor", and "SandPipe", in the context of pipeline inspection. Fig. \ref{mimir:fig:sampleMIMIRimgs} depicts a sample of the recorded images. As shown in Table \ref{mimir:table:mimirpractical}, various tracks are recorded under each environment, with different lengths and durations. 
+In all environments, the robot carries two artificial lights creating uneven light reflections throughout the scene.
+SeaFloor presents a shallow underwater environment, with good visibility but under the presence of dynamic light reflections from natural light. SeaFloor Algae extends the challenges in SeaFloor incorporating a higher concentration of dynamic objects in the scene occluding the pipes. % It comprises two levels of difficulty in terms of dynamic objects in the scene: one with few dynamic elements in the ground, and the other with a high proportion of dynamic elements occluding the pipes.
+OceanFloor is a deep underwater environment where most visibility comes from the robot's artificial light.
+Similarly, SandPipe also integrates a deep underwater environment, but in this case, the pipe is covered by sand, with some exposed areas through the trajectory.
+%For recreating the underwater visual effects, the environments include; water distortion, floating particles, caustics, bobbles, fishes, rock formations, and reefs. %One of the advantages of the Unreal Engine that is not found in general robotic simulators is the vertex blending materials that smoothly blend the landscape with the objects placed on it. This increases the realism, especially in the buried pipe scenario where the landscape is partially covering the inspection pipe. 
+%The vehicle pose and sensor data are collected from Unreal Engine using the Airsim library.  How these paths have been generated is detailed hereafter.
+
+\subsubsection{Sensor data and ground truth collection}
+The dataset is recorded with three cameras: two forward-looking cameras in a stereo configuration and a downward-looking camera. Each camera comprises three data sources: RGB, segmentation, and depth, gathered with AirSim's image API.
+The segmentation labels are automatically generated by AirSim's image API. Each RGB image from the camera has assigned a segmentation image, where each pixel has a color assigned to the object's class it belongs to. There is a total of fourteen classes corresponding to dynamic objects such as fishes, bubbles and algae, and static objects comprising pipes, rocks, the seafloor and the sky. %The main target object in the three environments are the pipes, however, there are known limitations to the labelled data: fishes and bubbles, since they are defined as an Emitter object in the Unreal environment, cannot be distinguished from each other and therefore have the same label. However, this label comprising both elements, altogether with the algae label, can be considered as a mask for dynamic elements since they all share a dynamic nature.
+The depth, as provided by AirSim's image API, is recorded as a floating point image containing the depth values in meters, with all the points in the plane parallel to the camera plane retrieving the same depth value. This depth recording is converted and stored as an inverse depth image for storage efficiency. The depth values recorded as zeros are stored as zeros in the inverse depth image to avoid zero division.
+AirSim's API also retrieves inertial measurements and pose ground truth, which are also provided in the dataset. %The recording frequency is 210 Hz for pose and IMU, and 30 Hz for the cameras.
+For each track, we provide Airsim's settings file with which it is recorded and each camera's intrinsic and extrinsic parameters.
+
+\subsubsection{Trajectory generation}
+
+The dataset is recorded by a simulated underwater robot following trajectories generated from a set of waypoints. The waypoints are selected to generate trajectories that ensure motion diversity within the given setup and revisit the same areas under different points of view for loop closure.
+%The proposed dataset is organized containing multiple trajectories tracked by a simulated underwater robot. Each trajectory is constructed using a set of waypoints that are selected according to two main criteria. Firstly, they ensure maximization of the motion diversity for the given setup. Secondly, they allow revisiting the same areas under different points of view for loop closure. 
+The minimum-snap trajectory generation method generates smooth trajectories connecting waypoints ~\cite{richter2016polynomial}. They are generated as a 10-degree polynomial function describing the four-dimensional state, corresponding to the three linear axes and the robot heading with respect to time. For simplicity, tracking those trajectories is reduced to a general point-mass control problem.
+%Smooth trajectories connecting waypoints are generated by the minimum-snap trajectory generation method ~\cite{richter2016polynomial}. They are generated as a 10-degree polynomial function describing the four-dimensional state, corresponding to the three linear axes and the robot heading with respect to time. For simplicity, the tracking of those trajectories is reduced to a general point-mass control problem.
+
+
+%To create variations and diversities in robot motion and camera perspectives, various types of trajectories are generated and categorized with respect to the level of difficulties for visual SLAM algorithms.
+%These methods compute a minimum-jerk or minimum-snap continuous reference trajectory for multi-propeller systems with respect to the hardware-constrained control inputs and minimal time allocation. 
+
+%Typically, a smooth trajectory $P(t)$ can be modelled by multiple piecewise polynomials that are functions of time $t$. Each piecewise polynomial is defined as a $N$-th order segment $S(t)$ that connects two desired waypoints, which can be decoupled in independent axes as follows:
+
+% \begin{equation}
+%     \centering
+%     S_{k}(t) = a_{0} + a_{1}t + a_{2}t^{2} + ... + a_{N}t^{N},
+%     \label{eg:component_polynomial}
+% \end{equation}
+
+%where $k: x, y, z, \psi$. $x, y, z \in \mathbb{R}$ denote the Cartesian coordinates of the robot, and $\psi \in \mathbb{R}$ is its heading angle. The vector of coefficients $s_{k} = [a_{0}\; a_{1}\; a_{2}\; ... \;a_{N}]$ for dimension $k$ is determined through the minimization a quadratic cost function of derivative orders $J_{i}(t) =  \int_0^T \! c_{0}S(t)^{2} + c_{1}S'(t)^{2} + c_{2}S''(t)^{2} + ... + c_{N}S^{(N)}(t)^{2} \,\mathrm{d}t$ subject to 1) a set of constraints to guarantee that the trajectory is smooth, i.e. continuous at different high-order derivatives %(such as acceleration, jerk, and snap)
+%, and 2) maximum velocities and acceleration constraints to reflect slow (easy-level) and fast (medium-level) motions. The trajectory in (\ref{eg:component_polynomial}) is then sampled at time $t_r$ giving a reference pose $p_r = ( x_r, y_r, z_r, \psi_r)$. For simplicity, the reference trajectory tracking is reduced to a general point-mass control problem.
+
+%Tracking the reference trajectory is a difficult control problem, and requires accurate modeling of underwater robots kinematics and dynamics. Since this work focuses on the vision-based challenges, the modeling of underwater robots is oversimplified, reducing to a general point-mass control problem. Future work could consider extending the robot control and trajectory generation for a more realistic underwater robot behavior.
+
+
+%To bring the robot from its current pose $p$ to $p_r$, a tuned thrust - attitude rate controller is utilized: $f, q\dot = f(p, p_r)$. Since the resulting motions of the robot are inherently smooth, photometric gain estimation and ego-motion excitations are obtained more easily and accurately. The aforementioned waypoints are generated so that the motion diversity is maximized for the given setup, and considering area revisiting under different points of view for possible loop closure detection for SLAM algorithms.
+
+
+
+%On the contrary, for difficult-level trajectories, reference poses are given directly as predefined hard-to-reach waypoints, and tracked by a proportional–integral–derivative controller with aggressive gains. The induced motion jerkiness subsequently introduces noises, drifts, and inaccuracies to challenge visual SLAM algorithms.
+
+%\HP{Include 3 subfigures of trajectories with increased difficulties}
+
+%\begin{itemize}
+%    \item Easy-level trajectories: the robot moves slowly between waypoints, following a smooth trajectories. The waypoints are randomized around some locations that are known \textit{a priori}.
+%    \item Medium-level trajectories: similar to the previous level, the robot still tracks a smooth trajectories between waypoints, but with increased linear and angular speeds.
+%    \item Difficult-level trajectories: in these trajectories, the robot moves aggressively between way points with high jerkiness and velocities.
+%\end{itemize}
+

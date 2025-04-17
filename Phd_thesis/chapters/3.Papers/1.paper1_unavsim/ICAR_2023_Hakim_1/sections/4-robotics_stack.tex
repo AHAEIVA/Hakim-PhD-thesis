@@ -1,0 +1,52 @@
+\section{Vision-based underwater navigation stack}\label{sec:stack}
+The vision-based underwater navigation stack of UNav-Sim includes planning, control, and \ac{SLAM}. Many state-of-the-art \ac{AI} algorithms in robotics, for example, as implemented in OpenDR toolkit \cite{opendr} or PyPose library \cite{pypose}, primarily rely on vision for localization, planning, and control~\cite{huy}. Therefore, in this study, we have chosen to utilize visual SLAM (VSLAM) and end-to-end \ac{DRL} algorithms to demonstrate the capabilities of the proposed simulator. To facilitate ease of integration with various autonomy algorithms and deployment on actual hardware, all algorithms have been developed using \ac{ROS} framework.
+
+
+
+
+\subsection{Vision-based planning}
+\label{sec:stack:planning}
+
+% \HIU{Describe \ac{DRL} for planning briefly}
+
+The recent developments in machine learning methods enable intelligent agents to learn navigation tasks end-to-end. Generally, a deep neural network policy takes sensory input, such as high-dimensional visual data, and generates feasible actions without explicitly mapping the environment. These learning-based methods require large amounts of data for training, which is impractical for real-world robotics systems. Hence, simulation environments are very substantial for enriching the required data in many cases \cite{loquercio2021learning}.
+Furthermore, \ac{DRL} methods require demonstrations for exploration of the environment to learn a policy, which increases safety concerns for real-world learning \cite{halil}. 
+Consequently, simulation environments with high-fidelity visual sensors and accurate physical dynamics are crucial for DRL research. OpenAI's gym~\cite{gym} is a general standard for experimenting with learning-based sequential decision-making tasks.
+Therefore, we have provided a gym environment along with our simulator to augment its capabilities for benchmarking learning-based navigation algorithms.
+% halil will add more about gym interface and so
+
+\subsection{Control}
+\label{sec:stack:control}
+
+A \ac{MPC} strategy was utilized to control the \ac{ROV} model, which consists of a two-step process involving an \ac{MPC} followed by a control allocation algorithm. The motivation for the use of MPC is based on its ability to handle both input and state constraints explicitly, and intuitive tuning parameters \cite{mpc_survey}.   
+%The selection of \ac{MPC} is based on its widespread use in robotics and its ability to handle nonlinear models and actuator constraints \cite{mpc_survey}.
+The \ac{MPC} is designed to solve an online optimization problem, aiming to determine the optimal body wrench forces and moments, given a particular robot pose and a desired reference pose. 
+
+The control allocation algorithm is then employed to obtain the individual control signal for each thruster by using a pseudo-inverse of an allocation matrix, which is vehicle-specific and depends on the thruster configuration of the \ac{ROV}. ACADO toolkit \cite{acado} is utilized to implement the \ac{MPC} as a  \ac{ROS} package, which is integrated into the  \ac{ROS} navigation stack.
+
+\subsection{Visual localization}
+Visual localization algorithms rely on cameras to retrieve the robot's state, which are widely used in the underwater robotics community \cite{olaya_survey}. %\cite{vSLAM:eustice2008visually,vSLAM:nagappa2013single,vSLAM:trslic2020vision,olaya_survey}. 
+Long-standing ROS packages for SLAM include \texttt{robot\_localization}, which presents a classical filtering approach for sensor fusion \cite{vSLAM:moore2016robot_localizationROS}, \texttt{hector\_slam}, which implements occupancy grid maps for laser and IMU data \cite{vSLAM:hectorSLAM}, and \texttt{gmapping}, which leverages a Rao-Blackwellized particle filter for laser-based SLAM  \cite{vSLAM:gmapping}.
+The availability of these state-of-the-art and ready-to-use algorithms has allowed outstanding progress in the robotics community \cite{vSLAM:lidarreview,vSLAM:hectorreview1,vSLAM:hectorreview2,vSLAM:gmappingreview1,vSLAM:gmappingreview2}, as they ease the implementation of future advances for SLAM and the benchmarking of their performance. However, the availability of off-the-shelf packages for visual SLAM remains an open problem.
+Therefore, we propose \texttt{robot\_visual\_localization}, a ROS metapackage for deploying and benchmarking visual localization algorithms. We chose to implement the state-of-art methods ORB-SLAM3 \cite{vSLAM:orb3} and TartanVO \cite{vSLAM:tartanvo}. Each algorithm is implemented as a standalone ROS package within the \texttt{robot\_visual\_localization} metapackage, which takes as input the image stream, and outputs the camera trajectory and the map points for ORB-SLAM3, and the camera trajectory for TartanVO. 
+
+ORB-SLAM3 encompasses a geometry-based approach for SLAM. The ORB-SLAM3's front end tracks ORB features across consecutive frames. The features are selected to be uniformly distributed across the image, and the matches search is performed according to a constant velocity model. The ORB-SLAM3's back end builds a map with the sparse points tracked from the front end. Under tracking loss, the map is stored in memory as inactive, creating a new active map. The loop closure thread finds revisited areas under the active and inactive maps, merging them and propagating the accumulated drift. %TartanVO presents a learning-based visual localization pipeline, composed of an optical flow module based in PWC-Net \cite{vSLAM:sun2018pwcnet}, followed by a pose regressor based in the ResNet50 \cite{vSLAM:resnet} architecture.
+
+Geometry-based algorithms such as ORB-SLAM3 still present the de-facto state-of-art for SLAM, due to their high precision and efficiency. However, they are highly dependent on feature detection and matching, and therefore sensitive to visual degradations such as repetitive patterns, textureless environments, and non-Lambertian surfaces. On the other hand, learning-based algorithms can be more robust against those challenging imaging conditions, but are highly dependent on the training data, and usually lack generalization ability.
+
+The proposed ROS metapackage serves then as an accessible tool for the easy comparison of two of the main taxonomies in the SLAM's state-of-art, which in the present work serves as a comparison of their performance under challenging underwater imaging conditions.
+
+%\subsection{Auto-annotation tool}
+
+%Recently, deep learning-based algorithms have been successfully applied to various problems in underwater robotics such as object detection, semantic segmentation, and instance segmentation. One of the challenges with this approach is the time and cost-intensive process of collecting and annotating data. To address this problem, synthetic data can be generated in a simulated environment. The \ac{UWRS} is a state-of-the-art platform built on top of the AirSim drone simulator, which provides auto-labeling features and supports various capabilities that are essential for generating synthetic data for training deep neural networks in underwater robotics.
+%\begin{enumerate}
+%    \item Auto-Labeling: The auto-labeling features enable automatic annotations of object bounding boxes, semantic segmentation masks, and instance segmentation masks, minimizing the need for manual labeling and reducing the likelihood of human labeling errors.
+%    \item Randomization of the environment: Randomization of various environmental factors such as lighting, weather conditions, and the presence of objects. This is crucial for generating a diverse and robust training dataset that can handle various real-world scenarios.
+%    \item Camera types: A variety of camera types, such as monocular, stereo, and fisheye, can be used to generate different kinds of images and videos with various perspectives, field of views, and distortions.
+%\end{enumerate}
+%These features are maintained and supported by \ac{UWRS}, and by leveraging the advanced capabilities of AirSim, the \ac{UWRS} can create synthetic data that closely mimics real-world underwater scenarios. This data can then be used to train deep learning-based algorithms for various applications, including object detection, semantic segmentation, and instance segmentation. 
+
+
+
+%%%% Halil taking notes under here:
+% https://sites.google.com/view/prl4airsim/home -> a recent submission to ICRA that implements parallel RL on AirSim. 

@@ -1,0 +1,153 @@
+\section{Experimental evaluation}
+\label{sec:evaluations}
+
+This section proposes a set of experimental evaluations for SubPipe, consisting of leveraging state-of-the-art algorithms for RGB image segmentation, visual SLAM, and object detection in side-scan sonar images.
+
+
+\subsection{Visual SLAM}
+The proposed state-of-the-art SLAM algorithms are the geometry-based algorithms ORB-SLAM3 \cite{campos2021orb} and DSO~\cite{engel2017dso}, and the learning-based methods TartanVO \cite{wang2020tartanvo} and DeepVO \cite{wang2017deepvo}. 
+
+ORB-SLAM3 integrates an indirect-based approach that relies on ORB descriptors that are efficiently tracked across frames following a constant velocity model. Meanwhile, an Atlas map is created, in which, under tracking loss, the current map is stored, and a new map is created. These maps are merged into one if a loop is detected.  Indirect methods like ORB-SLAM3 rely on descriptor matching and thus are prone to fail in low-textured areas such as the ones present in SubPipe. Conversely, direct methods like the proposed DSO compare pixel intensities across image frames, therefore using more information from the image. These methods are more robust to low-textured areas but more sensitive to large baselines. DSO, in particular, presents a sparse approach that tracks all those pixels in the image with a high gradient.
+TartanVO \cite{wang2020tartanvo} and DeepVO \cite{wang2017deepvo} present two of the primary state-of-the-art in learning-based \ac{VO}. Given a sequence of two images, DeepVO leverages an optical flow module based in FlowNet \cite{dosovitskiy2015flownet} followed by a recurrent module. 
+The learning-based method TartanVO, as described in \cite{wang2020tartanvo}, leverages PWC-Net \cite{sun2018pwcnet} for computing optical flow and employs a tailored version of ResNet50 \cite{dl:vo:2015resnet} for pose estimation, featuring dual output branches dedicated to rotation and translation respectively. Furthermore, it integrates the intrinsic camera parameters via an intermediary layer that bridges the optical flow computation and pose estimation components, enhancing its adaptability to various camera parameters. The loss function proposed is a combination of optical flow and camera motion.
+
+Both geometry-based algorithms fail to track the trajectory under SubPipe's very challenging imaging conditions. The lack of features and gradients in the image, as evidenced by the delentropy metric in Section \ref{section:subpipe:metrics}, is the source of failure. ORB-SLAM3 can track some pipe sections, as depicted in Fig. \ref{fig:orbslam3}. The pipe clamps provide a higher density of distinctive features that the algorithm can track. However, the track is lost as soon as those areas are out of the cameras' field of view. Similarly, the uniformity of the pixel gradients does not provide DSO with enough points to track across frames, as shown in Fig. \ref{fig:dso}.
+
+The lack of information on SubPipe's images challenges the performance of geometry-based algorithms. Under these conditions, there is a potential for visual localization algorithms to benefit from the higher-level representations of the image that learning-based approaches can achieve \cite{olaya_survey}. 
+The next set of proposed experiments leverages DeepVO and TartanVO on SubPipe. Additionally, we deploy a fine-tuned model for TartanVO.
+The last layers of the optical flow module and the pose regressor were fine-tuned with SubPipe's Chunk 2, which was afterward tested in Chunk 3. Given that SubPipe does not provide optical flow ground truth, the loss function corresponds to the chordal loss for the $SE(3)$ pose introduced in \cite{dl:vo:isr}. It was fine-tuned for $15$ epochs and with an Adam optimizer with an initial learning rate of $10^{-4}$ and weight decay factor of $10^{-3}$.
+Table \ref{table:results-tartanvo-chunk3} shows the \ac{APE} and the \ac{RPE} \cite{sturm2012tumrgbd} metrics resulting from comparing the ground truth with the results inferred from all the models. 
+DeepVO's high drift originates from the network's inability to generalize to out-of-distribution data. This behavior is expected since the model was trained exclusively on data from the KITTI dataset \cite{dataset:kitti}. Although Section \ref{section:subpipe:metrics} shows a similarity between the motion distributions of KITTI and SubPipe, the image data distributions differ substantially: it was recorded with a camera with different intrinsics and in a city environment with very different imaging conditions.
+TartanVO, with its ability to encode the camera's intrinsics, enables better generalization across datasets, thus showing better performance. Note that the jump performance between Chunks 2 and 3 originated from a much higher presence of very uniform images (with the pipe covered in sand) in Chunk 2.
+While the error is considerably lower in the fine-tuned model than in the original model, Fig. \ref{fig:results-tartanvo-chunk3} evidences that such low error indicates that the model overfitted to the data. This is caused by the uniformity of the images and the trajectory, as evidenced by the dataset metrics in Fig. \ref{fig:datasetmetrics}. Therefore, additional datasets in the fine-tuning process must be included, introducing a broader data distribution.
+
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[height=4.5cm]{figs/paper4-subpipe/slam-experiments/orb-chunk3.jpg}
+        \caption{}
+        \label{fig:orbslam3}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[height=4.5cm]{figs/paper4-subpipe/slam-experiments/dso-chunk3.jpg}
+        \caption{}
+        \label{fig:dso}
+    \end{subfigure}
+    \caption[Geometry-based SLAM algorithm's performance on SubPipe]{Performance on SubPipe: (a) ORB-SLAM3's performance. The pipe clamps (top-left) provide enough features to track the camera's motion; however, the track is lost once the clamps and the pipe are out of sight (top-right). (b) DSO's performance. The low gradients do not allow the detection of enough features (the colored pixels in the bottom-left image) to be tracked after the algorithm's initialization.}
+    \label{fig:slam_comparison}
+\end{figure}
+
+
+
+
+\begin{table}[ht!]
+\centering
+\footnotesize
+\caption{Visual Odometry results on SubPipe's chunks 2 and 3.}
+\label{table:results-tartanvo-chunk3}
+\begin{tabular}{c@{\hspace{1.1mm}} c@{\hspace{1mm}}c@{\hspace{1.1mm}} c@{\hspace{1mm}}c@{\hspace{1.1mm}} c@{\hspace{1mm}}c@{\hspace{1.5mm}} c@{\hspace{1mm}}c@{\hspace{1.1mm}} c@{\hspace{1mm}}c@{\hspace{1.1mm}} c@{\hspace{1mm}}c}
+\toprule
+ & \multicolumn{2}{c}{ORB-SLAM3} & \multicolumn{2}{c}{DSO} & \multicolumn{2}{c}{TartanVO} & \multicolumn{2}{c}{TartanVO f.t.} & \multicolumn{2}{c}{DeepVO} \\
+\cmidrule(l{1em}r{1em}){2-3}\cmidrule(l{1em}r{1em}){4-5}\cmidrule(l{1em}r{1em}){6-7}\cmidrule(l{1em}r{1em}){8-9}\cmidrule(l{1em}r{1em}){10-11}
+ & ATE[m] & RPE[m] & ATE[m] & RPE[m] & ATE[m] & RPE[m] & ATE[m] & RPE[m] & ATE[m] & RPE[m] \\
+\midrule
+Chunk2 & - & - & - & - & 612.5 & 0.29 & 151.7 & 0.033 & 1582 & 0.546 \\
+Chunk3 & - & - & - & - & 182.3 & 0.4 & 95.6 & 0.038 & 836.7 & 0.570 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{figs/paper4-subpipe/slam-experiments/chunk2_inference.pdf}
+        \caption{}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{figs/paper4-subpipe/slam-experiments/chunk3_inference.pdf}
+        \caption{}
+    \end{subfigure}
+    \caption[Results of applying TartanVO's and DeepVO models in SubPipe]{Results of applying TartanVO's models to SubPipe's Chunks 2 and 3. The trajectories have been aligned using Umemaya's method as described in \cite{grupp2017evo} for better visualization. The blue trajectory represents TartanVO's original model provided by the authors. The green trajectory shows the original model fine-tuned with SubPipe's Chunk 2. The red trajectory represents DeepVO's model.}
+    \label{fig:results-tartanvo-chunk3}
+\end{figure}
+
+
+
+
+
+\begin{table}
+\caption[Sample results and mIoU for segmentation]{Sample results (Top) and mIoU (Bottom) for segmentation.}
+\label{fig:segmentationresults}
+\centering
+\footnotesize
+\resizebox{\linewidth}{!}{\begin{tabular}
+{c rcc}
+\toprule
+Image & \multicolumn{1}{c}{Groundtruth}& SegFormer~\cite{xie2021segformer} &  DeepLabV3~\cite{chen2017rethinking} \\ 
+
+ \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper4-subpipe/deep-segformer-results/image.jpeg}}
+ 
+ & \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper4-subpipe/deep-segformer-results/segformer_target-segformerTest.jpeg}}
+
+ & \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper4-subpipe/deep-segformer-results/segformer_output-segformerTest.jpeg}} 
+
+ & \adjustbox{valign=m,vspace=.2pt}{\includegraphics[width=.2\linewidth]{figs/paper4-subpipe/deep-segformer-results/output-deepLab.jpeg}} \\
+ \cmidrule(l{2em}r{2em}){1-4}
+\multirow{3}{*}[0em]{Results}& Background [\%] &  91.76  & 91.21 \\ %90.66  & 90.21 \\
+& Pipeline [\%]  & 66.42 &  60.12  \\ %55.20 & 23.29 \\
+& mIoU [\%] & 79.09 &  75.66 \\ % 72.93 & 56.75 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+
+\subsection{RGB image segmentation}
+ The models chosen for the RGB image segmentation experiments were SegFormer~\cite{xie2021segformer} and DeepLabV3~\cite{chen2017rethinking}. SegFormer is a visual transformer that uses transformer blocks in the encoder and uses the encoder's multiscale output features as inputs for a multilayer perceptron decoder. Using multiscale features in the decoder helps combine local and global information to achieve better results. This model was implemented in Pytorch and trained from scratch.\footnote{Reference implementation: \url{https://github.com/FrancescoSaverioZuppichini/SegFormer}} DeepLabV3 is a largely used \ac{CNN} for image segmentation that uses dilated convolution, which gives a better field of view for the filters, allowing for better detection of objects in different scales. This second model used the official PyTorch implementation with weights pre-trained on a subset of the COCO dataset. %SegFormer was trained for 130 iterations and DeepLabV3 for 30 iterations.
+
+Both models were trained with cross-entropy loss, using the Adam optimizer with an initial learning rate of $10^{-4}$. The models were trained using the 647 annotated frames. The first 60\% labeled images from SubPipeMini were used for training, the next 20\% for validation, and the last 20\% for testing.  A suite of augmentation techniques was employed to mitigate overfitting, including flipping, rotation, cropping, and perturbations in RGB channels, saturation, and hue.
+
+A sample of the results can be seen in Fig. \ref{fig:segmentationresults}. Even though SegFormer was trained from scratch, it still achieved good results, recognizing the pipeline relatively well. It indicates that the data has enough quantity and quality to train a deep-learning model. At the same time, even though the pipeline is a straight line, with an easy shape to be segmented, the \ac{IoU} for this class has room for improvement for both models, highlighting the difficulties of processing underwater images. Since pipeline tracking and inspection is a critical task, ideally, the \ac{IoU} for the pipeline should be improved. Perhaps pre-processing the images, using techniques to, e.g., increase the contrast, could improve the results. 
+
+\subsection{Object detection in side-scan sonar images}
+SubPipe provides SSS images featuring underwater pipelines. To evaluate the dataset's validity and quality, the YOLOX object detection model has been employed in two sizes: YOLOX-S with 9 million parameters and YOLOX-Nano with 0.9 million parameters~\cite{yoloxpaper}. The models were trained on high-frequency data from timestamp \texttt{1693573388} to \texttt{1693574657}, providing 15,404 images divided into 70\% for training, 15\% for testing, and 15\% for validation. Both models used pre-trained weights from the COCO dataset and trained during 300 epochs. The validation results on the training data are presented in the first column of Table \ref{table:object_detection}, indicating a 98\% accuracy for YOLOX-S and 96\% for YOLOX-Nano.
+
+To further ensure the dataset's validity, a separate SSS mission from a different survey provided an additional validation set, from which 7,900 images were extracted. The second validation's results are in the second column of Table \ref{table:object_detection}.
+
+A comparative analysis of both validation datasets revealed that neither model adequately detected objects in the second, validation dataset. Fig. \ref{fig:sample_SSS_dataset} includes two samples from each dataset, illustrating that despite being collected from the same location, the datasets possess distinct characteristics, such as sand, pipeline shadow, and pipeline size variations. These characteristics implicitly offer insights into the models' learning patterns. Consequently, the experimental results suggest that even with a sufficient dataset size and high training metric values, environmental factors such as the sand's properties and the vehicle's altitude (affecting the pipeline shadow) must be considered for effective pipeline detection.
+
+\begin{table}[!htbp]
+\caption{Object Detection Results.}
+\centering
+\footnotesize
+\label{table:object_detection}
+\begin{tabular}{l c c}
+\toprule
+Model                                      & $\textit{AP}_{50-95}$ Training      & $\textit{AP}_{50-95}$ Validation\\    
+\midrule
+YOLOX-S            & 98.1\%    & 14.9\% \\
+YOLOX-Nano  & 96.3\%    & 10.06\% \\
+\bottomrule
+
+\end{tabular}
+\end{table}
+
+
+\begin{figure}[!t]
+\centering
+\footnotesize
+{\begin{tabular}
+{cc}
+Training Data & Validation Data\\ 
+
+\includegraphics[width=0.35\textwidth]{figs/paper4-subpipe/SSS/training_data.jpg} & \includegraphics[width=0.35\textwidth]{figs/paper4-subpipe/SSS/validation_data.jpg}\\
+\end{tabular}}
+\caption[Comparison between training and validation datasets]{Comparison between training and validation datasets. The sample on the left illustrates the pipeline and its environment as represented in the training set, while the sample on the right depicts the validation dataset. The pipeline is next to the nadir gap in the second image.}
+\label{fig:sample_SSS_dataset}
+\end{figure}

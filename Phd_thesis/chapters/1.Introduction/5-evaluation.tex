@@ -1,0 +1,38 @@
+\subsection{Evaluation Criteria}
+The evaluation framework directly aligns with the research goals through quantitative metrics assessing each component's contribution to the core hypothesis.}
+
+\begin{table}[h!]
+\centering
+\caption{Performance Metrics for Hypothesis Validation}
+\label{tab:eval_metrics}
+\footnotesize
+\begin{tabular}{p{0.22\textwidth}p{0.73\textwidth}}
+\toprule
+\textbf{Component} & \textbf{Evaluation Metrics} \\
+\midrule
+
+\textbf{Tether-Aware Planning} &
+\begin{itemize}[leftmargin=*,noitemsep]
+\item \textit{Safety}: Max allowable tether length exceedance time
+\item \textit{Coverage}: Completeness (\% inspected area) on complex structures
+\item \textit{Computation time}
+\end{itemize} \\
+
+\textbf{Perception-Aware Control} &
+\begin{itemize}[leftmargin=*,noitemsep]
+\item \textit{Safety}: Distance from inspection surface
+\item \textit{Inspection Quality}: How centered the surfaces being inspected (defined in paper). 
+\item \textit{Robustness}: Performance under operational disturbances
+\end{itemize} \\
+
+\textbf{Data-Driven Modelling} &
+\begin{itemize}[leftmargin=*,noitemsep]
+\item  \textit{Modelling Error}: Mean squared error in predicting environmental disturbances
+\item \textit{Trajectory Tracking Error}:  Mean squared error in trajectory tracking
+\end{itemize} \\
+
+
+
+\bottomrule
+\end{tabular}
+\end{table}

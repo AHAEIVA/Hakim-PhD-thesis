@@ -1,0 +1,78 @@
+\section{Introduction}
+\label{mimir:sec:intro}
+
+While simulators and datasets are critical in developing computer vision algorithms, multiple factors have limited their availability in underwater scenarios. For instance, the strong attenuation under water hinders the use of state-of-art ground truth pose and motion capture devices. Moreover, generating ground truth for segmentation requires specialization on the subjects, such as coral,  fish species, and pipeline damage. The accessibility of deployment areas is another critical down-weighting factor. Offshore structures are suitable for underwater robot deployment, as they require regular inspections \cite{rw:pipeinspection2012oil}. However, in the oil and gas industries, the principal owners are generally unwilling to open their data for public use for privacy and security reasons.
+
+
+% \begin{table*}[!htbp]
+% \caption{Comparison of the state-of-the-art  datasets for SLAM, segmentation and depth estimation purposes.}
+% \centering
+% \footnotesize
+% \label{mimir:table:comparisonsoadataset}
+% \begin{tabular}{r@{\hspace{1mm}}  c@{\hspace{1mm}}c@{\hspace{1mm}}  c@{\hspace{1mm}} c@{\hspace{1mm}}  c@{\hspace{1mm}} c@{\hspace{1mm}}  c@{\hspace{1mm}} c@{\hspace{1mm}} }
+% \toprule
+% Dataset                                   & Type       & Environment   & Pose      & Segmentation & Camera    & Depth   & Perceptual aliasing  & Dynamic \\    
+% \midrule
+%  KITTI \cite{dataset:kitti}                & real      & city          & \cmark    & \cmark       & stereo    & \cmark  & \xmark               & \cmark  \\    
+%  EuRoC \cite{dataset:burri2016euroc}       & real      & indoor        & \cmark    & \xmark       & stereo    & \xmark  & \xmark               & \xmark  \\ 
+%  TUM-RGBD \cite{sturm2012tumrgbd} & real      & indoor        & \cmark    & \xmark       & stereo    & \cmark  & \cmark                  & \cmark \\  
+%  ETH-MS \cite{dataset:eth_ms_visloc_2021}  & real      & in/outdoor    & \cmark    & \xmark       & rig       & \xmark  & \xmark               & \xmark  \\ 
+%  Aqualoc \cite{dataset:aqualocdb}                  & real      & underwater    & \cmark    & \xmark       & mono & \xmark  & \cmark               & \cmark  \\
+%  AURORA \cite{dataset:bernardi2022aurora}  & real      & underwater    & \cmark    & \xmark       & mono & \xmark  & \cmark               & \cmark \\
+%  Caves \cite{diver2} & real      & underwater    & \cmark    & \xmark       & mono & \cmark  & \cmark               & \cmark \\
+% TartanAIR\cite{dataset:tartanair2020iros}  & synthetic & miscellaneous & \cmark    & \cmark       & mono       & \cmark  & \xmark                 & \cmark  \\
+% TrashCan\cite{TrashCan}                    & real      & underwater    & \xmark    & \cmark       & mono & \xmark  & N\slash A            & N\slash A\\
+% SUIM\cite{suim}                            & real      & underwater    & \xmark    & \cmark       & mono & \xmark  & N\slash A            & N\slash A \\
+% NAUTEC \cite{drews2021underwater}       & real      & underwater    & \xmark    & \cmark       & mono & \xmark  & N\slash A            & N\slash A \\ 
+% \hline
+% \textbf{MIMIR-UW}                          & Synthetic & underwater    & \cmark    & \cmark       &rig        & \cmark  & \cmark               & \cmark \\    
+% \bottomrule
+% \end{tabular}
+
+% \end{table*}
+
+\begin{figure}[!htp]
+    \centering
+    \includegraphics[width=.9\textwidth]{figs/paper2-mimir/mimirGA.pdf}
+    \caption[MIMIR-UW dataset gathering pipeline]{MIMIR-UW dataset gathering pipeline: a camera rig consisting of a stereo set ($C_0$,$C_1$) and a downward-looking camera ($C_2$) recording RGB, depth, and segmentation in four underwater environments. The robot follows polynomial trajectories with varying speeds and accelerations.}
+    \label{mimir:fig:GA}
+\end{figure}
+
+Unlike geometry-based localization approaches, learning-based localization algorithms are affected by the diversity of imaging conditions and the camera's motion patterns. Similarly, other learning methods, such as segmentation and depth estimation, require diverse imaging conditions to achieve generalization.
+
+Prevailing datasets for \ac{SLAM}, segmentation, and depth estimation have been primarily gathered with ground or aerial devices, which are constrained by their model's dynamics and environmental conditions.
+Bringing deep learning techniques for computer vision to the underwater environment requires the availability of datasets in such conditions. 
+
+Simulators are a viable alternative for dataset generation under the mentioned difficulties for data collection inherent to underwater environments. Realistic simulation renderings have made sim-to-real transfer a fundamental discipline in robotics \cite{intro:simtoreal,intro:pencilnet}.
+However, realistic simulations of underwater imaging conditions \cite{alvarez2019generation,song2021deep} have yet to be incorporated into the prevailing open-source robotic simulators \cite{manhaes2016uuv,uwsim,projectdave}. Nevertheless, the open-source 3D generation tool Unreal Engine provides a framework with realistic image renderings, which, integrated with external plugins \cite{intro:rw:HoloOcean22icra, rw:shah2018airsim}, provides frameworks for robotics simulation. The AirSim plugin \cite{rw:shah2018airsim} provides an API for collecting pose, segmentation, and depth estimation ground truth, along with Robot Operating System (ROS)  integration.
+This chapter proposes an underwater synthetic dataset collected with Unreal Engine and AirSim in the context of pipeline inspection (See Fig. \ref{mimir:fig:GA}).
+The contributions of this work are:
+\begin{enumerate}
+    \item A synthetic dataset for localization, segmentation, and depth estimation. It has been recorded under four underwater scenarios, with varying trajectories, lighting conditions, and presence of dynamic elements.
+    % \item Introduction of the metrics that quantitatively describe characteristics of the dataset.
+    \item Experimental evaluation with state-of-art algorithms for \ac{SLAM}, segmentation, and depth estimation. The dataset's capabilities for sim-to-real transfer of the learning-based segmentation and depth estimation methods are tested under a real-life pipe inspection scenario.
+
+\end{enumerate}
+
+To the best of our knowledge, this is the first underwater dataset to introduce such a variety of labeled data and a pipeline inspection scenario. This way, we aim to ease algorithm testing and push the development of learning-based computer vision algorithms through sim-to-real transfer for underwater environments.
+
+The chapter's outline is as follows: Section \ref{section:mimiruw} presents the MIMIR-UW and the data collection process. Section \ref{mimir:section:metrics} deploys the proposed the metrics for dataset comparison, and Section \ref{mimir:section:evaluationAnalysis} demonstrates the dataset's pertinence under the proposed baseline algorithms. Finally, some conclusions are drawn from this study in Section \ref{mimir:sec:conclusions}.
+% The chapter's outline is as follows: Section \ref{mimir:section:relatedworks} introduces the related works on dataset gathering. Then, Section \ref{section:mimiruw} presents the MIMIR-UW and the data collection process. Section \ref{mimir:section:metrics} proposes the metrics for dataset comparison, and Section \ref{mimir:section:evaluationAnalysis} demonstrates the dataset's pertinence under the proposed baseline algorithms. Finally, some conclusions are drawn from this study in Section \ref{mimir:sec:conclusions}.
+
+
+% \section{Related Works}
+% \label{mimir:section:relatedworks}
+
+% Deep learning methods' high data requirements and the challenging conditions that the underwater environment poses for robot deployment have recently motivated the development of underwater robotics simulators and datasets. 
+% However, the simulation of imaging conditions is limited to exponential attenuation or sunlight reflections \cite{manhaes2016uuv,uwsim,alvarez2019generation}, making them insufficient for testing computer vision systems.  
+% Openly available datasets for underwater computer vision cover a variety of scopes, from object detection \cite{MUEDdb,UOT100}, to image segmentation \cite{TrashCan,suim,drews2021underwater} 
+% and localization \cite{dataset:aqualocdb,dataset:bernardi2022aurora,diver2}.
+% Ground truth retrieval for localization algorithms is particularly challenging underwater; hence the availability of datasets for visual localization is limited. Namely, Aqualoc dataset provides an estimated ground truth from the Colmap library \cite{dataset:aqualocdb}.
+% Well-known datasets like EuRoC \cite{dataset:burri2016euroc}, KITTI \cite{dataset:kitti}, TUM-RGB-D \cite{sturm2012tumrgbd}, and ETH-MS \cite{dataset:eth_ms_visloc_2021} have been widely used for algorithm benchmarking. TartanAir \cite{dataset:tartanair2020iros} introduces a synthetic dataset with diverse environments presenting challenging imaging conditions. 
+% The difficulty levels of these datasets have been qualitatively described according to the presence of imaging defects caused by motion blur, illumination conditions, or dynamic elements. 
+% Table \ref{mimir:table:comparisonsoadataset} compares MIMIR-UW and the mentioned datasets  in accordance with these characteristics.
+% MIMIR-UW aims to simulate imaging settings specific to the underwater environment, including perceptual aliasing, dynamic features, and other natural distortions.  Additionally, compared to previous underwater datasets, MIMIR-UW comprises a broader range of ground truth data. The imaging fidelity with respect to other underwater datasets can be seen in Fig. \ref{mimir:fig:sampleMIMIRimgs}.
+
+
+
+

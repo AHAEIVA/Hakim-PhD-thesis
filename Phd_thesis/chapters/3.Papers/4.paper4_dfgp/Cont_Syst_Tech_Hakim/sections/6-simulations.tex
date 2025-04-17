@@ -1,0 +1,178 @@
+\section{Experimental results}
+\label{sec:expirments}
+The algorithm's predictive accuracy and trajectory tracking capabilities are assessed against state-of-the-art benchmarks through simulations and indoor pool testing.
+
+\subsection{Implementation details}
+
+
+
+The scenario is simulated using the underwater robotic simulator, Mobula \footnote{https://www.eiva.com/products/navisuite/navisuite-bundles/navisuite-mobula-pro-videoray}. 
+The inducing points are chosen to be identical to the inputs for consistency between the different methods. The first ten seconds of data are recorded for training the \ac{GP}, where the conjugate gradient method is employed to optimize the hyperparameters. Regarding implementing the proposed \ac{DF-GP} approach, we set $K$ to be three, which implies solving the optimization problem \eqref{eq:DF} for three \ac{GP}s with forgetting factors namely, $1$, $0.8$, and $0.6$.  
+%for consistently with the baselines. 
+As such, the number of selected \ac{GP} models is a user-defined configuration parameter. While adding more \ac{GP} models is expected to enhance performance, it also increases the computational burden. Additionally, the measurement horizon $N$ is set to 20 samples which is determined via the trial-and-error method. Moreover, the \ac{DF-GP} method is implemented using the CasADi  \cite{casadi}. For the \ac{MPC}, which is used as the tracking controller with all the \ac{GP} models, a direct multiple shooting method with a $0.05$-second grid size is used. The solution is obtained via solving a sequential quadratic program with a combination of the generalized Gauss-Newton method and the real-time iteration scheme. ACADO toolkit \cite{acado} and qpOASES solver \cite{qpoases} handle the solution for \eqref{eq:NMPC}, with $N_c = 100$ prediction horizon and $0.05$ second sampling time. A long horizon was selected which ensures accurate tracking, improved safety, and reliable constraint satisfaction.
+
+
+
+
+
+
+
+
+\subsection{Simulation experiments}
+
+%describe simulation scenario
+% - whats the trajectory, disturbances, implementation details, other methods to compare.
+% disturbance estimation of different algorithms, error etc.
+% weights plots
+% trajectory tracking vs MPC
+
+
+
+%comment on the performance 
+%\begin{equation}
+%    \text{disturbance} = 
+%    \begin{cases}
+%     \text{sine}(t)\, &   t < 30 \\
+%      \text{sine}(t) + \text{cos}(t) + \text{sine}(2t), & t<55
+%    \end{cases}
+%    \label{eq:dist}
+%\end{equation}
+
+
+  
+
+
+
+
+A lemniscate trajectory, comprising two cycles, is provided as a reference to the \ac{MPC}, while the scenario includes the introduction of a disturbance profile consisting of a sine wave, a combined sine wave (combination of different sine waves as included in \cite{mohit_gp}), and a square wave. 
+We first motivate the inclusion of a dynamic forgetting factor by implementing our method with fixed forgetting values, namely $\lambda = 1.0$, $\lambda = 0.8$, and $\lambda = 0.6$. Additionally, four different baselines are implemented: an \ac{MPC} without a \ac{GP}, the \ac{GP}-\ac{MPC} method proposed in \cite{mohit_gp}, the fast adaptive sparse \ac{GP} (Fast-AGP) proposed in \cite{asgp}, the \ac{MHE} disturbance observer augmented with \ac{MPC} proposed in \cite{mpc_mhe}, and finally, the proposed method, \ac{DF-GP}. Moreover, we also test the \ac{MPC} without disturbances to illustrate the best-case tracking performance.
+
+
+
+%Furthermore, four different baselines are implemented: a \ac{MPC} without a \ac{GP}, \ac{GP}-\ac{MPC} method proposed in \cite{mohit_gp}, the fast adaptive sparse \ac{GP} (Fast-AGP) proposed in \cite{asgp}, \textcolor{red}{the \ac{MHE} disturbance observer augmented with \ac{MPC} proposed in \cite{mpc_mhe}} and finally the proposed method, \ac{DF-GP}. Furthermore, we also test the \ac{MPC} without disturbances to illustrate the best-case tracking performance. 
+
+
+
+%For the \ac{MPC} implementation, the direct multiple shooting method is utilized with a shooting grid size of $0.05$ seconds. Consequently, the resulting discretized \ac{OCP} reduces to a sequential quadratic program, which is solved via the generalized Gauss-Newton method with \ac{RTI} scheme \cite{DIEHL2002577}. ACADO toolkit \cite{acado}, along with the qpOASES solver \cite{qpoases}, is chosen as the solution platform for solving the OCP in \eqref{eq:NMPC}, as it incorporates the direct multiple shooting method and the RTI approach altogether. Additionally, the prediction horizon $N_c = 100$ and a sampling time of $0.05$ seconds are specified.
+
+
+
+
+
+
+
+
+The overall performance enhancement of the \ac{DF-GP} compared to other methods is illustrated in Table \ref{tab:sim}. 
+%
+\begin{table}[b]
+  \caption{Simulation results summary: The \ac{DF-GP} method demonstrates significant improvements in prediction compared to baselines. The improvement percentage is calculated relative to the GP-MPC method in disturbance prediction and relative to the \ac{MPC} with no \ac{GP} in tracking performance.}
+  \centering
+  \footnotesize % Decrease font size for the whole table
+  \begin{tabular}{|>{\centering\arraybackslash}p{1.9cm}|>{\centering\arraybackslash}p{1.1cm}|>{\centering\arraybackslash}p{0.8cm}|>{\centering\arraybackslash}p{1.cm}|>{\centering\arraybackslash}p{0.8cm}|>{\centering\arraybackslash}p{0.6cm}|} % Compute column is now last
+    \hline
+    Method & Mean prediction error [$m/s^2$] & Improve. \%  & Mean traj. error [m] & Improve. \%  & \textcolor{black}{Comp. [ms]} \\ % Compute is now the last column
+    \hline
+    \textit{Ideal} &  -    &  -   &    \textit{0.0186}  &   \textit{82.3} & - \\
+    No GP   &  -      &  -   &    0.105  &  0.0 & - \\
+    \textcolor{black}{MHE-MPC \cite{mpc_mhe}} & \textcolor{black}{0.445}  & \textcolor{black}{37.8}  & \textcolor{black}{ 0.0889}  & \textcolor{black}{15.3}  & \textcolor{black}{2.41} \\
+    GP-MPC \cite{mohit_gp}  & 0.716  &  0.0  &    0.0597   &  43.1 & \textcolor{black}{1.25}  \\
+    Fast-AGP \cite{asgp} &  0.381 & 46.8  &  0.0378     & 64.0 & \textcolor{black}{0.748}  \\    
+    $\lambda = 1.0$ & 0.644  &   10.1 & 0.0519 &  50.6 & 0.788  \\
+    $\lambda = 0.8$ &0.674  &   5.97 & 0.0505 & 51.9 & \textbf{0.720} \\
+    $\lambda = 0.6$ & 0.656    & 8.38   &0.0514& 51.0 &\textcolor{black}{0.756}  \\
+    DF-GP           & \textbf{0.289} &  \textbf{59.6}   & \textbf{0.0285}  & \textbf{72.9} &  2.05 \\  
+    \hline
+  \end{tabular}  
+
+  \label{tab:sim}
+\end{table}
+Particularly, regarding the motivation for dynamic forgetting compared to a static forgetting factor, while a fixed forgetting factor provides a prediction error of about $0.66$ $m/s^2$, the \ac{DF-GP} outperforms it by reducing the prediction error to less than half, i.e., to $0.289$ $m/s^2$. The reason is that a fixed forgetting factor is not suitable for different disturbance scenarios. Initially, when the disturbance is repeated, a higher $\lambda$ value renders a large dataset which is crucial for accurate prediction. Conversely, when the disturbance profile abruptly changes, such as in combined disturbances or square wave cases, a lower $\lambda$ is needed as older data becomes less relevant and recent data gains importance. The \ac{DF-GP} method strikes a balance as it weights different \ac{GP} models and quickly adapts predictions based on the error of each model within a short horizon.
+
+
+
+ Figure \ref{fig:prediction} illustrates the disturbance profile alongside the predictions generated by GP model from different methods. 
+ %
+ \begin{figure}[t]
+	\centering	\includegraphics[width=0.95\linewidth]{figures/Simulations/pred_mhe.pdf}
+	\caption{\ac{GP} predictions during the simulation run. \ac{DF-GP} effectively predicts the disturbance profile by optimally combining contributions from different \ac{GP}s.}
+	\label{fig:prediction}
+\end{figure}
+%
+\begin{figure}[b]
+	\centering	\includegraphics[width=1\linewidth]{figures/Simulations/pred_err_mhe.pdf}
+	\caption{\ac{GP} predictions error in simulation for the \ac{GP} with different forgetting factors. The \ac{DF-GP} method maintains low prediction errors. }
+	\label{fig:pred_error}
+\end{figure}
+ %
+ \begin{figure}[t]
+	\centering
+	\includegraphics[width=1\linewidth]{figures/Simulations/lem_mhe.pdf}
+	%\includegraphics[width=0.97\linewidth]{figures/Simulations/traj2.pdf}
+	\caption{Obtained trajectory in simulation for the proposed \ac{DF-GP} method against baselines. }%By accurately learning disturbances of varying magnitude and frequencies, \ac{DF-GP} method outperforms the baselines in the trajectory tracking task achieving comparable performance to the ideal (no disturbance) scenario. Points indicating the initiation of different disturbance profiles are highlighted in blue.}
+	\label{fig:traj}
+\end{figure}
+ %
+ Up until the first 30 seconds, all  \ac{GP}s are able to predict the disturbance profile relatively well. Starting at time $t=30$, the disturbance profile shifts to a combined sine wave, where the GP-MPC \cite{mohit_gp} is failing to follow the profile, as it has not encountered it before in the training data. On the other hand, the Fast-AGP and \ac{DF-GP} are able to accurately follow the disturbance profile, even as it switches. This can be attributed to the forgetting factor and the dynamic selection of inducing points in \cite{asgp}. Notably, our \ac{DF-GP} method demonstrates a superior ability to quickly adapt to the changing disturbance profile and maintain accuracy, as evidenced by the error plot in Fig. \ref{fig:pred_error}. This capability is due to its innovative approach of balancing multiple predictions by optimizing the weights of these predictions, enabling it to dynamically adjust and respond to the changing disturbance profile.
+
+%However, we can clearly observe the ability of the DF-GP method to quickly adapt to the disturbance profile and accurately follow it as shown in the error plot in Fig. \ref{fig:pred_error}. This can be attributed to its ability to balance different predictions by optimizing weights of different predictions.
+
+
+
+
+
+
+
+\begin{figure}[t]
+	\centering	\includegraphics[width=0.90\linewidth]{figures/Simulations/traj_err_mhe.pdf}
+	\caption{Trajectory tracking error results. The peaks in the error correspond to when the disturbance profile changes and the applied disturbance reaches a maximum magnitude.} %The \ac{DF-GP} method consistently outperforms baselines throughout the trajectory, after applying three different disturbance profiles. }
+	\label{fig:traj_error}
+\end{figure}
+
+
+
+
+
+
+
+
+Figure \ref{fig:traj} presents the tracking accuracy of the \ac{DF-GP} method compared to the baselines \ac{MPC}. It is evident that \ac{DF-GP} outperforms baselines in terms of tracking precision.  Figure \ref{fig:traj_error} showcases the trajectory tracking errors, with mean errors depicted for each forgetting factor. The enhancement in disturbance prediction translates into improved tracking accuracy for \ac{DF-GP}, demonstrating superior performance compared to other methodologies. Furthermore, the \ac{MHE}-\ac{MPC} demonstrated worse tracking performance than \ac{DF-GP} method, primarily due to the lack of predictive capability. Additionally, the computational performance of the methods is shown in \ref{tab:sim}. As expected, the methods based on \ac{ASGP} are the fastest, as they rely on quick online updates of new data points and dynamic inducing point selection. They are followed by the \ac{GP}-\ac{MPC} method, which uses a dense \ac{GP} implementation. The proposed \ac{DF-GP} method is not far behind; it only requires additional computation for \eqref{eq:DF}, which is an \ac{LP} with $K$ = 3, adding just 0.8 ms to the \ac{GP} predictions. Thanks to the efficient C++ implementation, which utilizes multithreading and parallelization, adding multiple \ac{GP} predictions did not noticeably increase the computation time. On the other hand, the \ac{MHE}-\ac{MPC} method had a higher computational cost, as it relies on a more expensive nonlinear optimization problem over a past horizon. 
+
+
+
+\subsection{Real-world experiments }
+\label{sec:real}
+%To further validate the simulation results, a real-world experiment is conducted at EIVA experimental test facility, in a $3 \times 5 \times 4$ pool, where the simulation test scenario is replicated.
+To enhance the validation of the simulation results, a real-world experiment is carried out at the EIVA experimental test facility, utilizing a 3 × 5 × 4 meter pool \footnote{The authors would like to thank Adis Hodzic, Ernest Wilk, Mathias Friis Spaniel, and Thomas Frank Klein from EIVA for their help with the experimental setup.}.  The motivation to conduct real-world tests is twofold:
+
+\begin{enumerate}
+    \item To demonstrate real-time feasibility, including computational feasibility and communication delays.
+    \item To showcase the effectiveness of the framework against unmodeled real-time effects, wall effects, self-induced currents by the \textcolor{black}{\ac{AUV}}, and tether.
+\end{enumerate}
+The experiment is conducted with a circular reference trajectory of 1-meter diameter due to space limitations. A BlueROV2 Heavy equipped with a BlueRobotics Navigator board \footnote{https://bluerobotics.com/store/comm-control-power/control/navigator/}, which incorporates an \textcolor{black}{\ac{IMU}}, compass and barometer is utilized. These sensors measure acceleration, heading, depth, and attitude estimates. Furthermore, a Wayfinder Doppler velocity log\footnote{https://www.teledynemarine.com/en-us/products/Pages/Wayfinder.aspx} is used to obtain the velocity estimate. The pose estimates are then derived through dead-reckoning based on the obtained velocities. To introduce periodic disturbances, the \ac{AUV} tether is tied to one side of the pool, creating a challenging environment for the \ac{AUV}.  %The obtained \ac{AUV} trajectories are shown in Figs. \ref{fig:error-real} and \ref{fig:pred_dist_real}. 
+%\begin{figure}[!htb]
+%	\centering	\includegraphics[width=0.95\linewidth]{figures/Expirements/traj_real.pdf}
+%	\caption{Obtained trajectory in real-world experiments for the proposed \ac{DF-GP} method against nominal \ac{MPC} method.}
+%	\label{fig:traj-real}
+%\end{figure}
+Figures \ref{fig:error-real} and \ref{fig:pred_dist_real} demonstrate that the \ac{DF-GP} strategy can learn the unmodelled effects of the inaccuracies and achieve a better trajectory tracking accuracy than nominal \ac{MPC} by improving the tracking error by $34.5\%$. This allows for learning unmodeled disturbances, such as tether effects, \ac{AUV}-generated currents, thrust degradation, and other factors.
+
+
+\begin{figure}[t]
+	\centering	\includegraphics[width=1.0\linewidth]{figures/Expirements/error_real.pdf}
+	\caption{Trajectory error obtained in real experiments for  \ac{DF-GP} and nominal \ac{MPC}. Dynamic disturbance learning through \ac{DF-GP} enhances tracking performance significantly.}
+	\label{fig:error-real}
+\end{figure}
+
+
+\begin{figure}[t]
+	\centering	\includegraphics[width=1.0\linewidth]{figures/Expirements/pred_real.pdf}
+	\caption{Comparison of real-world test predictions against disturbance calculations (pseudo-ground truth).} %The pseudo-ground truth is obtained by calculating disturbances at the current time instance \(\Delta_t\) using the system model equations. The first 15 seconds are used for collecting the training data and hyperparameter optimization of the \ac{GP}.}
+	\label{fig:pred_dist_real}
+\end{figure}
+
+
+
+
+
+
+

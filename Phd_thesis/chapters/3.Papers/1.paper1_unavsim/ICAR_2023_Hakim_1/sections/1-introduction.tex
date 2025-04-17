@@ -1,0 +1,60 @@
+\section{Introduction}\label{sec:intro}
+Marine robotics is an expanding field with numerous applications, including exploring underwater ecosystems and inspecting underwater infrastructure \cite{applications}. Recent developments in robotics and autonomy have demonstrated the superior capabilities of \ac{AI} and vision-based algorithms in solving complex tasks, such as drone racing \cite{DRL_erdal,gatenet} and inspection \cite{mohit}. These achievements have shown promise in developing \ac{AI} and autonomy for marine applications as well \cite{DFKI}. To mitigate the high costs involved in developing and testing such algorithms, photorealistic simulation environments are needed that can accurately model the complexity of underwater scenarios \cite{mimir23}.
+%there is a trend to applyMarine robotics is an expanding field with numerous applications, such as exploring underwater ecosystems and inspecting underwater infrastructure \cite{applications}. With recent developements in robotics and autonomy, ex. in autonomous drone racing has shown the capalities of such A.I algorithms in solving challenging tasks. 
+%there is a trend to apply
+%Recent developments in \ac{AI} and robotic autonomy \cite{DRL_erdal}, \cite{gatenet}, \cite{pencil} have shown promise in using \ac{AI} in marine robotics applications \cite{dfki}. 
+% This has the potential to revolutionize our %understanding and interaction with the oceans. 
+
+%However, deploying and testing \ac{AI} algorithms in autonomous underwater includes various challenges. These challenges include high operational costs, as well as the risks involved in the setup and conducting the tests, thus making it inconvenient to conduct numerous tests. 
+
+
+
+%This has the potential to revolutionize our understanding and interaction with the oceans. However, their are many challenges that hinder the progress of such technologies and deployment into real-life scenarios. According to \ac{DFKI} \cite{dfki}, the main challenge facing autonomous underwater robotics \ac{AI} development is integrating these techniques in resilient and long-term capable autonomous systems. 
+
+%To reduce the design and deployment costs for underwater robots, there is a need for photo-realistic simulation environments that can also accurately model the complex physics of underwater systems. 
+
+%Accordingly, it is essential to identify the key requirements a simulator must meet in research and development. 
+
+%To create an effective simulation of underwater vehicles and their interactions with the environment, the simulation environment should accurately represent the physical behavior of the vehicles and their interactions with the water. This requires accurate physics and hydrodynamic modeling that considers various factors such as buoyancy, drag, and water currents. In addition, the simulation should provide high-fidelity visual modeling with detailed representations of the underwater environment. This includes light scattering, blur, distortion and other effects that mimic the real-world environment. To test the capabilities of underwater vehicles in different scenarios, the simulation environment should simulate various underwater environments, including shallow water, deep water, and marine environments with varied terrain, obstacles, and other objects. Lastly, the simulation environment should accommodate a wide range of underwater vehicles to enable researchers and engineers to test different types of vehicles and their capabilities in a simulated environment.
+
+
+
+%With this in mind, we have identified the following criteria that an underwater robotics simulator is expected to provide:
+%To overcome these challenges, there is a need for sophisticated simulation environments that can accurately model the complex physics of underwater systems and provide a realistic rendering of underwater environments. Accordingly, it is important to identify the key requirements that a simulator must meet in order to be effectively used in research and development. With this in mind, we have identified the following criteria that a simulator is expected to provide:
+%\begin{itemize}
+
+
+%\item Accurate physics and hydrodynamic modeling: The simulation environment should accurately represent the physical behavior of underwater vehicles and their interactions with the aquatic environment.
+
+%\item High-fidelity visual modeling: The simulation environment should provide detailed visual representations of the underwater environment, including realistic lighting, motion blur, and other effects.
+
+%\item Diverse environments: The simulation environment should simulate various underwater environments, including shallow water, deep water, and marine environments with varied terrain, obstacles, and other objects.
+
+%\item Support for a wide range of vehicle types: The simulation environment should accommodate a wide range of underwater vehicles, including submersibles, \ac{AUV}, \ac{ROV}.
+
+%\item Customization and flexibility: The simulation environment should offer high customization and flexibility, enabling users to create and modify their environments and vehicles. 
+
+%\end{itemize}
+
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=8.5cm]{figures/UWRS_pipe.pdf}
+    \caption{UNav-Sim is an underwater robotics simulator utilizing Unreal Engine 5 (UE5) highly realistic environments. The simulator includes many features useful for roboticists, such as ROS 2, and a wide range of sensors and cameras. The bottom right displays the feed from a front-facing RGB camera, while the bottom left shows a corresponding depth image.}
+    \label{fig:uwrs}
+\end{figure}
+
+
+
+\begin{figure*}[!t]
+    \centering
+    \includegraphics[width=0.97\textwidth]{figures/abstract4.pdf}
+    \caption{UNav-Sim system architecture is designed to be modular, allowing flexibility in adapting the simulator to various underwater autonomy tasks. The system utilizes Unreal Engine 5 (UE5) to provide a high-fidelity rendering environment for increased photo-realism.  A model predictive controller (MPC), combined with a deep reinforcement learning (DRL) planner and Visual \ac{SLAM} are utilized for vision-based underwater navigation.   }
+    \label{fig:abstract} 
+\end{figure*}
+
+
+In this context, this paper presents UNav-Sim, the first open-source underwater simulator based on \ac{UE5} to create photorealistic environments (see Fig. \ref{fig:uwrs}). Compared to existing underwater robotics simulators, \cite{holoocean,uuv,dave,marus}, UNav-Sim provides superior rendering quality, essential for the development of \ac{AI} and vision-based navigation algorithms for underwater vehicles. It supports robotics tools such as ROS 2 and autopilot firmwares making it suitable for robotics research and development. The simulator uses the following open-source AirSim \cite{airsim} extensions: \cite{byu_vtol} to add custom vehicle models to AirSim, and \cite{coles} for integration of AirSim to \ac{UE5}. UNav-Sim can be used to simulate a wide range of underwater scenarios and models. The paper also demonstrates its effectiveness for the development of vision-based localization and navigation methods for underwater robots. 
+
+The rest of the paper is structured as follows: Section \ref{sec:soa} presents an overview of the state-of-the-art simulators and their respective capabilities. Section \ref{sec:description} describes the software architecture, physics, and models that comprise UNav-Sim. In Section \ref{sec:stack}, we describe a vision-based underwater navigation stack that was developed as a component of UNav-Sim. Then, we present a test case in Section \ref{sec:tests}, where we showcase the abilities and features of our simulator in a vision-based pipe inspection scenario. Lastly, conclusions are drawn from this work in Section \ref{sec:conclusion}.
+

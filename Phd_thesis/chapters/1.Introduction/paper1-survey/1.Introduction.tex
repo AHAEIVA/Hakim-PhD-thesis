@@ -1,0 +1,48 @@
+\section{Introduction}
+Simultaneous localization and mapping (SLAM) is a well-known method for the autonomous navigation of mobile robots. It defines a state estimation problem in which an autonomous system must determine its location in the environment while generating a representation of it as a map.
+\ac{SLAM} has been implemented on autonomous mobile robots using various types of sensors, such as depth cameras, monocular and stereo RGB cameras, LiDAR \cite{intro:survey:lidarkhan2021comparative}, or acoustic \cite{intro:survey:jiang2019surveyacoustic}. This survey focuses on monocular visual-centered approaches for \ac{SLAM}, referred to as monocular visual \ac{SLAM} in the literature.
+
+
+There are several advantages to using monocular visual SLAM over stereo visual SLAM. One is their simplicity: monocular systems only incorporate a single camera; therefore, they do not require stereo calibration and matching. 
+Using a single camera also makes monocular visual SLAM more cost-effective than setups incorporating more sensors. Moreover, unlike stereo systems, the depth of field in monocular systems is not limited by the fixed distance between camera centres, i.e., the baseline. Consequently, monocular visual SLAM systems are more versatile against scene geometry changes than stereo systems.
+Nevertheless, the availability of depth information in stereo setups allows them to retrieve the absolute scale of the motion estimate and to provide better accuracy than monocular setups.
+
+
+\begin{figure*}[tbp]
+\centering
+\includegraphics[width=\textwidth]{figs/paper1-survey/introduction/1-pipeline.pdf}
+\caption[Outline of the SLAM modules according to the pipeline implementation]{Standard modules for SLAM pipeline implementations as outlined in this chapter. The front-end is where the raw data is extracted from the sensors and abstracted into a model. The back-end infers from the front-end data and optimizes the estimates. The main modules in the front-end are tracking, loop detection, and relocalization. Tracking can be either direct or indirect. The back-end can be classified into filter and optimization-based techniques.}
+\label{fig:pipeline}
+\end{figure*}
+  
+
+Early visual \ac{SLAM} applications have relied on filtering algorithms for the estimation task. Given a set of landmarks detected in the image observed by the camera from a particular pose, filtering methods define a joint state vector that includes the landmarks' pose and the camera's aggregated pose. 
+A filtering algorithm, e.g. the Kalman filter, iteratively updates this vector. However, as the state vector grows, so does the computational cost, exponentially in some cases \cite{intro:ito2000gaussian}. Moreover, these solutions suffer from random walk noise accumulation over time, which results in drift and high measurement uncertainty \cite{intro:survey:aulinas2008filterslam}.
+More recently, a new class of SLAM systems arose: optimization-based or keyframe-based. These systems separate localization and mapping into two parallel threads: the localization, or front-end, is performed at frame rate, while the mapping, or back-end, takes place on a subset of the camera frames (keyframes), at keyframe rate \cite{intro:survey:younes2017keyframe}. 
+
+The front-end includes the estimation of a camera's pose without the computation of a map. This problem is known as visual odometry, and many methods exist to solve it very efficiently. However, as the map is not corrected with new measurements, the pose estimate from visual odometry rapidly drifts over time. 
+The back-end handles the map estimate, which in the loop closure algorithm minimizes the front-end drift by iteratively optimizing the map and pose estimates every time an area of the map is revisited. The loop closure algorithm is one of the critical concepts of \ac{SLAM}  that contributes to the camera's precise localization.
+The above-mentioned algorithms can be subdivided further, as depicted in Fig. \ref{fig:pipeline}. Visual \ac{SLAM} systems can be further categorized with respect to the selected algorithms.  
+
+Based on the constraints used for the pose estimate in the front-end, a visual \ac{SLAM} system can be classified as indirect or direct.
+Indirect \ac{SLAM} techniques minimize the reprojection error between features that need to be extracted first, and associated afterwards. On the other hand, direct \ac{SLAM} methods minimize the photometric error between the selected features. The selection of features can be either sparse, semi-dense, or dense, defining another class of visual \ac{SLAM} systems. 
+
+The back-end structure differs according to whether the approach is filter-based or optimization-based. 
+To reduce the state space of the problem, filter-based methods marginalize all past measurements. Optimization-based methods address the state space reduction by performing the measurements under a subset of the frames processed in the front-end, i.e., the keyframes. The keyframes are selected according to distance or covisibility criteria. 
+The optimization constraint chosen defines a pose graph optimization or a bundle adjustment algorithm. The information stored by the back-end comprises the \ac{SLAM} map, whose content varies depending on the implementation. It can comprise the 2D features, the 3D (sparse) map points, the depth (dense) map, the relative pose transforms, the estimated scale, and even semantic information.
+
+The SLAM's pipeline has remained unchanged for classic or geometry-based implementations around the above-mentioned configurations. The establishment of deep learning has brought
+a fundamental change to that structure, introducing end-to-end implementations of subsets of algorithms within the pipeline, and aiming for end-to-end SLAM approaches.
+Visual \ac{SLAM} comprises a multidisciplinary problem, involving computer vision, geometry, optimization, statistics, and deep learning. Except for end-to-end approaches, each SLAM module comprises a set of algorithms implemented independently. The broad scope of the problem leads then to a wide variety of approaches to its study. Previous surveys have reviewed a selection of algorithms developed within a timeline \cite{intro:survey:2010to2016}, or have defined a de-facto standard formulation for SLAM and then reviewed some aspects, such as scalability  and robustness \cite{intro:survey:robust} or time continuity \cite{intro:survey:yan2019flow}. Other surveys focus on specific domain challenges such as dynamic \cite{intro:survey:dynamicenvs} or underwater \cite{intro:survey:uwvisualslam} environments. There are also reviews on subsets of SLAM such as visual odometry \cite{intro:survey:scaramuzza2011visualodomtut,intro:survey:VODL}, loop closure \cite{intro:survey:loopclosure}, pose graph optimization \cite{intro:survey:carlone2015initialization}, map building \cite{intro:survey:geomap, intro:survey:3dmap} or deep learning for pose estimation and semantic information \cite{intro:survey:DLSLAMreview18, intro:survey:semantic20}.
+
+Rather than finding a de-facto implementation for monocular visual SLAM, the present work defines the standard modules that determine its pipeline, and surveys them. To the best of our knowledge, this is the first survey on monocular visual SLAM to introduce a general formulation for its pipeline that involves the different classes of geometry-based SLAM algorithms and end-to-end deep-learning-based SLAM algorithms. The aim of this general formulation is twofold: to serve as an introduction to the SLAM's terminology, and to identify the different combinations of taxonomies that yield a full SLAM pipeline. An outline of the SLAM's modules, as defined in this chapter, is shown in Fig. \ref{fig:pipeline}. For each module, the survey studies the recent advances within and outside the context of SLAM. Moreover, the challenges and opportunities for each SLAM algorithm are evaluated throughout the survey, culminating in a final experimental evaluation that compares a set of SLAM classes across different scenarios. 
+
+The outline of the Chapter is as follows:
+The front-end and back-end of geometry-based pipelines are introduced in Sections \ref{sec:frontend} and \ref{sec:backend}. Section \ref{sec:deeplearning} showcases end-to-end pipelines for the different modules for SLAM. Section \ref{sec:environment} enumerates the environmental challenges and shows the results from testing different pipelines under those challenges. Finally, Section \ref{sec:futurework} acknowledges future lines of development for visual SLAM.
+
+
+
+
+
+
+

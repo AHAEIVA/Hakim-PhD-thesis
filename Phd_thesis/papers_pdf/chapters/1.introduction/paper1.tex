@@ -1,0 +1,18 @@
+\chapter{Monocular visual SLAM: formulation and surveying}
+\label{chapter:paper1}
+\section*{Monocular visual simultaneous localization and mapping: \\(r)evolution from geometry to deep learning-based pipelines}
+% We demand rigidly defined areas of doubt and uncertainty!
+% ― Douglas Adams, The Hitchhiker’s Guide to the Galaxy 
+\paragraph*{Abstract}
+With the rise of deep learning, there is a fundamental change in visual \ac{SLAM} algorithms toward developing different modules trained as end-to-end pipelines.  However, regardless of the implementation domain, visual SLAM’s performance is subject to diverse environmental challenges, such as dynamic elements in outdoor environments, harsh imaging conditions in underwater environments, or blurriness in high-speed setups. These environmental challenges need to be identified to study the real-world viability of SLAM implementations. Motivated by the aforementioned challenges, this paper surveys the current state of visual SLAM algorithms according to the two main frameworks: geometry-based and learning-based SLAM. First, we introduce a general formulation of the SLAM pipeline that includes most of the implementations in the literature. Second, those implementations are classified and surveyed for geometry and learning-based SLAM. After that, environment-specific challenges are formulated to enable experimental evaluation of the resilience of different visual SLAM classes to varying imaging conditions. We address two significant issues in surveying visual SLAM, providing (1) a consistent classification of visual SLAM pipelines and (2) a robust evaluation of their performance under different deployment conditions. Finally, we give our take on future opportunities for visual SLAM implementations.
+
+\paragraph*{Reference \cite{olaya_survey}:}
+Álvarez-Tuñón, O., Brodskiy, Y., \& Kayacan, E. (2023). ``Monocular visual simultaneous localization and mapping: (r) evolution from geometry to deep learning-based pipelines''. \textit{IEEE Transactions on Artificial Intelligence.}
+
+
+\input{chapters/1.introduction/paper1-survey/1.Introduction}
+\input{chapters/1.introduction/paper1-survey/2.Front-end-SLAM}
+\input{chapters/1.introduction/paper1-survey/3.Back-end-SLAM}
+\input{chapters/1.introduction/paper1-survey/5.DeepLearning}
+\input{chapters/1.introduction/paper1-survey/7.Environment-Specific-Challenges}
+\input{chapters/1.introduction/paper1-survey/8.FutureWorks}

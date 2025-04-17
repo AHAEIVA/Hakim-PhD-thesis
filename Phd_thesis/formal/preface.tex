@@ -1,0 +1,240 @@
+\phantomsection
+%\pdfbookmark[0]{Titelblad}{titelblad}
+
+% \vspace{10pt}
+
+\chapter*{Preface}
+\addcontentsline{toc}{chapter}{Preface}
+% \section*{Project Design} Innovative Training Networks (ITN) - Marie Curie Actions
+This thesis concludes a three-year research journey carried out between July 2022 and June 2025. This work was conducted out as part of the Ph.D. program at the Graduate School of Technical Sciences (GSTS) at Aarhus University, in collaboration with EIVA A/S in Denmark. 
+
+Aarhus University served as the primary academic institution for this project, with the majority of the research conducted within the Department of Electrical and Computer Engineering, specifically in the Artificial Intelligence in Robotics group. This work was carried out under the supervision of Professor Erdal Kayacan. Industrial supervision was provided by Dr. Yury Brodskiy from the Robotics \& AI department at EIVA A/S. Additionally, this project benefitted from collaborations and mentoring of Dr. Mohit Mehindratta from GIM Robotics. % Add Andiry and Bilal
+
+This thesis focuses on the development of data-driven optimal control and navigation methods for autonomous marine robotics inspection applications. The outcomes of this project include six published scientific papers in the fields of control theory and robotics, with two additional draft publications pending submission. The author of this thesis is the main author of six of these publications and has made significant contributions to the other publication.
+
+
+The thesis is structured as a cohesive monograph, comprising an introduction to the research topics and state-of-the-art developments, a detailed description of the proposed research questions, the most relevant manuscripts produced during the Ph.D. project, and concluding remarks.
+
+\section*{Recognition of funding and grants}
+\addcontentsline{toc}{section}{Recognition of funding and grants}
+This research receives support from Innovation Fund Denmark grant number 2040-00032B and EIVA a/s.
+
+\section*{Reading guide}
+\addcontentsline{toc}{section}{Reading guide}
+The contents of the individual Chapters in this dissertation with published manuscripts are introduced with an abstract summarising the contents of the Chapter and a reference to the original published work. References throughout the dissertation are listed at the end of the main document. The standard numbered style denounces the references. Hence, a citation is referred to by [Number]. Bibliographical citations appear at the end of the document where journal and proceedings papers are referred by author, article title between quotes, and journal names in \textit{italics}. Books are referred by author, title in \textit{italics}, publisher, edition, and year, while websites are referred by author, title, year, URL, and time of last visit. Figures, tables, and equations are numbered according to the particular Chapter they are placed in, where uppercase Roman numerals number Chapters. Therefore, the first figure in Chapter Three is assigned with figure number III.1 and the second III.2, etc. Descriptive captions for tables are found above relevant tables, and captions for figures are found under relevant figures. Additional explanatory concepts are added with footnotes, labeled with $\ast$, $\dagger$, $\ddagger$, and so forth.
+
+% \subsection*{Chapter's Guide}
+The thesis is structured into five parts, each containing chapters aligned with the published content within the thesis. The chapters based on published manuscripts remain identical to their original versions, except for adjustments to figures to fit the thesis format or updates in experimental results conducted after publication.
+
+The first Part introduces the thesis topic and research questions and outlines the project's structure. Additionally, it presents a comprehensive state-of-the-art review aimed at identifying gaps in the literature that the subsequent Parts of the project will address.
+
+Parts II and III focus on addressing these identified gaps and are titled accordingly. Part IV discusses preliminary future work conducted during the Ph.D. project. Finally, Part V provides the concluding remarks, summarizing the main conclusions and research outcomes and highlighting future research directions in the field.
+
+
+
+
+\section*{List of Publications}
+\addcontentsline{toc}{section}{List of Publications}
+The following scientific manuscripts (in chronological order) have been published, accepted, or are under review at the time of submission of this thesis:
+
+\vspace{1em}
+
+\tcbset{
+  colback=gray!5!white, 
+  colframe=gray!75!black, 
+  boxrule=0.5pt, 
+  arc=4pt, 
+  boxsep=5pt, 
+  left=5pt, 
+  right=5pt, 
+  top=5pt, 
+  bottom=5pt,
+}
+
+%\begin{tcolorbox}[colback=gray!10, colframe=gray!80, title=\textbf{Publications}]
+\textbf{1.} \textbf{Amer, A.}, Mehndiratta, M., Brodskiy, Y., \& Kayacan, E. (2025). \textit{REACT: Real-time Entanglement-Aware Coverage Path Planning for Tethered Underwater Vehicles}. Submitted to the IEEE Transactions on Field Robotics, under review.\\[0.8em]
+
+\textbf{2.} \textbf{Amer, A.}, Falsegar, D., Brodskiy, Y., \& Sarabakha, A. (2025). \textit{Modelling of Underwater Vehicles using Physics-Informed Neural Networks with Control}. Submitted to the International Joint Conference on Neural Networks (IJCNN), Accepted for publication.\\[0.8em]
+
+\textbf{3.} \href{https://ieeexplore.ieee.org/document/10916556/authors#authors}{\textbf{Amer, A.}, Mehndiratta, M., Brodskiy, Y., \& Kayacan, E. (2025). \textit{Empowering Autonomous Underwater Vehicles Using Learning-based Model Predictive Control With Dynamic Forgetting Gaussian Processes}. \textit{IEEE Transactions on Control Systems Technology}.}\\[0.8em]
+
+\textbf{4.} \href{https://ieeexplore.ieee.org/document/10900576}{Liang, W., \textbf{Amer, A.}, Mehndiratta, M., Chen, Z., Yao, B., \& Kayacan, E. (2025). \textit{Adaptive Robust Control Integrated With Gaussian Processes for Quadrotors: Enhanced Accuracy, Fault Tolerance and Anti-Disturbance}. \textit{IEEE Transactions on Systems, Man, and Cybernetics: Systems}.}\\[0.8em]
+
+\textbf{5.} \href{https://ieeexplore.ieee.org/document/10406329}{\textbf{Amer, A.}, Mehndiratta, M., Sejersen, J.L.F., Pham, H.X., \& Kayacan, E. (2023). \textit{Visual Tracking Nonlinear Model Predictive Control Method for Autonomous Wind Turbine Inspection}. \textit{2023 21st International Conference on Advanced Robotics (ICAR)}, 431-438.}\\[0.8em]
+
+\textbf{6.} \href{https://ieeexplore.ieee.org/abstract/document/10406819}{\textbf{Amer, A.}, Álvarez-Tuñón, O., Uğurlu, H.İ., Sejersen, J.L.F., Brodskiy, Y., \& Kayacan, E. (2023). \textit{UNav-Sim: A visually realistic underwater robotics simulator and synthetic data-generation framework}. \textit{2023 21st International Conference on Advanced Robotics (ICAR)}, 570-576.}\\[0.8em]
+
+\textbf{7.} \textbf{Amer, A.}, Álvarez-Tuñón, O., Falsegar, D., Brodskiy, Y., \& Kayacan, E. (2023). \textit{MUDROV: A modular underwater defouling ROV for ship propeller cleaning}. \textit{Advanced Marine Robotics Workshop, International Conference on Intelligent Robots and Systems (IROS) 2023}.
+%\end{tcolorbox}
+
+
+
+\section*{Open-source contributions}
+
+Additionally, as part of this PhD, several outcomes of the research have been realized as open-source projects, supporting research on learning-based control, motion planning, and simulation for field robotics applications.
+
+
+
+\begin{itemize}
+    \item \textbf{UNav-Sim} \\
+    A visually realistic underwater robotics simulator and synthetic data-generation framework developed for benchmarking learning-based planning and control algorithms.\\
+    \href{https://github.com/open-airlab/UNav-Sim}{\texttt{github.com/open-airlab/UNav-Sim}}
+
+    \item \textbf{VT-NMPC: Autonomous Wind Turbine Inspection} \\
+    An open-source implementation of Visual Tracking Nonlinear Model Predictive Control for autonomous drone-based wind turbine inspection, integrating perception and control modules.\\
+    \href{https://github.com/open-airlab/VTNMPC-Autonomous-Wind-Turbine-Inspection}{\texttt{github.com/open-airlab/VTNMPC-Autonomous-Wind-Turbine-Inspection}}
+
+    \item \textbf{Physics-Informed Neural Control (PINC)} \\
+    A lightweight PyTorch-based Physics-Informed Neural Network framework for learning BlueROV dynamics from real-world data. Developed in collaboration with EIVA.\\
+    \href{https://github.com/eivacom/pinc-xyz-yaw}{\texttt{github.com/eivacom/pinc-xyz-yaw}}
+\end{itemize}
+
+
+
+
+
+\cleardoublepage
+
+% \noindent\fbox{\parbox{\textwidth}{
+
+\BgThispage  % add watermark
+
+\begin{minipage}[t]{0.48\textwidth}
+	\vspace*{0pt}			%\vspace*{-9pt}
+	\includegraphics[width=0.74\linewidth]{figs/logos/AUpantoneBlueMPE.pdf}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.3\textwidth}
+    \begin{flushright}
+        {\small 
+        \textbf{Aarhus University \\
+        Department of Electrical
+        and Computer Engineering} \\
+        Finlandsgade 22 \\
+        8200 Aarhus N, Denmark \\
+        \url{http://ece.au.dk/en}}
+    \end{flushright}
+\end{minipage}
+
+\vspace{5ex}
+
+% \noindent\makebox[0.3\linewidth]{{\rule{0.25\paperwidth}{4pt}}}
+\noindent\makebox[\linewidth]{{\rule{0.8\paperwidth}{4pt}}}
+
+\vspace{5ex}
+
+% \noindent\fbox{\parbox{\textwidth}{
+
+\begin{minipage}[t]{0.485\textwidth}
+\begin{flushleft}
+
+% \textbf{Title:} \\[5pt]
+% Robust Optimisation of Ultrasonic Flow Meters by Computational Fluid Dynamics and Enhanced Turbulence Modelling
+
+\textbf{Thesis submitted:} \\[5pt]\hspace{2ex}
+June 30\textsuperscript{st}, 2025
+\\[5pt]
+\textbf{Author:} \\[2pt]\hspace*{2ex}
+\textbf{Abdelhakim Khaled Amer} \\\hspace*{2ex}
+\href{mailto:olaya@ece.au.dk}{abdelhakim@ece.au.dk}\\\hspace*{2ex}
+\href{mailto:oat@eiva.com}{abdelhakim@aucegypt.edu}\\\hspace*{2ex}
+
+\textbf{Pages: -} \\
+% \textbf{Appendices: None} \\ 
+%\textbf{Project deadline: 29-5-2017}
+\end{flushleft}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.485\textwidth}
+\begin{flushleft}
+
+\textbf{Supervisors:} \\[5pt]
+
+\textbf{Henrik Karstoft} \\
+Full Professor \\
+Signal Processing and Machine learning \\
+Aarhus University \\
+\href{mailto:hka@ece.au.dk}{hka@ece.au.dk} \\[5pt]
+
+\textbf{Erdal Kayacan} \\
+Full Professor \\
+Automatic Control Group (RAT) \\
+Paderborn University \\
+\href{mailto:abkar@mpe.au.dk}{erdal.kayacan@uni-paderborn.de} \\[5pt]
+
+\textbf{Yury Brodskiy} \\
+Senior Software Engineer \\
+Computer Vision Group Leader \\
+EIVA A/S \\
+\href{mailto:ybr@eiva.com}{ybr@eiva.com} \\
+
+\end{flushleft}
+\end{minipage}
+% }}
+
+\vspace{5ex}
+
+% \noindent\makebox[0.3\linewidth]{{\rule{0.25\paperwidth}{4pt}}}
+\noindent\makebox[\linewidth]{{\rule{0.8\paperwidth}{4pt}}}
+
+
+\vfill
+
+\noindent {\footnotesize\itshape 
+The contents of this Ph.D. thesis are freely accessible and distributed under the terms of the Creative Commons CC-BY-SA license, 
+\begin{wrapfigure}{o}{0.1\textwidth}
+    \includegraphics[width=0.1\textwidth]{figs/logos/CC_BY-SA_icon.svg.png}
+\end{wrapfigure}
+which permits unrestricted use, distribution, and reproduction in any medium, provided the original work is properly cited and the license type does not change. Furthermore, none of the contents of this dissertation includes plagiarism.
+}
+
+\newpage
+
+\vspace{5ex}
+
+{\Large \textbf{Project collaborators:}} 
+
+\vspace{7ex}
+
+\begin{center}
+
+\includegraphics[width=0.4\textwidth, valign=c]{figs/logos/AUblack.pdf}
+\hspace{5ex}
+\includegraphics[width=0.4\textwidth, valign=c]{figs/logos/eivalogo.png}
+
+\vspace{5ex}
+
+\includegraphics[width=0.2\textwidth, valign=c]{Phd_thesis/figs/logos/dfki.png}
+\hspace{14ex}
+\includegraphics[width=0.35\textwidth, valign=c]{Phd_thesis/figs/logos/pad.png}
+
+
+\vspace{2ex}
+
+\includegraphics[width=0.25\textwidth, valign=c]{figs/logos/gim.jpg}
+\hfill
+\includegraphics[width=0.15\textwidth, valign=c]{Phd_thesis/figs/logos/upteko.png}
+\hfill
+\includegraphics[width=0.20\textwidth, valign=c]{Phd_thesis/figs/logos/airlab.jpg}
+
+
+\vspace{2ex}
+
+\includegraphics[width=0.2\textwidth, valign=c]{Phd_thesis/figs/logos/purdue.png}
+\hspace{14ex}
+\includegraphics[width=0.18\textwidth, valign=c]{Phd_thesis/figs/logos/zju.png}
+
+
+
+\vspace{1ex}
+
+
+
+\vspace{1ex}
+
+\includegraphics[width=0.8\textwidth]{Phd_thesis/figs/logos/inno.png}
+\end{center}
+
+\cleardoublepage
+
+

@@ -1,0 +1,16 @@
+\section{Conclusions and future work}
+\label{sec:conclusion}
+
+SubPipe is an underwater pipeline dataset for visual-inertial SLAM, object detection, and segmentation tasks. 
+%it is targeted for training and testing of deep learning models for the proposed algorithms. 
+It presents challenging imaging conditions characteristic of underwater environments. 
+This chapter proposes a set of experiments consisting of deploying state-of-the-art algorithms to benchmark those challenges. These experiments underscore the challenges and insights in deploying visual SLAM, image segmentation, and object detection in the context of submarine pipeline inspection. 
+
+Geometry-based visual SLAM algorithms struggle with SubPipe's low-textured areas, leading to track loss or inadequate feature tracking, whereas the learning-based TartanVO and DeepVO show promise in navigating these conditions. For RGB image segmentation, both SegFormer and DeepLabV3 show promising results despite the complexities of underwater imagery. 
+%Finally, the object detection experiments on the side-scan sonar data reveal the impact of the recording conditions on YOLOX's model performance [...HELP...].
+Object detection experiments on SSS data demonstrate the influence of recording conditions on the performance of the YOLOX model. These experiments indicate that the model's accuracy may be compromised even when using the same SSS system, frequency, and pipeline, highlighting the inherent challenges in applying object detection to SSS images.
+
+Collectively, these findings accentuate the promise of learning-based algorithms for underwater computer vision and the need for wider availability of data recorded under such conditions that allow more general models.
+Consequently, the public release of this dataset serves as a critical contribution to addressing the scarcity of publicly available underwater datasets for computer vision. 
+
+

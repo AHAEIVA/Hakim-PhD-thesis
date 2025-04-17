@@ -1,0 +1,273 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% AUthesis book
+% LaTeX Template
+% Version 1.0 (23/10/2023)
+%
+% This template is based on a template from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Lorenzo Pantieri (http://www.lorenzopantieri.net) with extensive modifications by:
+% Vel (vel@latextemplates.com), and
+% Morten (morten.haastrup@eng.au.dk).
+% Adaptation to Aarhus University and extension of the original template by:
+% Mario J. Rincon (mjrp@mpe.au.dk)
+%
+% License:
+% cC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	REQUIRED PACKAGES
+%----------------------------------------------------------------------------------------
+\usepackage{xcolor}  % to define colours
+\definecolor{AUpantone}{rgb}{0.0, 0.2392156, 0.5111111}
+\definecolor{AUpantoneDark}{rgb}{0.0, 0.1450980392156863, 0.27450980392156865}
+\definecolor{AUpantoneCyan}{rgb}{0.21568627, 0.6274509, 0.79607843}
+\definecolor{AUpantoneTurkis}{rgb}{0.0, 0.6705882353, 0.6431372549}
+
+
+\usepackage[
+    paper=b5paper,
+    inner=17.5mm,         % Inner margin % for book 20mm;   % for report 20mm
+    outer=17.5mm,         % Outer margin
+    % bindingoffset=10mm, % Binding offset FOR BOOK PRINTING
+    top=20mm,           % Top margin
+    bottom=20mm,        % Bottom margin
+]{geometry}
+
+\usepackage{tgpagella} % text only for Palatino font
+\usepackage{mathpazo}  % math & text for Palatino font
+\usepackage{titlesec}
+% For chapter format
+\titleformat{\chapter}[block]
+  {\normalfont\LARGE}
+  {\normalfont\makebox[\textwidth][r]{\makebox[\textwidth][r]{\scalebox{3}{\thechapter}}}}
+  {10pt}
+  {\vspace{1ex}\filright}
+  [\vspace{1ex}\titlerule]
+\titlespacing*{\chapter}{0pt}{10pt}{20pt}
+\renewcommand{\thechapter}{\Roman{chapter}}  % to have roman numerals in toc
+% For title of sections format
+\titleformat*{\section}{\Large}
+\titleformat*{\subsection}{\large}
+\titleformat*{\subsubsection}{\normalsize}
+\titleformat*{\paragraph}{\scshape}
+\titleformat*{\subparagraph}{\scshape}
+\usepackage{emptypage}  % To remove headers on empty pages
+\usepackage{fancyhdr}  % to make headers and footers
+\pagestyle{fancy}  % Enable the headers specified in this block and page style
+\fancyhf{}  % clear headers and footers
+\fancyhf[RFO, LFE]{\thepage}  % page number on the right on odd pages and the left of even pages
+\fancyhf[RHO]{\leftmark}  % chapter name in the right of odd pages
+\fancyhf[LHE]{\rightmark}  % section title in the left of even pages
+\renewcommand{\headrulewidth}{0pt} % rule width
+
+% Redefine the plain page style for chapter page
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \fancyhf[RFO, LFE]{\thepage}  % page number on the right on odd pages and the left of even pages
+  \renewcommand{\headrulewidth}{0pt}% Line at the header invisible
+  \renewcommand{\footrulewidth}{0.0pt}% Line at the footer invisible
+}
+
+% To change the math font to standard LaTeX Computer Modern, comment to use Euler font
+\SetSymbolFont{operators}   {normal}{OT1}{cmr} {m}{n}
+\SetSymbolFont{letters}     {normal}{OML}{cmm} {m}{it}
+\SetSymbolFont{symbols}     {normal}{OMS}{cmsy}{m}{n}
+\SetSymbolFont{largesymbols}{normal}{OMX}{cmex}{m}{n}
+\SetSymbolFont{operators}   {bold}  {OT1}{cmr} {bx}{n}
+\SetSymbolFont{letters}     {bold}  {OML}{cmm} {b}{it}
+\SetSymbolFont{symbols}     {bold}  {OMS}{cmsy}{b}{n}
+\SetSymbolFont{largesymbols}{bold}  {OMX}{cmex}{m}{n}
+
+\SetMathAlphabet{\mathbf}{normal}{OT1}{cmr}{bx}{n}
+\SetMathAlphabet{\mathsf}{normal}{OT1}{cmss}{m}{n}
+\SetMathAlphabet{\mathit}{normal}{OT1}{cmr}{m}{it}
+\SetMathAlphabet{\mathtt}{normal}{OT1}{cmtt}{m}{n}
+\SetMathAlphabet{\mathbf}{bold}  {OT1}{cmr}{bx}{n}
+\SetMathAlphabet{\mathsf}{bold}  {OT1}{cmss}{bx}{n}
+\SetMathAlphabet{\mathit}{bold}  {OT1}{cmr}{bx}{it}
+\SetMathAlphabet{\mathtt}{bold}  {OT1}{cmtt}{m}{n}
+
+% Used added packages
+\usepackage[nolist,nohyperlinks]{acronym}
+\usepackage[shortlabels]{enumitem}
+% \usepackage{blindtext}European
+\usepackage[export]{adjustbox}
+\usepackage{wrapfig, siunitx, caption, subcaption, multirow, nicefrac}
+\usepackage{color, soul}
+\usepackage{makecell}
+\usepackage{pdfpages}
+\usepackage{rotating}
+\usepackage[english]{babel}
+\usepackage{mathtools,amsmath, amssymb, amsthm} % For including math equations, theorems, symbols, etc
+%to write big norm brackets in equations
+\newcommand\norm[1]{\left\lVert#1\right\rVert}
+\newcommand\normx[1]{\left\Vert#1\right\Vert}
+\usepackage{hyperref}
+\usepackage{pifont}
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\usepackage[utf8]{inputenc} % Required for including letters with accents
+\usepackage{graphicx} % Required for including images
+\graphicspath{{figs/}} % Set the default folder for images
+\usepackage{enumitem} % Required for manipulating the whitespace between and within lists
+\usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\usepackage{varioref} % More descriptive referencing
+\usepackage{listings}
+\usepackage{epstopdf}
+\usepackage[symbol]{footmisc}  % to add footmarks as symbols
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\usepackage[some]{background}  % to add watermark images to some pages
+% Defininf here the bibliography style and format. Sort&compress stands for compressed formatting e.g. [3-7]
+\usepackage[square, numbers, sort&compress]{natbib}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{microtype}
+% to have the name of figures, tables, and equations based on chapters or not
+% \counterwithout{figure}{chapter}
+% \counterwithout{table}{chapter}
+% \counterwithout{equation}{chapter}
+
+\usepackage{cleveref}
+
+\usepackage{nomencl}
+\makenomenclature
+
+\newenvironment{dedication}
+  {\clearpage           % we want a new page
+   \thispagestyle{empty}% no header and footer
+   \vspace*{\stretch{1}}% some space at the top 
+   \itshape             % the text is in italics
+   \raggedleft          % flush to the right margin
+  }
+  {\par % end the paragraph
+   \vspace{\stretch{3}} % space at the bottom is three times that at the top (to make it pretty)
+   \clearpage           % finish off the page
+  }
+
+% For book class to not overlap roman numerals in toc
+\usepackage{tocloft}
+\setlength{\cftchapnumwidth}{3em}
+\setlength{\cftsecnumwidth}{3em}
+\setlength{\cftsubsecnumwidth}{4em}
+\renewcommand\cftaftertoctitle{\vskip10pt\par\noindent\hrulefill\par\vskip-30pt}  % to add a horizontal line below toc title
+\renewcommand\cftafterloftitle{\vskip10pt\par\noindent\hrulefill\par\vskip-30pt}  % to add a horizontal line below toc title
+\renewcommand\cftafterlottitle{\vskip10pt\par\noindent\hrulefill\par\vskip-30pt}  % to add a horizontal line below toc title
+
+% to make the spacing in the table of figures and tables consistent
+% vertical
+\renewcommand\cftfigafterpnum{\vskip5pt\par}
+\renewcommand\cfttabafterpnum{\vskip5pt\par}
+% horizontal
+\cftsetindents{figure}{0em}{3.5em}
+\cftsetindents{table}{0em}{3.5em}
+
+%---------------------------------------------------------------------------------------
+%     CODE
+%---------------------------------------------------------------------------------------
+% Set up caption font size
+\captionsetup[figure]{font=small,labelfont=bf}
+\captionsetup[table]{font=small,labelfont=bf}
+
+\lstdefinestyle{mystyle}{
+    basicstyle=\footnotesize,
+    breakatwhitespace=true,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+%----------------------------------------------------------------------------------------
+%	THEOREM STYLES
+%---------------------------------------------------------------------------------------
+
+\theoremstyle{definition} % Define theorem styles here based on the definition style (used for definitions and examples)
+\newtheorem{definition}{Definition}
+
+\theoremstyle{plain} % Define theorem styles here based on the plain style (used for theorems, lemmas, propositions)
+\newtheorem{theorem}{Theorem}
+
+\theoremstyle{remark} % Define theorem styles here based on the remark style (used for remarks and notes)
+
+%----------------------------------------------------------------------------------------
+%	HYPERLINKS
+%---------------------------------------------------------------------------------------
+
+\hypersetup{
+%draft, % Uncomment to remove all links (useful for printing in black and white)
+colorlinks=true, breaklinks=true, bookmarksnumbered,
+urlcolor=AUpantone, linkcolor=AUpantone, citecolor=AUpantone, % Link colors
+pdftitle={Vision-based navigation for underwater safety-critical applications}, % PDF title
+pdfauthor={Olaya Álvarez Tuñón \textcopyright}, % PDF Author
+pdfsubject={Fluid mechanics, Optimisation, Turbulence modelling}, % PDF Subject
+pdfkeywords={PhD thesis, Fluid mechanics, Optimisation, Turbulence modelling}, % PDF Keywords
+pdfcreator={pdfLaTeX}, % PDF Creator
+pdfproducer={LaTeX} % PDF producer
+}
+% Other functions
+\newcommand{\vect}[1]{\mathbf{#1}} %In order to show vectors in bold
+\usepackage{appendix}  % to make appendices
+% C++ typeset in appendix
+\usepackage{listings}
+% Set the default code style
+\lstset{
+    % frame=tb, % draw a frame at the top and bottom of the code block
+    tabsize=4, % tab space width
+    showstringspaces=false, % don't mark spaces in strings
+    numbers=left, % display line numbers on the left
+    commentstyle=\color{green}, % comment color
+    keywordstyle=\color{blue}, % keyword color
+    stringstyle=\color{red} % string color
+}
+
+%%% some macros to ease writing equations and such
+\newcommand{\volsym}{\rlap{\kern.08em--}V} % Volume symbol
+\newcommand\lrp[1]{\left( #1 \right)}
+\newcommand\lrb[1]{\left[ #1 \right]}
+\newcommand\lrcb[1]{\left\{ #1 \right\}}
+\newcommand\avg[1]{\left\langle #1 \right\rangle}
+
+%%% Extra math macros
+\newcommand{\Partialdiff}[2]
+    {\frac{\partial #1}{\partial #2}}
+    
+\def\Pardt{\partial_t}
+\def\Pardi{\partial_i}
+\def\Pardj{\partial_j}
+    
+\newcommand{\diff}[2]
+    {\frac{d #1}{d #2}}
+    
+\newcommand{\mean}[1]
+    {\langle #1 \rangle}
+
+\def\ij{{ij}}
+
+% Final touches
+% \newcommand\customfont[1]{{\usefont{T1}{fonts/AUPassata_Light}{m}{n} #1 }}  % To use custom AU font (font files under "fonts" directory. Need to use XeLaTeX compiler)
+
+\backgroundsetup{contents=\includegraphics{figs/formal/watermarkOddPage.pdf}, scale=1, opacity=0.05, angle=0}  % define the watermark figure for odd pages
+
+\hyphenation{Fortran hy-phen-ation} % Specify custom hyphenation points in words with dashes where you would like hyphenation to occur, or alternatively, don't put any dashes in a word to stop hyphenation altogether
+
+
+\newcommand{\HRule}{\rule{.9\linewidth}{.6pt}} % New command to make the lines in the title page
+\definecolor{greenEIVA}{HTML}{CADB2A}
+\definecolor{redEIVA}{HTML}{FF7043}
+\definecolor{greenEIVAdark}{HTML}{749C48} 
+
+%%%%%%%%%%%%%%%%%%%%%

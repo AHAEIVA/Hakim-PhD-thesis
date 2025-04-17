@@ -1,0 +1,27 @@
+\chapter{Introduction}
+%% We demand rigidly defined areas of doubt and uncertainty!\\
+% ― Douglas Adams, The Hitchhiker’s Guide to the Galaxy
+\epigraph{\textit{``We demand rigidly defined areas of doubt and uncertainty!"}}{--- \textup{Douglas Adams}, \textit{The Hitchhiker’s Guide to the Galaxy}}
+
+% Intro
+The exploration and utilization of underwater environments are critical to a variety of sectors within the European economy, including but not limited to renewable energy, oil and gas exploration, pharmaceuticals, and marine sciences. As these activities expand, so does the necessity for advanced robotic systems capable of operating in such challenging and often unpredictable conditions. Underwater robotics, particularly Autonomous Underwater Vehicles (AUVs), play a pivotal role in this domain by performing tasks that range from infrastructure inspection to environmental monitoring and data collection.
+
+Despite significant advancements, the operation of AUVs is hindered by the complex and dynamic nature of underwater environments. Poor visibility, variable lighting conditions, and the physical properties of water significantly affect the performance of traditional navigation and perception systems. Consequently, there is a pressing need for enhanced methodologies that can reliably support the perception and navigation capabilities of these robotic systems.
+
+% Motivation
+
+The REMARO project aims to address these challenges by focusing on the development of reliable artificial intelligence (AI) methodologies for underwater robotics. This project, involving a consortium of experts in robotics AI, software reliability, and safety, emphasizes the need for advancements across three strategic objectives: the development of reliable AI methods for perception, including vision, object detection, and underwater localization; the development of reliable AI methods for knowledge representation, planning, and mission execution; and the development of reliable tools and methods for self-diagnosis of underwater AI robotics.
+
+This PhD thesis is focused on the first objective, concentrating on the enhancement of visual-aided navigation systems through the application of deep learning techniques. The motivation for this research originates from the critical need to improve how AUVs interpret and interact with their environments, enabling more effective decision-making and operational autonomy. This research aims to:
+\begin{itemize}
+    \item Develop robust visual perception models that can overcome the inherent difficulties posed by underwater environments, such as distorted light propagation and suspended particulate matter, which can obscure and alter visual data.
+    \item Enhance localization capabilities to enable AUVs to navigate and perform tasks with higher precision, essential for activities like detailed inspections or sample collections in delicate or hazardous locations.
+    \item Leverage deep learning to adaptively learn from diverse underwater imagery, thereby improving the adaptability and robustness of navigation systems across various underwater scenarios, from shallow waters to deep-sea environments.
+\end{itemize}
+
+By advancing visual-aided navigation technologies, this thesis supports the broader goals of the REMARO project to ensure the safety, reliability, and environmental compatibility of underwater robotics. The outcomes of this research have the potential to transform the operational capabilities of AUVs, thereby enhancing the economic viability and sustainability of Europe’s underwater industries. Through a focused exploration of deep learning applications in visual perception, this thesis aims to set new benchmarks in the field of underwater robotic autonomy.
+
+%%%%%%%%%%%%%%%%%%%%%5
+% Use camera-based deep learning algorithms to aid navigation
+% of underwater vehicles. For safety it is important to warn the system, when model predictions are unreliable. For an underwater camera the accuracy is especially dependent on water clarity and lighting conditions. The deep learning models may be sensitive to small domain changes such as recordings taken from two different pipelines. EIVA has created a camera and a sonar based pipeline tracking system that outputs the vehicle positioning relative to a pipeline. The relative positioning enables an underwater vehicle to autonomously follow a pipeline—similar to a lane-assist system in the automotive industry. However, the reliability of this model has not been systematically assessed, and doing so remains a basic research challenge. For each displacement the model shall provide the reliability of the measurement
+% and the uncertainty of a measurement (for instance the standard deviation of the predicted position).

@@ -1,0 +1,34 @@
+\section{Thesis Structure and Contributions}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=1.0\textwidth]{Phd_thesis/chapters/1.Introduction/figures/contributions_thesis.pdf}
+    \caption{Research contributions and their interdependencies in marine robotics autonomy}
+    \label{fig:contribution_structure}
+\end{figure}
+
+The main scientific and technological contributions presented in this thesis are:
+
+\begin{description}[leftmargin=1cm, style=unboxed, font=\normalfont] % Using description list for clarity
+
+    \item[\textcolor{blue}{\textbf{[C1] Simulation Infrastructure}}] \hfill \\
+        Provides the foundational platform for development and validation.
+        \begin{itemize}[leftmargin=0.5cm, itemsep=0pt]
+            \item \textbf{C1.1: Visually Realistic Underwater Robot Simulator:} Development of a simulation environment combining realistic visual rendering with accurate hydrodynamic modeling to reduce the sim-to-real gap.
+        \end{itemize}
+
+    \item[\textcolor{blue}{\textbf{[C2] Control and Planning}}] \hfill \\
+        Develops novel algorithms for safe and effective autonomous navigation and task execution.
+        \begin{itemize}[leftmargin=0.5cm, itemsep=0pt]
+            \item \textbf{C2.1: Tether-Aware Path Planning:} Algorithms for generating collision-free and entanglement-aware trajectories for tethered underwater robots during complex inspection tasks.
+            \item \textbf{C2.2: Perception-Aware NMPC Formulation:} An \ac{NMPC} strategy that explicitly incorporates visual tracking objectives and constraints, optimizing for both path following and inspection quality.
+        \end{itemize}
+
+    \item[\textcolor{blue}{\textbf{[C3] Model Learning}}] \hfill \\
+        Enhances controller performance by improving the fidelity of the underlying dynamic models.
+         \begin{itemize}[leftmargin=0.5cm, itemsep=0pt]
+            \item \textbf{C3.1: Learning Full Model Dynamics using PINNs:} Exploration of Physics-Informed Neural Networks for learning comprehensive dynamic models from data while respecting physical laws.
+            \item \textbf{C3.2: Learning Model Residuals using GP:} Online estimation of model uncertainties and external disturbances using \acp{GP} to adaptively augment the nominal model used within the \ac{MPC}.
+        \end{itemize}
+\end{description}
+

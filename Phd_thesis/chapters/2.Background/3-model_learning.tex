@@ -1,0 +1,145 @@
+\section{Model Learning}
+
+\subsection{Why model learning?}
+In underwater robotics, accurate dynamical models are crucial for designing controllers, state estimation, and motion planning. The dynamics of underwater vehicles are typically represented as ordinary differential equations (ODEs) derived from hydrodynamic principles and Newton-Euler formulations. Classical approaches to modeling underwater vehicle dynamics rely on first principles to derive mathematical models based on physical laws. However, these analytical models often present limitations when applied to real underwater systems due to complex hydrodynamic effects that are difficult to model precisely.
+
+Unmodeled dynamics such as complex fluid-structure interactions, vortex shedding, and boundary layer effects can significantly impact vehicle behavior. Parameter uncertainty is particularly pronounced in underwater environments, where hydrodynamic coefficients depend on vehicle geometry, operational depth, and environmental conditions. Environmental variations including currents, waves, and varying water density affect system behavior in ways that are challenging to predict analytically. Furthermore, computational constraints may limit the use of high-fidelity computational fluid dynamics (CFD) models in real-time applications, and system wear and biofouling can change hydrodynamic properties over time.
+
+Data-driven model learning addresses these limitations by leveraging experimental data to identify underwater vehicle dynamics, either complementing or replacing analytical models. This approach is particularly valuable for underwater robots that interact with complex, uncertain marine environments, where accurate models are essential for achieving desired performance and safety objectives in challenging underwater operations.
+
+\subsection{Model learning paradigms: Full model learning vs learning residuals}
+Two primary paradigms have emerged in data-driven model learning for underwater vehicle dynamics:
+
+\subsubsection{Full Model Learning}
+In this approach, the entire hydrodynamic model is learned from data without incorporating prior knowledge from first principles. The underwater vehicle dynamics are represented as:
+
+\begin{equation}
+\dot{\mathbf{x}} = f_{\theta}(\mathbf{x}, \mathbf{u})
+\end{equation}
+
+where $\mathbf{x}$ represents the state (typically position, orientation, linear and angular velocities), $\mathbf{u}$ is the control input (thruster forces and moments), and $f_{\theta}$ is a parameterized function with parameters $\theta$ that are optimized based on observed vehicle behavior.
+
+For underwater vehicles, full model learning offers advantages when hydrodynamic effects are particularly complex or when analytical models fail to capture significant dynamic phenomena. This approach requires no prior knowledge about the specific hydrodynamic structure, potentially providing higher accuracy when physical models are inadequate, and offers a unified framework regardless of vehicle configuration.
+
+However, full model learning for underwater vehicles requires extensive datasets collected across various operating conditions, may struggle with generalization beyond the training data regime, offers limited interpretability of learned hydrodynamic coefficients, and may not preserve physical properties like energy conservation or symmetry in the hydrodynamic tensors.
+
+\subsubsection{Learning Residuals}
+The residual learning approach combines analytical hydrodynamic models with data-driven components. The underwater vehicle dynamics are represented as:
+
+\begin{equation}
+\dot{\mathbf{x}} = f_{physics}(\mathbf{x}, \mathbf{u}) + f_{residual}(\mathbf{x}, \mathbf{u})
+\end{equation}
+
+where $f_{physics}$ is the physics-based hydrodynamic model derived from fluid mechanics principles, and $f_{residual}$ represents the unmodeled dynamics learned from data.
+
+For underwater vehicles, this paradigm is particularly valuable for handling complex hydrodynamic effects, unmodeled interactions with the environment, and systematic errors. The residual component can capture ocean current disturbances, unmodeled hydrodynamic effects such as cross-coupling terms, parameter uncertainties in added mass and damping matrices, and biofouling effects that alter vehicle hydrodynamics over time.
+
+The residual learning approach incorporates prior hydrodynamic knowledge, typically requires less training data compared to full model learning, demonstrates better generalization properties beyond the training regime, preserves interpretability of the physical hydrodynamic coefficients, and is often more sample-efficient for underwater applications where data collection is expensive and time-consuming.
+
+However, this approach depends on the quality of the base physical hydrodynamic model, may propagate errors if the physical model is significantly flawed, and requires careful integration of the two model components to avoid instabilities in the combined dynamic representation.
+
+\subsection{Full model learning with PINNs}
+Physics-Informed Neural Networks (PINNs) represent a sophisticated approach to full model learning that incorporates physical constraints into the neural network training process. For underwater vehicle dynamics, PINNs respect underlying hydrodynamic principles while maintaining the flexibility of neural networks.
+
+PINNs approximate the underwater vehicle's state evolution using neural networks while enforcing consistency with governing differential equations. For an underwater vehicle described by:
+
+\begin{equation}
+\mathbf{M}\dot{\mathbf{\nu}} + \mathbf{C}(\mathbf{\nu})\mathbf{\nu} + \mathbf{D}(\mathbf{\nu})\mathbf{\nu} + \mathbf{g}(\mathbf{\eta}) = \mathbf{\tau} + \mathbf{\tau}_{env}
+\end{equation}
+
+where $\mathbf{M}$ is the inertia matrix (including added mass), $\mathbf{C}$ is the Coriolis and centripetal matrix, $\mathbf{D}$ is the damping matrix, $\mathbf{g}$ represents gravitational and buoyancy forces, $\mathbf{\tau}$ is the control input, and $\mathbf{\tau}_{env}$ represents environmental forces.
+
+PINNs learn a neural network approximation $\hat{f}_\theta(\mathbf{x}, \mathbf{u}, t)$ using a composite loss function:
+
+\begin{equation}
+\mathcal{L}_{total} = \lambda_d \mathcal{L}_{data} + \lambda_p \mathcal{L}_{physics}
+\end{equation}
+
+where $\mathcal{L}_{data}$ measures the discrepancy between predictions and observed underwater vehicle behavior, and $\mathcal{L}_{physics}$ penalizes violations of known hydrodynamic principles.
+
+The physics loss term enforces consistency with the vehicle's equations of motion through automatic differentiation:
+
+\begin{equation}
+\mathcal{L}_{physics} = \left\| \mathbf{M}\frac{d\hat{\mathbf{\nu}}}{dt} - \left(-\mathbf{C}(\hat{\mathbf{\nu}})\hat{\mathbf{\nu}} - \mathbf{D}(\hat{\mathbf{\nu}})\hat{\mathbf{\nu}} - \mathbf{g}(\hat{\mathbf{\eta}}) + \mathbf{\tau} \right) \right\|^2
+\end{equation}
+
+This ensures that the neural network's predictions respect hydrodynamic principles even in regions with limited or no training data.
+
+For underwater vehicle dynamics, PINNs can incorporate various physical constraints including conservation laws ensuring energy or momentum conservation, kinematic constraints enforcing rigid body motion principles, and stability properties preserving known hydrodynamic stability characteristics of the vehicle.
+
+PINNs offer several advantages for underwater vehicle modeling, including seamless integration of data and hydrodynamic constraints, requiring less training data compared to pure data-driven approaches, better generalization outside the training distribution, and physically consistent predictions even in extreme conditions.
+
+However, PINNs face limitations in underwater applications, including computationally intensive training process that may be challenging for real-time applications, sensitivity to hyperparameter selection affecting model quality, challenges in balancing data and physics loss terms for optimal performance, and difficulty in encoding complex hydrodynamic constraints like free surface effects or vortex shedding.
+
+\subsection{Learning residuals with Gaussian Process}
+Gaussian Process (GP) regression is particularly well-suited for learning residual dynamics in underwater vehicle systems due to its probabilistic nature and sample efficiency. This approach combines analytical hydrodynamic models with data-driven components to capture unmodeled dynamics.
+
+In the residual learning paradigm for underwater vehicles, the system dynamics are modeled as:
+
+\begin{equation}
+\dot{\mathbf{x}} = f_{nominal}(\mathbf{x}, \mathbf{u}) + \delta(\mathbf{x}, \mathbf{u})
+\end{equation}
+
+where $f_{nominal}$ represents the nominal hydrodynamic model and $\delta(\mathbf{x}, \mathbf{u})$ is the residual function learned using GP regression.
+
+For underwater systems, the residual term typically captures complex hydrodynamic interactions such as vortex-induced forces, unmodeled coupling effects between degrees of freedom, varying added mass effects at different speeds, current and wave disturbances, and thruster nonlinearities including deadband and saturation.
+
+The implementation process involves data collection gathering state-input-acceleration triplets from underwater vehicle operation, residual computation calculating the difference between observed and model-predicted accelerations, GP training fitting GP models to map from states and inputs to residual accelerations, and uncertainty propagation leveraging GP variance for robust underwater vehicle control.
+
+\subsection{Gaussian Process Regression}
+Gaussian Process regression provides a principled Bayesian approach to function approximation, offering both predictions and uncertainty estimates, which makes it particularly valuable for underwater robotics applications where model uncertainty can significantly impact performance and safety.
+
+A Gaussian Process is fully specified by its mean function $m(\mathbf{x})$ and covariance function (kernel) $k(\mathbf{x}, \mathbf{x}')$:
+
+\begin{equation}
+f(\mathbf{x}) \sim \mathcal{GP}(m(\mathbf{x}), k(\mathbf{x}, \mathbf{x}'))
+\end{equation}
+
+Given observations $\mathcal{D} = \{(\mathbf{x}_i, y_i)\}_{i=1}^n$ where $y_i = f(\mathbf{x}_i) + \epsilon_i$ and $\epsilon_i \sim \mathcal{N}(0, \sigma_n^2)$, the posterior distribution at a test point $\mathbf{x}_*$ is Gaussian:
+
+\begin{equation}
+p(f_* | \mathbf{x}_*, \mathcal{D}) = \mathcal{N}(\mu_*, \sigma_*^2)
+\end{equation}
+
+with mean and variance:
+
+\begin{equation}
+\mu_* = m(\mathbf{x}_*) + \mathbf{k}_*^T(\mathbf{K} + \sigma_n^2\mathbf{I})^{-1}(\mathbf{y} - \mathbf{m})
+\end{equation}
+
+\begin{equation}
+\sigma_*^2 = k(\mathbf{x}_*, \mathbf{x}_*) - \mathbf{k}_*^T(\mathbf{K} + \sigma_n^2\mathbf{I})^{-1}\mathbf{k}_*
+\end{equation}
+
+where $\mathbf{K}$ is the kernel matrix with entries $K_{ij} = k(\mathbf{x}_i, \mathbf{x}_j)$, $\mathbf{k}_*$ is the vector of kernel evaluations between $\mathbf{x}_*$ and training points, and $\mathbf{y}$ and $\mathbf{m}$ are vectors of observations and prior mean evaluations.
+
+The choice of kernel function encodes prior beliefs about the hydrodynamic residual properties. Common kernels for underwater vehicle dynamics include:
+
+Squared Exponential (SE) kernel:
+\begin{equation}
+k_{SE}(\mathbf{x}, \mathbf{x}') = \sigma_f^2 \exp\left(-\frac{||\mathbf{x} - \mathbf{x}'||^2}{2l^2}\right)
+\end{equation}
+
+Matérn kernel:
+\begin{equation}
+k_{\text{Matérn}}(\mathbf{x}, \mathbf{x}') = \sigma_f^2 \frac{2^{1-\nu}}{\Gamma(\nu)}\left(\frac{\sqrt{2\nu}||\mathbf{x} - \mathbf{x}'||}{l}\right)^\nu K_\nu\left(\frac{\sqrt{2\nu}||\mathbf{x} - \mathbf{x}'||}{l}\right)
+\end{equation}
+
+Periodic kernel (useful for capturing oscillatory hydrodynamic effects):
+\begin{equation}
+k_{\text{Periodic}}(\mathbf{x}, \mathbf{x}') = \sigma_f^2 \exp\left(-\frac{2\sin^2(\pi||\mathbf{x} - \mathbf{x}'||/p)}{l^2}\right)
+\end{equation}
+
+Hyperparameters such as length scale $l$ and signal variance $\sigma_f^2$ are typically optimized by maximizing the marginal likelihood of the observed underwater vehicle data.
+
+GP regression offers several advantages for learning residual dynamics in underwater robotics. It provides sample efficiency, which is crucial when collecting underwater vehicle data is expensive and time-consuming due to deployment logistics and operational constraints. The variance in GP predictions provides a natural measure of model uncertainty, which can be incorporated into robust control frameworks essential for underwater operations where safety margins are critical. GPs offer non-parametric flexibility to represent complex nonlinear hydrodynamic effects without requiring explicit basis function selection. The probabilistic formulation helps prevent overfitting, especially important when training data from underwater trials is limited. Additionally, mean functions and kernel design can encode domain-specific knowledge about the expected hydrodynamic residual structure.
+
+Despite their advantages, GPs face certain limitations in underwater applications. Standard GP inference scales as $\mathcal{O}(n^3)$ with the number of training points, limiting application to large datasets that might be necessary to capture diverse underwater conditions. Performance depends on proper hyperparameter tuning, which can be challenging without expert knowledge of the underlying hydrodynamics. GPs suffer from the curse of dimensionality, making high-dimensional inputs problematic for full 6-DOF underwater vehicle models. Many standard kernels assume stationary behavior, which may not hold for underwater systems experiencing varying flow regimes.
+
+To mitigate computational limitations, several approximation methods have been developed for underwater applications, including sparse GPs using inducing points to approximate the full GP, local GPs training multiple models on different operating regimes of the underwater vehicle, random Fourier features approximating the kernel with explicit basis functions, and state-dependent factorization exploiting structure in multi-output underwater vehicle dynamics.
+
+Model learning for underwater vehicle ODEs represents a crucial capability for advanced marine robotic systems, bridging the gap between analytical hydrodynamic models and real-world performance. The choice between full model learning with PINNs and residual learning with GPs depends on specific underwater application requirements, available prior knowledge of vehicle hydrodynamics, and data constraints imposed by the operating environment.
+
+PINNs offer an elegant approach to incorporate hydrodynamic constraints into neural network frameworks, enabling data-efficient learning of complete underwater vehicle models. In contrast, GP-based residual learning provides a principled way to enhance existing physical models with uncertainty-aware data-driven components that can adapt to varying ocean conditions.
+
+As underwater robotics systems continue to advance in complexity and application domains from deep-sea exploration to littoral operations, hybrid approaches that leverage the strengths of both paradigms show particular promise for achieving robust, accurate, and interpretable hydrodynamic models essential for autonomous underwater operations.

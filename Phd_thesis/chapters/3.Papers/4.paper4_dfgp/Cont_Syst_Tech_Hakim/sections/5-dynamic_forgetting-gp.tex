@@ -1,0 +1,290 @@
+\section{Dynamic Forgetting Gaussian Process}
+\label{sec:dfgp}
+In this section, we elaborate on the overall \ac{DF-GP} methodology proposed in this work. We begin with summarizing the nominal dense \ac{GP} expressions, followed by the \ac{ASGP} method proposed in \cite{asgp}. Then, we illustrate the implementation details of the online \ac{ASGP} method along with the adopted GP architecture. Finally, we deduce the optimization problem of the \ac{DF-GP} methodology and establish its global convergence.
+
+
+\subsection{Gaussian process preliminaries}
+In essence, a \ac{GP} is a set of infinitely-dimensional random variables characterized by a joint Gaussian probability distribution \cite{williams2006gaussian}. 
+Let there be  data set $\mathbf{D}$ of size $n$ given by
+%
+\begin{equation} \label{eq:data}
+  D_i = \bigl\{\mathbf{a}_i, y_i\bigl\}, \hspace{0.5cm}   i \in [1, n],
+\end{equation}
+%
+where $\mathbf{a}_i$  $\in \mathbb{R}^d$ and $y_i$ are the input-target of observations, with $d$ representing the input dimensionality. The goal is to estimate an unknown function $f(\mathbf{a}_i)$ that maps the inputs $\mathbf{a}_i$ to the target $\mathbf{y}_i$:
+%
+\begin{equation} \label{eq:data}
+  y_i =f(\mathbf{a}_i)+\epsilon_i, \hspace{0.5cm}    \epsilon_i \sim \mathcal{N}(0,\,\sigma_{\varepsilon_{i}}^{2}),
+\end{equation}
+where $\epsilon_i$ is an additive white noise, with a variance $\sigma_{\varepsilon_{i}}^{2}$. For simplicity, we will henceforth omit the index $i$. A prior on the underlying function can be deduced, such that $f(\mathbf{a})$ forms a \ac{GP} defined by a mean function $m(\mathbf{a})$ and covariance kernel $k(\mathbf{a},\mathbf{a}')$.
+
+
+ %Gaussian processes (GP) is probabilistic regression method for approximating nonlinear function, $f\left(\bullet\right):\mathbb{R}^{D}\to\mathbb{R}$. It takes in some input-output pairs $\mathbb{D}$
+%\begin{notation}$\bm{x}\in\mathbb{R}^{D}$  $y\in\mathbb{R}$ is the measurement of $f\left(\bm{x}\right)$, i.e., $y=f\left(\bm{x}\right)+\varepsilon$, where $\varepsilon\sim\mathcal{N}\left(0,\sigma^2_\varepsilon\right)$ is the Gaussian noise; $\sigma^2_\varepsilon\in\mathbb{R}^+$ is the noise variance.	Assuming that a dataset $\left\{\bm{x}_n,y_n\right\}_{n=1}^N$ is collected. Let $f_n$ denotes $f\left(\bm{x}_n\right)$ abbreviatedly; define compact forms $\bm{X}_N=\left\{\bm{x}_n\right\}_{n=1}^N\in\mathbb{R}^{N\times D}$, $\bm{y}_N=\left\{y_n\right\}_{n=1}^N\in\mathbb{R}^{N}$, $\bm{f}_N=\left\{f_n\right\}_{n=1}^N\in\mathbb{R}^{N}$.\end{notation}
+
+%\\
+%A prediction $f_*=f\left(\bm{a}_*\right)$ at a test point $\bm{a}_*$, assuming that vector $\bm{y}$, which represnts the vetcor of target [y1, . . . , yN ] and $f_*$ have a joint Gaussian distribution given as:
+A prediction \(f_* = f\left(\bm{a}_*\right)\) at a test point \(\bm{a}_*\) assumes that the vector of target values \(\bm{y} = [y_1, \dots, y_n]^\top\) and the prediction \(f_*\) have a joint Gaussian distribution given by:
+
+
+
+\begin{equation}
+	\begin{bmatrix}
+		\bm{y} \\ f_*
+	\end{bmatrix}
+	\sim
+	\mathcal{N}
+	\left(\bm{0},
+	\begin{footnotesize}\begin{bmatrix}
+			\bm{K}_{aa}+\sigma^2_\varepsilon\bm{I} & \bm{k}_{a*} \\
+			\bm{k}_{*a} & k_{**}
+	\end{bmatrix}\end{footnotesize}\right),\label{eq:p_jointx}
+\end{equation}
+with the covariance calculated using a squared exponential kernel, as follows:
+\begin{equation}
+	\hspace{-1.9mm} k\left(\bm{a},\bm{a}'\right)= \sigma_f^2\exp\left(-\frac{1}{2}\left(\bm{a}-\bm{a}'\right)^T\bm{L}_a^{-2}\left(\bm{a}-\bm{a}'\right)\right),\label{kernal}
+\end{equation}
+wherein $\sigma_f^2$ $\in$ $\mathbb{R}^+$  denote the prior variance, and $\bm{L}_a\in\mathbb{R}_{>0}$ is a diagonal matrix that represents the input length scales. Together, these parameters form the kernel hyperparameters \(\theta \in \mathbb{R}^{d+1}\), which determine the  characteristics of the functions that the \ac{GP} samples from. Typically, the optimal hyperparameters, \(\theta_{\text{opt}}\), are obtained by minimizing the negative log marginal likelihood represented as follows: 
+%
+\begin{equation} \label{eq:hyper_opt}
+    \theta_{\text{opt}} = \arg \min_{\theta} \left( \frac{1}{2} \mathbf{y}^T \bm{K}_{aa}^{-1} \mathbf{y} + \frac{1}{2} \log |\bm{K}_{aa}| + \frac{n}{2} \log 2\pi \right).
+\end{equation}
+%
+Finally, the joint probability distribution \eqref{eq:p_jointx} is conditioned  on $\bm{y}$ to calculate the posterior distribution of $f_{*}$, resulting in the following posterior prediction equations for the test point $\bm{a}_*$:
+\begin{align}
+%	&p\left(f_*|\bm{y}\right) = \mathcal{N}\left(\mu_*, \Sigma_*\right) \label{eq:pred_dense1}\\
+	&\mu_* = \bm{k}_{*a}\left(\bm{K}_{aa}+\sigma^2_\varepsilon\bm{I}\right)^{-1}\bm{y}, \label{eq:pred_dense2}\\
+	&\Sigma_* = k_{**} - \bm{k}_{*a}\left(\bm{K}_{aa}+\sigma^2_\varepsilon\bm{I}\right)^{-1}\bm{k}_{a*}. \label{eq:pred_dense3}
+\end{align}
+
+ 
+\subsection{Adaptive sparse Gaussian process}
+%Next, we introduce the \ac{ASGP} as proposed in \cite{asgp}: 
+A recent work in \cite{asgp} introduces an adaptive version of the variational sparse GP method, referred to as the \ac{ASGP}, which utilizes the following mean and variance equations:
+%
+\begin{align}
+	\mu_*(\lambda) &= \sigma^{-2}_\varepsilon\bm{k}_{*s}\bm{B}_\lambda\bm{K}_{sa}\bm{\Lambda}\bm{y}, \label{eq:pred_asgp1}\\
+	\Sigma_*(\lambda) &= k_{**} + \bm{k}_{*s}\left(\bm{B}_\lambda-\bm{K}_{ss}^{-1}\right)\bm{k}_{s*}, \label{eq:pred_asgp2}
+\end{align}
+%
+where $\bm{\Lambda}$ (forgetting factor matrix) and $\bm{B}_\lambda$ are expressed as:
+%
+\begin{align}
+	\bm{\Lambda} &= {\rm diag}\left(
+	\begin{matrix}
+		\lambda^{n-1} & \lambda^{n-2} & \cdots & \lambda^0
+	\end{matrix}\right), \label{eq:pred_asgp3}\\
+	\bm{B}_\lambda &= \left(\bm{K}_{ss}+\sigma^{-2}_\varepsilon\bm{K}_{sa}\bm{\Lambda}\bm{K}_{as}\right)^{-1}. \label{eq:pred_asgp4}
+\end{align}
+%
+The equations above utilize a vector of inducing points \( \mathbf{s}_m \), where \( m \in \{1, \ldots, M\} \). There are \( M \) such inducing points, which together provide a sparse approximation of the dense input \( \mathbf{a} \), enabling computationally efficient and real-time prediction capabilities. Furthermore, introducing a forgetting factor enables prediction equations tailored for time-series data. This factor prioritizes recent data points with exponentially increasing weights, emphasizing recent data in the prediction. %Furthermore, since it comprises a sparse covariance matrix $\bm{K}_{ss}$, it enables computationally efficient and real-time prediction capabilities.
+
+
+%Furthermore, the equations rely on sparsification approximation, of the \ac{GP}, enabling more efficient implementation and real-time prediction capabilities.
+
+
+ 
+ 
+\subsection{Online ASGP for disturbance prediction}
+
+Next, we describe the procedure for generating the data set $ D = \bigl\{\mathbf{a}, y\bigl\}$, which is used by the \ac{ASGP} for predicting the disturbance at the following time step ($\hat{\Delta}_{t+1} = \mu_*(\lambda)$). At an arbitrary measurement time $\tau$, the input vector and target scalar are defined in the following manner:  
+%
+\begin{align} \label{eq:gp_data}
+ %\mathbf{a} &= [ \Delta_{t-h}, \mathbf{x}_{t-h}, \mathbf{u}_{t-h}]  , \; \forall h = 0, \cdots, H \\
+\mathbf{a} &= [ \Delta_{\tau-1-H}, \mathbf{x}_{\tau-1-H}, \mathbf{u}_{\tau-1-H}, \cdots, \Delta_{\tau-1}, \mathbf{x}_{\tau-1}, \mathbf{u}_{\tau-1}], \\
+y &=  \Delta_{\tau}. \label{eq:input_target}
+\end{align}
+%
+The input vector $\mathbf{a}$ is constructed utilizing the historical data, wherein $H$ represents the length of the data history. 
+%contains a history of disturbance estimates $\Delta_{t-h}$, where $H$ represents the length of the data history. 
+The disturbance value at time instance $\tau$ ($\Delta_{\tau}$) is computed from the model equations \eqref{eq:model_eqs}, by incorporating the corresponding acceleration and velocity feedback along with the control input. %Then, \ac{GP} uses this historical data to predict the disturbance at the next time instance, i.e., $\hat{\Delta}_{t+1}$.
+
+It is important to note that there is a one-time step difference between the input and output to facilitate learning. This input-output choice renders the \ac{GP} model more effective in learning disturbances. Also, the feature space is augmented with states and control inputs to embed the associated dynamics information. Moreover, a separate \ac{GP} model is employed for disturbance estimation along each axis to streamline the input space and reduce computational complexity. Furthermore, the dataset is partitioned into two sets as proposed in \cite{mohit_gp}, namely $D^1$ and $D^2$. The static dataset $D^1$, collected at the beginning of the operation, is utilized for hyperparameter optimization. On the other hand, the dynamic dataset $D^2$ is updated online, wherein the latest acquired data point replaces the first element (oldest data point). This design allows the forgetting factor to balance between the offline collected dataset $D^1$, representing nominal model errors, and the online collected dataset $D^2$, representing sudden disturbances, such as currents.
+
+
+%\begin{remark}
+%\textcolor{red}{The partitioning of the dataset is based on the following rationale: Dataset D1 represents a nominal dataset that captures historical modeling errors under standard operating conditions, primarily encompassing recurring unmodeled effects. In contrast, Dataset D2 consists of more recent, online-collected data that includes sudden and abrupt disturbances encountered during operation.By using both datasets, we can balance the forgetting factor ($\lambda$) to appropriately weigh the influence of older nominal disturbances (from D1) against the impact of newer, sudden disturbances (from D2). This approach helps in managing the computational burden of the MPC algorithm by ensuring that the model remains responsive to recent changes while still incorporating valuable historical data. For more detailed information on this approach, please refer to \cite{mohit_gp}}
+%\end{remark}
+
+
+%The input vector $\mathbf{a} $ contains a history of disturbance estimates $\Delta_{t-j}$, where $J$ represents the length of the data history. It is important to note that there exists a one-time step difference between the input and output to facilitate learning. This input-output choice aids the \ac{GP} in more effectively learning disturbances. Moreover, the feature space is augmented by incorporating state and control input. To streamline the input space and reduce computational complexity, a separate \ac{GP} for disturbance estimation along each axis.
+%Furthermore, the dataset is partitioned into two sets as described in \cite{mohit}: $D^1$ and $D^2$. $D^1$ is a static dataset collected at the beginning of the operation, which is also used for hyperparameter optimization. The dataset $D^2$ is dynamic, updated online where the first element (oldest) is replaced with the newest acquired data. This design allows the forgetting factor to balance between the offline collected dataset $D^1$, representing nominal model errors, and the online data collected $D^2$, representing sudden disturbances such as currents.
+
+
+
+
+\subsection{Dynamic weight optimization}
+
+
+As mentioned earlier, the forgetting factor in the \ac{ASGP} formulation can be crucial in time-series data prediction, making it suitable for predicting rapidly changing disturbances. However, a critical challenge lies in determining the optimal value for this factor. One potential approach is to choose the forgetting factor that maximizes the log-likelihood. However, this method can be computationally demanding and may struggle to adapt effectively to dynamic datasets.
+
+
+ To address the limitation above, a dynamic forgetting approach is proposed to effectively weigh the predictions from multiple \ac{GP} models with varying forgetting factors. The formulation of the proposed optimization problem is as follows:
+%
+\begin{subequations} \label{eq:DF}
+\begin{align}
+	\minimize_{{\eta}_j} \quad & \sum_{j = 1}^{K} \sum_{i = 1}^{N} {\eta}_j  \|\mu^{j}_{*t-i-1}(\lambda_j)- \Delta_{t-i}\|^{2}_{\alpha_i}, \
+ %{\alpha}_i \left( \mu^{k}_{i} - y_{i}\right)
+ % \|\mu^{k}_{i}- y_{i}\|^{2}  
+  \label{eq:DF1} \\
+    	\textrm{s.t.} \quad & \sum_{j = 1}^{K} {\eta}_j = 1 , \hspace{0.2cm} j \in [1, K],  &   \label{eq:DF2} \\
+    &  {\eta}_j \geq 0 , \hspace{0.8cm} j \in [1, K]. &   \label{eq:DF2} 
+\end{align}
+\end{subequations}
+%
+Here, \(K\) denotes the number of \ac{GP} models used in the prediction, where $K$ is a user-defined number. In essence, the objective is to obtain the optimal weights ($\eta_{j}$) that minimize the Euclidian error between the individual GP prediction ($\mu_{*t-i-1}^{j}(\lambda_j)$) and the corresponding measured disturbance values ($\Delta_{t-i}$). %It is to be noted that subscript $*$ in \eqref{eq:DF1} indicates the inference at the test point $\bm{a}_*$ and is included to establish notational consistency with \eqref{eq:pred_asgp1}.  
+%
+%
+%\begin{remark}
+%\textcolor{red}{ TODO: differentate lambda and alpha. keywords: lambda weights the data points contrubution within mean computation. whereas, alphai wheights the contriubtion of different costs () for optimizing lambda value (make better, comment 4 reviewer 3).The exponential relationship for $\alpha_i$ is chosen to give higher importance to more recent errors compared to older ones. This ensures that the model places greater emphasis on correcting recent prediction errors, which is crucial for maintaining accurate and adaptive predictions. If $\alpha_i$ were the same for each $i$, it would imply equal weighting of all past errors, regardless of their recency. This would diminish the ability of the model to adapt to recent changes or trends in the data, potentially reducing its effectiveness in capturing the latest dynamics of the system.}
+%\end{remark}
+%
+Note that the optimization problem in \eqref{eq:DF1} is solved over a historical measurement horizon comprising $N$ data points. This measurement horizon ensures that the weighted combination results in higher prediction accuracy over consecutive time points, rather than just the current time, rendering a stable optimal solution. As such, $N$ can be inferred as a critical parameter that substantially influences the optimization process. Opting for a small $N$ might hinder the ability of the \ac{GP} model to capture past effects, i.e., making it near-sighted, thereby rendering overemphasis on the recent data. Conversely, selecting a large $N$ introduces computational burdens and reduces the responsiveness of the \ac{GP} model to recent disturbances.
+%
+
+
+%\begin{remark}
+%    \textcolor{red}{Although the ASGP will try to minimize the error associated with the cost function \eqref{eq:DF} through predictions at the next time step \(\mu_{*t}\), there will inevitably be some discrepancy due to the inherent limitations of the GP’s prediction capabilities. Therefore, it is necessary to optimize the weights \(\eta\) to determine which ASGPs, with the respective forgetting factor $\lambda$, are most effective at minimizing this prediction error, considering disturbances. }
+%\end{remark}
+
+
+
+Additionally, $\alpha_i$ represents the relative weightage of \ac{GP} prediction errors within the $N$-point horizon. Intuitively, an exponential expression $\alpha_i = e^{0.05 (N - i)}$ is defined. Exponential weighting via $\alpha_i$ allows the model to prioritize recent data, improving its ability to track fast-changing disturbances. For instance, if $\alpha_i$ is set as unity, the model will treat all past errors equally, reducing its adaptability to recent disturbances. To maintain consistency among \ac{GP} model predictions, the constraints in \eqref{eq:DF1} and \eqref{eq:DF2} are introduced.
+
+
+
+%This approach ensures that the predictions derived from multiple \ac{GP} models are effectively aligned with the historical data while considering the impact of past observations on the prediction accuracy.
+
+\begin{remark}
+It is important to distinguish between $\alpha_i$ and the the forgetting factor $\lambda$: while $\lambda$ determines the contribution of historical data points in the \ac{GP} mean computation, \(\alpha_i\) weighs the different prediction-error terms over the measurement horizon \(N\) in the optimization process for the weights \(\eta\). 
+\end{remark}
+
+
+
+%\begin{remark}
+%\textcolor{red}{
+%The optimization of the forgetting factor is a low-dimensional problem, with the dimensionality ($K$) typically being less than 10. }
+%\end{remark}
+
+The overall learning-based MPC framework, as depicted in Fig. \ref{fig:abstract}. Furthermore, A pseudo-code for the overall frame is provided in algorithm~\ref{alg:dynamic_forgetting_gp}. Note that the algorithm is presented for a single dimension of the \ac{GP}. The same procedure is applied independently to the x, y, and z directions to learn disturbances along each respective axis.
+
+
+
+%% Algorithm starts here
+%%%
+\begin{algorithm}
+\caption{Dynamic Forgetting Gaussian Process (DF-GP)}\label{alg:dynamic_forgetting_gp}
+\begin{algorithmic}[1]
+\State \textbf{Input:} 
+\Statex \quad Measurement horizon \(H\)
+\Statex \quad Number of \ac{GP} models \(K\)
+\Statex \quad Forgetting factors \(\lambda_j\)
+\vspace{0.2cm}
+\State  Generate datasets \(D^1\) and \(D^2\), incorporating \eqref{eq:gp_data},\eqref{eq:input_target}
+\State  Optimize GP hyperparameters, using \eqref{eq:hyper_opt}
+\vspace{0.2cm}
+
+\While{learning is active}
+
+    \State \quad Get current state and control
+    \State \quad Update \(D^2\), append new data and remove old
+    \For{ each GP model with \(\lambda_j\)}
+        \State \quadCompute predictions \(\mu_{gpj}\), using \eqref{eq:pred_asgp1}
+    \EndFor
+    \State \quad Optimize weights \(\eta^{opt}\) over horizon \(N\), using \eqref{eq:DF}
+    \State \quad {Predict disturbance \(\hat{\Delta}_{t+1}\) with \(\eta^{opt}\) using \eqref{eq:pred_dfgp1}.
+    \State \quad {Update MPC model with \(\hat{\Delta}_{t+1}\), using \eqref{eq:NMPC1}
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
+
+
+
+
+
+
+\subsubsection*{Feasibility and optimality} 
+
+To analyze the feasibility and  (global) optimality, the optimization problem in \eqref{eq:DF} can be represented in the following standard form:
+%
+\begin{subequations} \label{eq:LP}
+\begin{align}
+	\minimize_{\boldsymbol{{\eta}}}\quad & \boldsymbol{c}^{T}{\boldsymbol{\eta}} \label{eq:LP1}  , \\
+   	\textrm{s.t.} \quad & \boldsymbol{a}^{T}  {\boldsymbol{\eta}}  = b \  &   \label{eq:LP2} \\
+    &  \boldsymbol{{\eta}} \geq \boldsymbol{0}, \label{eq:LP3} 
+\end{align}
+\end{subequations}
+%
+where \eqref{eq:LP1} defines the cost function with the coefficient vector $\bm{c} \in\mathbb{R}^{K\times 1}$ written as follows:  
+ \begin{align*}
+    \mathbf{c} = 
+      \begin{bmatrix} 
+        \sum_{i = 1}^{N} \alpha_i(\mu^1_{t-i-1} - \Delta_{t-i})^2 \\
+        \sum_{i = 1}^{N} \alpha_i(\mu^2_{t-i-1} - \Delta_{t-i})^2 \\
+        \vdots \\
+        \sum_{i = 1}^{N} \alpha_i(\mu^K_{t-i-1} - \Delta_{t-i})^2 \\
+      \end{bmatrix} \in\mathbb{R}^{K\times 1}  \neq \mathbf{0},
+ \end{align*}
+and \eqref{eq:LP2} and \eqref{eq:LP3} represent the underlying constraints with the following variable definitions:
+\begin{align*}
+    \boldsymbol{a} = \begin{bmatrix} 
+      \mathbb{I} 
+    \end{bmatrix} \in\mathbb{R}^{K\times 1} , \quad
+    b = 1,
+\end{align*}
+wherein $\mathbb{I}$ infers an identity vector. This formulation is clearly a \ac{LP} due to its affine objective and constraint functions, demonstrating the convex nature of the problem.
+%
+%With a closer look at \eqref{eq:LP}, one may identify its similarity to a linear program due to the underlying affine objective and constraint functions. This infers the convex nature of the posed optimization problem while assuming the boundedness of $\mu_{*\tau}^{j}$ and $\Delta_{\tau}$ at the time instant $\tau$.
+Given the inherent convexity of linear programs, global convergence to the optimal solution is ensured, assuming feasibility. Efficient \ac{LP} solvers can thus reliably solve this problem.
+
+
+%Consequently, the global convergence of its solution can be ensured by selecting efficient \ac{LP} solvers. 
+
+
+\begin{remark}
+The optimization problem in \eqref{eq:LP} is a linear program that guarantees the existence of a solution. Non-uniqueness may occur if the vector $\mathbf{c}$ contains identical or zero elements. However, in most practical scenarios where $K$ is a small integer, a unique solution is typically achieved while ensuring feasibility.
+\end{remark}
+
+
+
+
+
+%\begin{remark}
+%\textcolor{red}{Since the optimization problem in \eqref{eq:LP} is a linear problem that typically provides a solution, especially given the low dimensionality (e.g., \(K=3\) in Section VI). The only scenario where the LP might fail is if \(\mathbf{c} = 0\) or all elements of \(\mathbf{c}\) are equal, leading to a non-unique solution. However, this is highly unlikely, ensuring the feasibility of the problem in almost all cases.}
+%\end{remark}
+
+
+
+
+\begin{figure}[t]
+	\centering	\includegraphics[width=1.0\linewidth]{figures/Introduction/new_abstract.pdf}
+	\caption{ The proposed learning-based \ac{MPC} framework. }
+
+%	\caption{First,  \ac{GP} models with varying forgetting factors $\lambda_i$ are utilized to generate  predictions of the disturbances $\mu_{gpj}$. Dynamic weight optimization is then performed, where the optimal weight $\eta^{opt}$ of each prediction is obtained, to minimize the error between $N$ measurements $\Delta_{t-i}$ and the \ac{GP} predictions. These optimal weights are then used to predict the disturbance at the next time instance $\hat{\Delta}_{t+1}$, updating the \ac{MPC} model.  }
+ 
+	\label{fig:abstract}
+\end{figure}
+
+
+%$\boldsymbol{A}$ is the constraint matrix, which is an identity vector of size $1 \times K$, and $\boldsymbol{b}$ is the constraint vector , which is an identity matrix size $1 \times 1$. 
+
+%It should be noted that the current optimization problem is posed as \ac{LP} in standard form \cite{boyd2004convex}, which implies convexity and hence global convergence using standard efficient \ac{LP} solvers. 
+
+
+
+
+The obtained optimal weights $\eta^{opt}_j$ are then utilized to obtain a new prediction equation for the \ac{DF-GP} as follows: 
+\begin{align} 
+	\mu_{*DF} &= \displaystyle\sum_{j=1}^{K} \eta^{opt}_j \mu_{*t}(\lambda_j) , \label{eq:pred_dfgp1}\\
+	\Sigma_{*DF} &=  \displaystyle\sum_{j=1}^{K} \eta^{opt}_j \Sigma_{*t}(\lambda_j). \label{eq:pred_dfgp2}
+\end{align}
+
+
+
+
+
+
+
+
+
+%We define the Linear program in standard form as in \cite{boyd2004convex},  $\eta \in \mathbb{R}^{K},$ where $A$ $\in \mathbb{R}^{1\times K}$ and $b$ is $\mathbb{I}$ and  $\in  \mathbb{R}^{1\times 1}$. $c^{T}_{i}$ is $\in \mathbb{R}^{1\times K},$ and is equal $[\alpha_i(\mu^j_i-\Delta_{i})^2 ]$ where j \in [0, K],.

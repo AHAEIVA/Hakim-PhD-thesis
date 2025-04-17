@@ -1,0 +1,14 @@
+\subsection{Critical Barriers to \ac{MPC} Adoption in Marine Robotics Inspection Tasks}
+\label{subsec:mpc_barriers}
+
+While \ac{MPC} improves autonomous capabilities, there are fundamental challenges that could hinder \ac{MPC}'s performance and deployment in marine environments, which include:
+
+\textbf{1. Simulation-Reality Discrepancy:} Existing underwater simulators lack both \textit{visual realism} (critical for perception algorithms) and \textit{physical fidelity} in modeling hydrodynamic interactions, making pre-deployment controller validation unreliable. This gap forces costly trial-and-error field testing.
+
+\textbf{2. Environmental Uncertainty:} Marine disturbances—waves, currents, —exhibit multi-scale spatiotemporal variations that defy analytical modeling. Traditional \ac{MPC} performance degrades rapidly when hydrodynamic predictions from reality.
+
+\textbf{3. Mission-Safety Tradeoffs:} Simultaneously optimizing inspection coverage while preventing tether entanglement requires solving high-dimensional constraints in real time—a computationally intractable problem for conventional planners.
+
+\textbf{4. Perception-Control Decoupling:} Current frameworks treat trajectory tracking and visual inspection as separate objectives, often sacrificing coverage quality for path accuracy or vice versa. This disconnect leads to incomplete data collection in turbid or cluttered environments.
+
+These challenges form a self-reinforcing cycle: poor simulation prevents controller refinement, environmental uncertainty degrades predictions, and safety constraints limit mission complexity. Overcoming this requires co-designing robust simulation tools, adaptive modeling techniques, and task-aware control architectures—the focus of this work.

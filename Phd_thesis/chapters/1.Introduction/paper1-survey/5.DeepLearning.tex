@@ -1,0 +1,131 @@
+\section{Deep learning: towards end-to-end SLAM}
+\label{sec:deeplearning}
+
+End-to-end monocular visual SLAM models are as diverse as deep learning networks for computer vision. Understanding how the networks encode spatial, temporal, contextual, and semantic information is necessary to comprehend how each architecture influences the expected behaviour of the models. A camera moving within a euclidean space $SE(3)$ involves the space group symmetries; translation and rotation. Moreover, projecting the euclidean space onto an image plane defines a projective space in which scale symmetry must also be considered. Choosing the correct architectural elements to appropriately encode symmetries within a neural network is essential for successfully creating complex learned systems such as monocular visual SLAM.
+
+Several deep learning architectures have arisen in the last decade to explicitly support learning from spatial data \cite{surveyDLspatialdata}.
+Convolutional layers, also referred to as Euclidean or planar convolutions, are shift-equivariant; a shift to the input produces a shift to the output feature maps \cite{bronstein2021geometricDL}. Pooling layers allow scale invariance by locally subsampling the input feature map. 
+\Acp{CNN} in object detection achieve scale and rotation equivariance by feeding rotated and scaled versions of the training data to the network. However, localization pipelines require more generalized underlying representations. 
+\ac{G-CNNs} exploit the shift-invariance of Euclidean convolutions  by rotating and transforming them, thus achieving rotation and scale equivariance in discrete groups \cite{dl:groupconv}. Spherical \acp{CNN} \cite{dl:sphericalCNN} achieved equivariance within the continuous group for rotations SO(3).
+
+Aside from spatial information, visual localization shows a strong temporal correlation between visual features in consecutive frames.  
+\Acp{RNN} carry out temporal representations by sequentially encoding data. \acfp{GRU} and \acp{LSTM} encode the temporal information with the so-called gating mechanisms, which regulate the signal flow across the network.
+If implementing an appropriate range of gate values, the gating mechanisms achieve invariance to time transformations \cite{dl:rnn:canwarptime}. However, the performance of \acp{RNN} is hindered by their inability to parallelize under longer sequences.
+Transformers overcome the sequential processing of data by implementing the so-called attention mechanisms \cite{dl:attentioniswhatyouneed}, which allow for parallelization. They are originally permutation-invariant \cite{bronstein2021geometricDL}, but have been recently extended to provide equivariance within Lie groups \cite{dl:lietransformer}. Recently, \acp{GNN} have gained popularity, since many real-world problems represent data as graphs \cite{dl:intro:xia2021graphsurvey}. Initially designed as a permutation invariant or equivariant architecture, \acp{GNN} encode the geometric structure and local invariance of the data \cite{keriven2019gnninvoreq, dl:intro:jiao2022graphvisionsurvey}. \acp{GNN} benefit from the computational efficiency of sparse representations \cite{dl:intro:sparselearning}. Moreover, they allow for implementations of the mechanisms mentioned above, such as attention \cite{velivckovic2017graphattention}, convolution \cite{welling2016convgnn} and pooling \cite{yuan2020structpool}. 
+
+The current section surveys end-to-end pipelines for each SLAM module with a focus on the used architectural solutions.
+
+\subsection{End-to-end loop detection}
+\label{sec:deeplearning:loop}
+
+
+End-to-end loop detection pipelines comprise appearance-based methods that require robustness to lighting changes and different viewpoints. The baseline architectures for image representation rely on \ac{CNN}-based descriptors, where lower layers represent low-level features such as corners or edges, and upper layers represent semantic features such as buildings or faces. 
+
+One of the first end-to-end loop detection architectures was proposed in NetVLAD \cite{arandjelovic2016netvlad}. The dense description implements the \ac{CNN} architectures from AlexNet \cite{krizhevsky2012imagenet-alexnet} and VGG-16 \cite{dl:loopclosure:vgg16} as the baseline, cropped at the last convolutional layer. Rather than using the \ac{BoW} approach of concatenating clusters of descriptors, their residuals are aggregated into a single vector, for better memory efficiency (see Fig. \ref{fig:end2endloopdetection}). Furthermore, \cite{zhu2018attention,arandjelovic2016netvlad} apply PCA whitening to the descriptor, scaling its dimensions to address the issue of over-counting and co-occurrences.
+
+Deep learning models aim to provide invariance to scale, translation, rotation, and illumination changes.
+One method for achieving scale invariance is the implementation of spatial and global pooling layers \cite{zhu2018attention,ento-to-endloop,loopnet-attention}. In addition to that, other implementations use multi-scale descriptors \cite{arandjelovic2016netvlad,chen2018learningPR}, that is, they extract features at different layers in the network. A slightly different approach is followed in LoopNet \cite{loopnet-attention}, which inputs scaled images at different stages of the network.
+
+Instead of using standard metrics for measuring the distance between descriptors, the end-to-end descriptors in \cite{ento-to-endloop,arandjelovic2016netvlad} apply metric learning. In other words, they learn a loss that provides a smaller distance between the query and the best candidate than between the query and a set of negative candidates.
+
+The introduction of attention mechanisms allows models to focus on those regions of the image that are more relevant to the localization task. This way, the model can suppress the scene's transient information. 
+They can identify visually salient areas in the image \cite{zhu2018attention}, or also those of semantic importance \cite{chen2018learningPR}, and weight the descriptors accordingly prior to their aggregation. 
+
+The aforementioned methods comprise appearance-based image retrieval algorithms. With NetVLAD \cite{dl:loopclosure:relposegnn} or a pre-trained CNN \cite{dl:loop:li2021transcamp,dl:loopclosure:li2022gtcar} as baseline, leveraging \acp{GNN} has allowed to regress the absolute pose of the candidate frames directly. 
+
+\begin{figure}[tb!]
+  \centering
+  \includegraphics[scale=1]{figs/paper1-survey/DL/9-end-to-end-loop-detection-nostroke.pdf}
+  \caption[The framework for loop detection in end-to-end methods]{ General framework of the end-to-end methods for loop detection. The descriptors are obtained from pre-trained classification networks. Then, they are clustered and assigned a residual according to the centroid of the cluster they belong to. For each cluster, the residuals are aggregated into a vector that describes the image's appearance.}
+  \label{fig:end2endloopdetection}
+\end{figure}
+
+
+
+
+\subsection{End-to-end front-end}
+\label{sec:deeplearning:frontend}
+The previous section introduced end-to-end approaches for loop detection. Loop detection defines an appearance-based localization task, which results in image retrieval of the closest match to a query image. However, the context of monocular visual \ac{SLAM} requires to retrieve the camera pose for the queried image, either for tracking or relocalization. 
+
+This section refers to "end-to-end front-end" as the mechanism that involves both appearance-based and geometry-based localization tasks in an end-to-end pipeline: given a query image (or sequence of images), it returns the predicted camera pose. It can also be referred to as end-to-end localization or end-to-end visual odometry.
+They can be further divided into supervised and unsupervised according to the labels used during training, which also conditions the general formulation of the pipeline as shown in Fig. \ref{gif:end2end-frontend}. Following that, this section introduces supervised and unsupervised methods for end-to-end front-end implementations.
+
+
+\begin{figure}[b!]
+  \centering
+  \includegraphics[scale=1]{figs/paper1-survey/DL/10-end-to-end-front-end-nostroke.pdf}
+  \caption[General representation of the end-to-end front-end pipelines]{General representation of the end-to-end front-end pipelines. Early supervised approaches used classification networks as a baseline. More recently, the output from optical flow networks has been used as input to the classification network that precedes the pose regressor. In addition, some implementations leverage recurrent units. Unsupervised methods mainly rely on monocular depth estimation networks. The output is a pose estimate that may have a separated or joint translation and rotation estimation. }
+  \label{gif:end2end-frontend}
+\end{figure}
+
+
+\subsubsection{Supervised methods}
+\label{sec:frontend:vo:supervised}
+The first end-to-end approach for camera localization involving loop detection and 6-DOF pose estimation was proposed in PoseNet \cite{kendall2015posenet}. It leverages the pre-trained classification network GoogleNet \cite{szegedy2015googlenet} as the baseline for pose regression, yielding an appearance-based method. More recent implementations of learning-based supervised methods for visual  odometry encode the appearance as optical flow fields, which can be represented in the image space \cite{wang2017deepvo,wang2020tartanvo}, or in a lower-dimensional latent space \cite{costante2018lsvo}. 
+Moreover, in visual odometry, there is a strong temporal correlation between the frames' appearance. DeepVO \cite{wang2017deepvo} is constituted by a pre-trained FlowNet \cite{dosovitskiy2015flownet} \ac{CNN} preceded by two \ac{LSTM} units. The \ac{CNN} module models the appearance, and the recurrent unit models the dynamic relationships between sequences of images. 3DC-VO models the temporal relationships as a 3D CNN \cite{dl:vo:3dcvo}.
+DeepVO does not require to be fed additional parameters for the camera model or the absolute scale, as the network learns them. However, this implies that the network can only be deployed under the data conditions it has been trained for. 
+Conversely, TartanVO \cite{wang2020tartanvo} inputs the intrinsic camera parameters into a layer between the optical flow and pose retrieval modules to achieve generalization across different cameras. It implements PWC-Net \cite{sun2018pwcnet} for optical flow and a modified ResNet50 \cite{dl:vo:2015resnet} for pose retrieval, with two output heads for rotation and translation. A ResNet is also used to regress the pose in AtLoc \cite{dl:vo:wang2020atloc}, which additionally incorporates contextual information as a self-attention mechanism. The attention mechanism in \cite{dl:vo:xue2019guidedatt} operates in both the spatial and temporal domain, allowing it to detect stable features and to identify motion patterns. 
+In addition to incorporating optical flow layers for matching, other algorithms leverage depth estimation modules. These modules can be either learned components \cite{czarnowski2020deepfactors, zhou2018deeptam} or geometric-based components \mbox{\cite{dl:vo:droidslam}}. This integrated approach enables the concurrent optimization of pose and depth estimation outputs, thereby enhancing the overall accuracy of the results.
+
+The inductive bias of classification networks used for pose regression such as ResNet is shift equivariance \cite{dl:vo:cotogni2022offset}. This inductive bias makes pose regression techniques more closely related to image retrieval than to 3D geometry approaches, and it does not guarantee to generalize beyond the training data \cite{dl:vo:19cnnlimitations}. This realization suggests the need for leveraging networks that carry more geometric information.
+The use of translation and rotation-equivariant features can induce the motion representation into the feature space, thus alleviating the amount of data needed and allowing for more lightweight models \cite{dl:vo:equivfeaturesforposeregression,dl:vo:zhang2020rotationequivariance}. Furthermore, the work in \cite{dl:vo:brynte2022rigidity} proposes an inductive bias with pitch-yaw equivariance which can handle perspective effects. 
+
+Supervised pose regression networks usually rely on a Euclidean loss for rotation and translation \cite{kendall2015posenet, wang2017deepvo,dl:vo:wang2020atloc,dl:vo:xue2019guidedatt}. TartanVO trains the optical flow jointly with the pose regressor. To keep the loss consistent across different data sources, the pose loss proposes an up-to-scale function, which consists in normalizing the vector of the estimated translation.
+The main challenge to address when implementing loss functions is the rotation representation.
+PoseNet represents rotations with quaternions: any arbitrary quaternion can be easily mapped to a valid rotation via normalization. DeepVO chooses Euler angles to avoid the optimization restriction that the unit constraint for the quaternion implies. Both quaternions and Euler angles define a discontinuous representation for rotations. Neural networks tend to produce significant errors around discontinuities. Therefore, it is convenient to use smoother functions, or a continuous representation for rotations \cite{zhou2019continuity, dl:vo:isr}. The Lie algebra representation for the pose leverages an unconstrained optimization problem, which has proven to provide faster convergence when applied to PoseNet \cite{dl:frontend:lieposenet} and DeepVO \cite{dl:vo:deepvo-graph,dl:vo:isr}. 
+
+
+
+
+
+\subsubsection{Unsupervised methods}
+
+Most unsupervised methods rely on stereo-image pairs for training, and share a similar architecture that retrieves the scene depth and the pose estimate.
+
+In UnDeepVO \cite{li2018undeepvo}, the pose estimator is a \ac{CNN} architecture that retrieves pose with orientation in Euler angles. The pose regressor consists of a VGG-based \cite{dl:loopclosure:vgg16} \ac{CNN} architecture. The depth estimator is an encoder-decoder network which directly recovers the depth map, rather than the inverse depth map, since it provides better convergence. 
+D3VO \cite{yang2020d3vo} builds on top of the DepthNet network from MonoDepth2 \cite{godard2019monodepth2} and PoseNet for depth and pose estimation. SIMVODIS++\cite{kimICRA22simvodis++} can train depth and pose in a self-supervised manner using the attention module CBAM \cite{woo2018cbam}, applied to a sequence of three images.
+Instead of stereo image pairs, SfMLearner \cite{zhou2017unsupervisedmono} can train a network that jointly learns depth and ego-motion from monocular video, both designed under a CNN framework. 
+
+Unsupervised pose regression networks primarily rely on shift-equivariant CNN architectures \cite{dl:vo:cotogni2022offset}. The same principle to supervised approaches applies: due to the three-dimensional nature of the problem, these architectures could benefit from networks leveraging higher-dimensional inductive biases. For example, the aforementioned translation and rotation equivariant networks and the pitch-yaw equivariant networks \cite{dl:vo:equivfeaturesforposeregression,dl:vo:brynte2022rigidity}.
+
+Without the ground truth pose for the image sequences, the loss functions in unsupervised methods are based on variants of the photometric error.
+UnDeepVO separates the loss into spatial and temporal components. The spatial loss operates with the stereo pair and minimizes the photometric error, checks the disparity map (inverse depth), and the pose consistency between the stereo pair images. The temporal loss operates with monocular images and minimizes the photometric and 3D geometric registration errors.
+D3VO depth and pose estimation are jointly trained using a photometric constancy loss function. Moreover, the loss function integrates uncertainty terms trained to model illumination changes or noise sources such as Lambertian surfaces.
+In addition to the photometric loss, SIMVODIS++ leverages three other metrics: the structural similarity loss handles inconsistencies from non-Lambertian surfaces and illumination changes by calculating the similarity between image patches. The depth smoothness loss removes random sharp lines, and the field-of-view loss uses the \ac{MSE} for learning the camera parameters.
+
+One limitation of the photometric loss is the drift caused by scale consistency for depth across images. Trianflow aligns the scale of depth and poses with a two-view triangulation \cite{zhao2020trianflow}. SC-SfMLearner \cite{bian2019unsuperviseddepthconsistency} builds on top of SfMLearner, introducing a geometry consistency loss. It estimates the pose between consecutive frames using PoseNet, and the depth on each of them with DepthNet. Afterwards, it warps one depth frame onto another using the estimated transform, leveraging the geometric consistency. This way, the scale remains consistent between consecutive frames.
+
+
+\subsection{End-to-end back-end}
+\label{sec:deeplearning:backend}
+End-to-end back-end approaches exploit the sparsity of the \ac{SLAM} graph by leveraging \ac{GNN}s.
+The work in \cite{tanaka2021learningbackend} builds a \ac{GNN} in which the vertices comprise the camera poses (keyframes) and landmarks, and the edges connect them according to visibility. Similar to \ac{BA}'s implementation in ORB-SLAM, the sum of the reprojection errors with the Huber norm is used as a loss function. While it does not outperform the standard \ac{BA} from the g2o library \cite{grisetti2011g2o} in terms of accuracy, it shows five times faster performance.
+
+PoGO-Net \cite{li2021pogoNET} builds the graph upon a multiple rotation averaging approach with a quaternion parameterization. Therefore, the vertex represents the absolute camera orientations and the edges' pair-wise connections.
+Furthermore, it addresses \ac{GNN}'s vulnerability to noisy graphs by adding parameterized denoising layers for outlier edge removal. The loss function has a local and a global consistency component. The global consistency component is used to train the \ac{GNN} and evaluates the precision of the pose graph. The local consistency component is used to evaluate the denoising layer, and it evaluates the prediction of the absolute camera orientations.
+Instead of only making a binary vertex connection according to visibility, the edges are parameterized to provide a reliability metric for the connections.
+
+A different approach is followed by RL-PGO\cite{kourtzanidis2022rlpgo}, which implements a reinforcement learning algorithm for a 2D case of pose graph optimization. It learns a policy for predicting optimal orientation retractions from pose graph observations. It outperforms Gauss-Newton and Levenberg-Marquardt methods, although it does not scale well with the size of the image and therefore is not suitable for online implementations.
+
+The recent  neural radiance field (NeRF) architecture \cite{mildenhall2021nerf} has been effectively incorporated as the mapping module in iMaP \cite{sucar2021imap} and NeRF-SLAM \cite{RW:nerfslam}. These frameworks, when provided with an image and pose input, are capable of producing per-pixel depth and colour outputs.
+
+
+\subsection{End-to-end SLAM}
+\label{sec:deeplearning:endSLAM}
+
+The main challenge to address in the end-to-end SLAM approaches is the development of a fully-differentiable pipeline. The high modularity of SLAM, with non-differentiable and complex subsystems, has hindered the development of end-to-end SLAM pipelines, which still remains an open problem. 
+
+SLAM-net \cite{karkus2021SLAM-Net} encodes the particle filter implementation of FastSLAM \cite{montemerlo2002fastslam} to learn mapping, transition, and observation models. Each particle represents a trajectory hypothesis and an associated weight.
+The network implements three models: a transition model, an observation model, and a mapping model. The outputs are the 2D pose estimate and a 2D grid map.
+The transition model is a learnt CNN estimating relative motion between frames. It extends the particle trajectories with each new observation.
+The mapping model is a learnt CNN that predicts the local map, which is added to a list of previously predicted local maps that configure a 2D grid of latent features.
+The local maps and the trajectory hypotheses are fed into the observation model, which updates the trajectory weights according to the consistency between maps and trajectory.
+The data transition from the mapping model to the observation model is made differentiable using spatial transformers \cite{jaderberg2015spatialtransformers} to convert the local map according to the relative pose in the particle trajectory.
+
+In MapNet \cite{henriques2018mapnet}, camera localization and map are encoded in a 2.5D representation, in which information related to
+the vertical dimension is implicitly encoded as a feature vector. The pose estimate is obtained from a standard convolutional operator as the absolute pose in the map. The registration of new observations to the map is obtained from its dual
+operator, deconvolution. This way, the SLAM problem is formulated as a simple and differentiable pipeline. 
+
+The non-differentiability of raycasting techniques required in the 3D to 2D mapping and some optimization algorithms used in SLAM such as Levenberg-Marquardt leads to simplified formulations for end-to-end SLAM where the map is only represented in the latent space. The work in gradSLAM \cite{jatavallabhula2020gradslam} presents a framework for developing fully differentiable SLAM systems. Within this framework, differentiable trust-region optimizers, map fusion schemes, and ray backprojection from the inverse depth map to the 2D image have been implemented. 
+
+Although the development of end-to-end SLAM is still in its early stages, these recent advances present promising lines of development for future architectures. 

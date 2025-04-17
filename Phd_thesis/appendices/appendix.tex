@@ -1,0 +1,26 @@
+% \chapter{Grid independence study}
+% \label{app:gridIndependence}
+% A grid independence study is performed with the criterion of obtaining pressure drop mesh independence for RANS $k-\omega \ \text{SST}$ turbulence model. The converged grid is likewise used for all fidelity levels (RANS and LES) and models to obtain an identical resolution comparison.
+
+% On the one hand, regarding wall-modelled simulations, a fixed 5-layers extrusion-mesh is defined with the first wall-adjacent cell thickness of $40\si{\micro\metre}$ and an expansion ratio of 1.25. The coarse grid is defined by 20 cells along the pipe diameter. Subsequently, refined grids are doubled in the number of cells.
+% Figure \ref{fig:gridIndependenceWM} shows the convergence of pressure drop through refinement cases. The \textit{very fine} mesh shows convergence with 2.07 million cells. This is the grid chosen to perform all numerical studies regarding optimisation due to the computational resources available.
+
+% On the other hand, for the wall-resolved cases, a fixed 15-layers extrusion-mesh is defined with the first wall-adjacent cell thickness of $2.5\si{\micro\metre}$ and an expansion ratio of 1.1. To ensure an adequate cell-volume gradient between the bulk mesh and the extrusion layers, two refinement levels of 3-cells wide are specified near the walls: refinement level 2 at $1 \ \si{\milli\metre}$, and refinement level 3 at $0.5 \ \si{\milli\metre}$ from all wall-type patches. Hence, refinement level 1 corresponds to the bulk mesh. The coarse grid is defined by 40 cells along the pipe diameter. Subsequently, refined grids are doubled in the number of cells.
+% Figure \ref{fig:gridIndependenceWR} shows the convergence of pressure drop through refinement cases. The \textit{fine} mesh shows convergence with 23.7 million cells. This is the grid chosen to perform all numerical studies for wall-resolved cases and validation.
+% \begin{figure}[H]
+%     \centering
+%     \begin{subfigure}[t]{0.495\textwidth}
+%     \centering
+%     \includegraphics[width=1\linewidth]{figs/gridIndependenceWM.png}
+%     \caption{Wall-modelled.}
+%     \label{fig:gridIndependenceWM}
+%     \end{subfigure}%
+%     ~ 
+%     \begin{subfigure}[t]{0.495\textwidth}
+%     \centering
+%     \includegraphics[width=1\linewidth]{figs/gridIndependenceWR.png}
+%     \caption{Wall-resolved.}
+%     \label{fig:gridIndependenceWR}
+%     \end{subfigure}%
+%     \caption{Grid independence study represented as pressure drop in function of grid quality for RANS $k-\omega \ \text{SST}$.}
+% \end{figure}
