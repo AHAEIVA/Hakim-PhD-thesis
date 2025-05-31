@@ -1,0 +1,23 @@
+% % Please add the following required packages to your document preamble:
+% % \usepackage{graphicx}
+% \begin{table*}[!t]
+% \caption{Comparison of the combined best model configurations}
+% \label{tab:best_models}
+% \centering
+% %\resizebox{\columnwidth}{!}{%
+% \begin{tabular}{l|r|r|r|r|r|r}
+% \textbf{Scheduler}                          & \textbf{yes}             & \textbf{no}      & \textbf{yes}      & \textbf{yes}      & \textbf{yes}             & \textbf{yes}             \\ \hline
+% \textbf{Gradient Scaling}                   & \textbf{Normalization} & \textbf{ConFIG} & \textbf{ConFIG} & \textbf{ConFIG} & \textbf{Normalization} & \textbf{Normalization} \\ \hline
+% \textbf{Collocation points}                 & \textbf{base}          & \textbf{base}   & \textbf{base}   & \textbf{base}   & \textbf{extra colls}   & \textbf{base}          \\ \hline
+% \textbf{Epochs $N_{\text{epoch}}$}                 & \textbf{2400}          & \textbf{2400}   & \textbf{2400}   & \textbf{4800}   & \textbf{4800}          & \textbf{4800}          \\ \hline
+% $\log_{10}(\mathcal{L}_{data,dev})$         & $-4.62$                & $-4.11$         & $-4.48$         & $-4.50$         & $-4.46$                & $\bm{-4.90}$           \\ \hline
+% $\log_{10}(\mathcal{L}_{roll,dev})$         & $-3.53$                & $-2.94$         & $-3.34$         & $-3.30$         & $-3.29$                & $\bm{-3.75}$           \\ \hline
+% $\log_{10}(\mathcal{L}_{phy,dev})$          & $-2.35$                & $-1.91$         & $-2.35$         & $-2.21$         & $-2.18$                & $\bm{-2.67}$           \\ \hline
+% $\log_{10}(\mathcal{L}_{data,test,interp})$ & $-4.88$                & $-4.30$         & $-4.64$         & $-4.71$         & $-4.67$                & $\bm{-5.20}$           \\ \hline
+% $\log_{10}(\mathcal{L}_{data,test,extrap})$ & $-4.41$                & $-3.95$         & $-4.31$         & $-4.33$         & $-4.26$                & $\bm{-4.63}$           \\ \hline
+% $\text{VPT}_{dev}$ [s]/[steps]              & $1.27$/$15.9$          & $0.68$/$8.50$   & $1.02$/$12.8$   & $0.83$/$10.4$   & $0.85$/$10.6$          & $\bm{1.67}$/$20.9$     \\ \hline
+% $\text{VPT}_{test,interp}$ [s]              & $1.21$/$20.2$          & $0.67$/$11.2$   & $0.79$/$13.2$   & $0.87$/$14.5$   & $0.85$/$14.2$          & $\bm{1.49}$/$24.8$     \\ \hline
+% $\text{VPT}_{test,extrap}$ [s]              & $1.33$/$13.3$          & $0.70$/$7.00$   & $1.09$/$10.9$   & $0.86$/$8.60$   & $0.84$/$8.40$          & $\bm{1.65}$/$16.5$    
+% \end{tabular}
+% %}
+% \end{table*}

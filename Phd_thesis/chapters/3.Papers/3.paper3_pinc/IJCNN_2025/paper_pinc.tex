@@ -1,0 +1,484 @@
+\section{Introduction} % <1 page
+% Motivation
+% Relevance of ROVs
+Underwater robotic systems, such as autonomous underwater vehicles (AUVs) and remotely operated vehicles (ROVs), are critical for tasks such as seabed inspections, pipeline monitoring \cite{amer2023unav}, and deep-sea exploration \cite{kunz2008deep}, where human access is limited. With advances in autonomy, underwater robots can tackle complex manipulation tasks, including pipeline repair and maintenance. 
+%
+% Importance of modelling for control
+%
+Such applications require precise control and accurate dynamic models. For example, model predictive control (MPC) provides a framework for achieving complex tasks with high performance, such as inspection \cite{amer2023visual}, while relying on an accurate motion model for prediction. However, modelling underwater robots using first principles is challenging due to non-linearities arising from hydrodynamic disturbances, and unmodeled higher-order effects \cite{lakshminarayanan2024estimation}. Furthermore, due to the wide variety of underwater vehicle designs, sizes, and degrees of freedom, modeling is often cumbersome and, in some cases, impractical. Data-driven methods on the other-hand offer a unifying framework to estimate the dynamics of these diverse systems.
+%
+% Justification for need of PINN and PINC
+Physics-informed neural networks~(PINNs) in particular is a promising approach that integrates data-driven neural networks with physical laws as regularization to produce physically plausible outputs \cite{karniadakis2021physics}. 
+
+%
+% Contribution
+This work explores the potential of a specialized variant of PINNs, namely the physics-informed neural network with control~(PINC) \cite{antonelo_physics-informed_2024}, for modelling the dynamics of underwater ROVs. The primary objective is to evaluate whether PINC can effectively model a simplified underwater dynamic system and have the potential to provide an accurate model for control applications.
+The investigation applies these modelling approaches to an underwater ROV as the physical system of interest. While prior studies on PINC have demonstrated potential benefits in other domains, no existing work (as of this writing) appears to apply PINC and its implicit integration technique, combined with autoregressive predictions, to underwater robotics. This gap presents a unique opportunity to evaluate whether and how PINC might offer advantages -- such as improved accuracy or generalization -- over a traditional DNN when modelling complex underwater dynamics. To that end, the model’s predictive capabilities and robustness are tested by incorporating input noise during training, among other methods. The main contributions of this article are summarized as follows:
+
+\begin{itemize}
+    \item Developed a PINC framework to model simplified ROV dynamics, achieving high long-horizon prediction accuracy with minimal computational overhead.
+    \item Demonstrated the effectiveness of combining physics-based regularization with training optimizations, including residual connections, gradient normalization, and adaptive learning rate scheduling.
+    \item Performed a comprehensive analysis of the hyperparameters' effect on the PINC performance.
+    \item Released an open-source implementation of the PINC framework\footnote{\url{https://github.com/eivacom/pinc-xyz-yaw}}, including a simulation model of an underwater vehicle for synthetic data generation.
+   % \item Made available a real-world dataset, collected using a motion capture system for a BlueROV, enabling researchers to train and evaluate their own PINC architectures.
+\end{itemize}
+
+    
+%\end{itemize}
+
+
+% Organisation
+This paper is organised as follows. Section~\ref{sec:related} provides a comprehensive literature review on PINNs, including their applications and limitations. Section~\ref{sec:problem} motivates the importance of accurate and computationally efficient dynamics models for enhancing prediction and control. Section~\ref{sec:method} outlines the methodological framework for evaluating PINC and baseline models in simulation experiments. Section~\ref{sec:results} presents the simulation results for different PINC configurations and baseline comparisons. Finally, Section~\ref{sec:conclusions} concludes with a summary of key insights and suggestions for future research directions.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Related Works} % ~1 page
+\label{sec:related}
+Recent advances in machine learning for dynamical system identification increasingly leverage PINNs, which embed known physical laws into network training to promote physically consistent predictions. This review focuses on PINNs in the context of non-linear system identification and control, concluding with an in-depth look at PINC. Traditional data-driven methods range from flexible but opaque neural networks to interpretable but potentially limited approaches like Dynamic Mode Decomposition with control~(DMDc). Sparse identification of non-linear dynamics with control~(SINDyC)~\cite{brunton_data-driven_2021} constructs a large function library, then applies a sparsity-promoting algorithm to isolate key dynamics for model-based control. Gaussian processes~(GPs)~\cite{rasmussen_gaussian_2008,amer2025} can quantify uncertainty but often scale poorly in high dimensions. PINNs bridge this gap by imposing differential equations within the neural network’s loss, reducing data needs while preserving interpretability.
+
+%\textbf{PINN Variations.} 
+Many works extend PINNs for more complex tasks. For instance, \cite{faria_data-driven_2024} applies PINNs to Reinforcement Learning, yielding faster training and robust controllers beyond the training domain. \cite{ramp} introduces a Robust Adaptive MPC framework leveraging PINNs to integrate physics-based priors with data-driven learning, improving trajectory tracking performance under uncertainties while mitigating the computational burden of traditional robust MPC approaches.
+
+Hybrid architectures like \textit{Deep Lagrangian networks}~\cite{lutter_combining_2023} embed energy-based formulations for better interpretability. Others focus on \textit{Neural ODEs}~\cite{ma_development_2024, chen2018neural}, augmenting nominal physics models with learned residuals. PINNs have also found success modelling AUV dynamics~\cite{zhao_research_2024}, soft robotics~\cite{gao_sim--real_2024}, and more. PINC extends PINNs to include control inputs, initial states, and time~\cite{antonelo_physics-informed_2024}. PINC can model a continuum of initial conditions by treating the network as a continuous time-stepper. Auto-regressive rollouts allow multi-step prediction, and architectures like domain-decoupled PINNs~\cite{krauss_domain-decoupled_2024} can boost training efficiency. PINC has shown promise for efficient MPC integration and large-scale industrial tasks~\cite{kittelsen_physics-informed_2024}. Gradient scaling poses a significant challenge when dealing with multiple loss terms, such as data, physics, and rollout losses, which may conflict with each other. Techniques like ConFIG \cite{liu_config_2024} address this issue by aligning gradient directions to mitigate conflicts. Additionally, activation smoothness plays a critical role in PINN performance. As highlighted in \cite{nicodemus_physics-informed_2022}, the use of non-smooth activation functions can impair performance due to the inaccuracies introduced by automatic differentiation.
+%Gradient scaling is a key hurdle multiple loss terms (data, physics, and rollout) can conflict, motivating techniques like ConFIG (Conflict-free Training of PhysicsInformed Neural Networks) \cite{liu_config_2024} to align gradient directions. Activation smoothness \cite{nicodemus_physics-informed_2022} is also crucial since automatic differentiation of non-smooth activations can degrade PINN performance. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Problem Formulation} % ~1 page
+\label{sec:problem}
+
+PINNs are effective for solving nonlinear dynamical systems by leveraging both partial knowledge of system dynamics and available data. For a general nonlinear system, where the system’s dynamics are represented by a function that is Lipschitz continuous, the solution over time depends on the complete knowledge of this function. However, in practice, this function is often not fully known due to uncertainties and modelling inaccuracies. Instead, nominal dynamics are used, and PINNs approximate the solution using a neural network, which incorporates these nominal dynamics into its training process. %This approach improves the efficiency of data usage and provides better robustness in the presence of uncertainties compared to traditional data-driven methods, which typically rely on large labelled datasets.
+%
+\begin{figure}[b!]
+    \centering
+    \includegraphics[width=0.55\columnwidth]{Phd_thesis/figures/rov_new.pdf}
+    \caption{Coordinate frame of the ROV with respect to the world frame.}
+    \label{fig:rov-coord-frame}
+\end{figure}
+%
+In this work, PINNs are applied to the open-loop system identification of the BlueROV2, a versatile underwater ROV commonly used for inspection and manipulation tasks. The BlueROV2 and its coordinate frame are illustrated in Fig.~\ref{fig:rov-coord-frame}, where it is noted that the vehicle has six thrusters, which provide input commands in the form of forces and torques around the ROV's center of gravity, with the thruster dynamics excluded from the model. A simplified 4-degree-of-freedom version of the “Fossen” model ~\cite{fossen}, with assumptions of small pitch and roll, is adopted for modelling the nominal system dynamics, which can be expressed in state-space form as follows:
+\begin{equation}
+    \label{eq:rov_simplified}
+    \begin{aligned}
+        \dot{\mathbf{x}} = \begin{bmatrix}
+        \cos(\psi)u-\sin(\psi)v \\ 
+        \sin(\psi)u+\cos(\psi)v \\ 
+        w \\ 
+        r \\ 
+        \frac{1}{m-X_{\dot{u}}}\left(X + (m-Y_{\dot{v}})vr+(X_u+X_{u|u|}|u|)u\right) \\ 
+        \frac{1}{m-Y_{\dot{v}}}\left(Y - (m-X_{\dot{u}})ur+(Y_v+Y_{v|v|}|v|)v\right) \\ 
+        \frac{1}{m-Z_{\dot{w}}}\left(Z + (Z_w+Z_{w|w|}|w|)w+F_g-V_{sub } \rho_{water}\right) \\ 
+        \frac{1}{I_{zz}-N_{\dot{r}}}\left(\Psi - (X_{\dot{u}}-Y_{\dot{v}})uv+(N_r+N_{r|r|}|r|)r\right) 
+    \end{bmatrix},
+    \end{aligned}
+\end{equation}
+The state vector is defined as $\mathbf{x} = [x, y, z, \psi, u, v, w, r]$, where $x$, $y$, and $z$ represent the translational positions in the world-fixed frame $\mathcal{F}_W$, and $u$, $v$, and $w$ denote the translational velocities in the body-fixed frame $\mathcal{F}_B$. The transformation of translational velocities from the body-fixed frame $\mathcal{F}_B$ to the world-fixed frame $\mathcal{F}_W$ is achieved by rotating the body velocities $(u, v)$ around $z_b$ using the yaw angle $\psi$. Additionally, the rotational velocity is represented by $r$. The input vector, defined as $\mathbf{u} = [X, Y, Z, \Psi]$, comprises the forces $X$, $Y$, and $Z$, which are the linear components of the combined force applied by the actuators on the AUV body in $\mathcal{F}_B$, and $\Psi$, which denotes the actuation control moment around $z_b$. 
+The vehicle’s physical parameters include its mass $m$, the angular moment of inertia about the z-axis $I_{zz}$, the gravitational constant $g$, the water density $\rho_{water}$, and the total submerged volume $V_{sub}$. The added mass coefficients, are given by $X_{\dot{u}}$, $Y_{\dot{v}}$, $Z_{\dot{w}}$, and $N_{\dot{r}}$. Drag effects are characterized by linear coefficients $X_{u}$, $Y_{v}$, $Z_{w}$, and $N_{r}$, and quadratic drag coefficients $X_{uc}$, $Y_{vc}$, $Z_{wc}$, and $N_{rc}$, which describe the drag along the surge, sway, heave, and yaw directions, respectively.
+
+%where $\mathbf{x} = [x,\, y,\, z,\, \psi,\, u,\, v,\, w,\, r]^\top$ denotes pose and velocities, and $\mathbf{u} = [X,\, Y,\, Z,\, \Psi]^\top$ are control forces/torques.  Non-linear damping, buoyancy terms, and rotational dynamics lead to complex system behaviour.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Proposed Method} % ~1 pages
+\label{sec:method}
+
+\subsection{PINC: Physics-Informed Neural Network with Control}
+
+PINNs \cite{raissi_physics-informed_2019} incorporate known dynamics into a neural network via a \emph{physics loss} enforcing consistency of \eqref{eq:rov_simplified}. Standard PINNs take continuous time $t$ and the state $\mathbf{x}(0)$ as inputs. 
+PINC \cite{antonelo_physics-informed_2024} extends PINNs to handle control inputs. We model the solution $\mathbf{x}(t)$ given:
+\begin{equation}
+\hat{\mathbf{x}}(t) = \mathcal{N}\Bigl(\left[\,\mathbf{x}(0),\,\mathbf{u}(0),\,t\right]\Bigr),
+\quad \text{for } t\in[\,0,T\,],
+\label{eq:pinc_mapping}
+\end{equation}
+where $\mathbf{u}(0)$ is the control at the initial step, assumed constant in $[0,T]$. %PINC can be iterated autoregressively to predict $\mathbf{x}(kT)$ for $k=1,2,\dots$.
+
+Discrete-time steps are denoted by index $n$, and continuous time by $t$. The $n$th initial state in a trajectory is $\mathbf{x}_n(0)$ with corresponding control actions $\mathbf{u}_n(0)$. Each point in a trajectory serves as an initial condition, making the one-step-ahead prediction $\hat{\mathbf{x}}_n(T)$ approximate the next state $\mathbf{x}_{n+1}(0)$:
+\begin{equation}
+    \mathbf{x}_{n}(T) = \mathbf{x}_{n+1}(0).
+\end{equation}
+Thus, the one-step-ahead predicted state is:
+\begin{equation} 
+    \hat{\mathbf{x}}_{n}(T) 
+    =\mathcal{N}\bigl(\underbrace{\begin{bmatrix}
+    \mathbf{x}_n(0) & \mathbf{u}_n(0) & T
+\end{bmatrix}}_{\mathbf{z}_n(0)}\bigr)
+    \approx\mathbf{x}_{n+1}(0).
+\end{equation}
+Long-horizon predictions (rollouts) over $N$ steps are defined as:
+\begin{equation}
+    \mathbf{x}_0(NT)=\mathbf{x}_N(0).
+\end{equation}
+These are achieved by autoregressively applying the dynamics model $\mathcal{N}$:
+\begin{equation}
+\label{eq:rollout_prediction}
+    \hat{\mathbf{x}}_0(NT) = \underbrace{\mathcal{N} \Bigl( \mathcal{N} \bigl( \mathbf{x}_0(0), \mathbf{u}_0(0), T \bigr)\dots, \mathbf{u}_{N-1}(0), T\Bigr)}_{\text{N times}}.
+\end{equation}
+During training, multiple trajectories are batched together indexed by $m$ (batch size $N_B$), each containing $N_D$ points indexed by $n$. For multi-step predictions and physics loss computations, the index $k$ and number of points $N_{P}$ are respectively used for the number of prediction steps and number of physics collocation points. 
+
+\subsection{Neural Network Architecture}
+\label{sec:nn_arch}
+The residual deep neural network architecture is used to learn ROV dynamics in a physics-informed manner.
+\subsubsection{Residual Formulation for ODE Integration}
+Solving an ODE over a time interval $I = [0,T]$ can be written as
+\begin{equation}
+    \mathbf{x}(T) = \mathbf{x}(0) + \int_0^T f(\mathbf{x}(\tau), \mathbf{u}(\tau)) d\tau.
+\end{equation}
+When the control is assumed constant over $I$ (zero-order hold), the integral can be approximated with a neural network that learns to “integrate” the dynamics from $\mathbf{x}(0)$ to $\mathbf{x}(T)$:
+\begin{equation}
+    \mathbf{x}(T) \approx \mathbf{x}(0) + \mathcal{N}\bigl(\underbrace{\begin{bmatrix}
+    \mathbf{x}(0) & \mathbf{u}(0) & T
+\end{bmatrix}}_{\mathbf{z}(0)}\bigr).
+\end{equation}
+
+\subsubsection{Layers, Neurons, and Activations}
+The architecture includes fully connected $N_L$ hidden layers, each containing $N_H$ neurons. Both adaptive \lstinline|tanh| and \lstinline|softplus| activation functions are tested with an adaptable parameter, denoted $\beta$, that is unique for each layer.
+
+\subsubsection{State Re-Parameterization for Yaw}
+Since yaw angle $\psi$ wraps around at $\pm\pi$, it is replaced with two states: $\cos(\psi)$ and $\sin(\psi)$. This ensures the continuity of the states and avoids angle discontinuities. 
+
+\subsubsection{Rotational Structural Information}
+To reflect the natural geometry of planar motion, the network’s predicted increments in $x$ and $y$ are rotated from the body frame $\mathcal{F}_B$ to the world-fixed $\mathcal{F}_W$. Specifically, if the raw network outputs are $\Delta \hat{x}_b$ and $\Delta \hat{y}_b$, they are transformed as follows:
+\begin{equation}
+    \begin{bmatrix}
+        \Delta\hat{x}_n\\
+        \Delta\hat{y}_n
+    \end{bmatrix}=
+    \begin{bmatrix}
+        \cos(\hat{\psi}) & -\sin(\hat{\psi})\\
+        \sin(\hat{\psi}) & \cos(\hat{\psi})
+    \end{bmatrix}
+    \begin{bmatrix}
+        \Delta\hat{x}_b\\
+        \Delta\hat{y}_b
+    \end{bmatrix}.
+\end{equation}
+Because the model learns increments in the body frame, it can capture the simpler local dynamics. Those increments are then rotated back into $\mathcal{F}_W$.
+
+\subsubsection{Layer Normalization} 
+Layer normalization \cite{ba_layer_2016} is another regularization technique employed in this work, which normalizes activations within each layer using learnable parameters, mitigating internal covariate shifts. 
+
+\subsection{Loss Functions}
+\label{sec:loss_funcs}
+PINC integrates multiple loss terms to accurately learn ROV dynamics by combining data-driven predictions with physics-based constraints. 
+
+\subsubsection{One-step-ahead Prediction Loss}
+The one-step-ahead prediction loss ($\mathcal{L}_D$) measures the mean squared error between the predicted state $\hat{\mathbf{x}}_{n,m}(T)$ and the ground-truth next state $\mathbf{x}_{n+1,m}(0)$ for each consecutive pair in all trajectories:
+
+\begin{equation}
+    \mathcal{L}_D = \frac{1}{N_B(N_D-1)} \sum^{N_B-1}_{m=0} \sum^{N_D-2}_{n=0} ||\mathbf{x}_{n+1,m}(0)-\hat{\mathbf{x}}_{n,m}(T)||_2^2,
+\end{equation}
+This loss encourages the model to match the known data at discrete intervals $T$.
+
+\subsubsection{Physics Loss}
+The physics loss ($\mathcal{L}_P$) regularizes the model’s predictions to respect the underlying physics by penalizing deviations from the governing differential equations. Fig.~\ref{fig:pinc_loss_processing} illustrates the processing of the data and physics losses within the PINC framework.
+\begin{figure}[!b]
+    \centering
+    \includegraphics[width=0.70\linewidth]{figures/block_pinc_losses.pdf}
+    \caption{PINC model output used to calculate the MSE data loss by comparing it to the ground truth state and used with AD and the underlying physics function to find the MSE physics loss.}
+    \label{fig:pinc_loss_processing}
+\end{figure}
+Each point in each trajectory has some corresponding collocation points $N_P$, indexed by $k$. Thus, the total number of collocation points evaluated in a batch is $N_D\times N_B\times N_P$. The $k$th collocation point in the $n$th trajectory, at its $m$th point is denoted $T_{n,m,k}^{coll}$, which is sampled by LHS on the interval $T^{coll}\in[0,T]$. The physics residual at each collocation point is defined as:
+\begin{equation}
+    \label{eq:phy_residual}
+    F(\mathbf{x}\dot{,\mathbf{x}},\mathbf{u}) = \dot{\mathbf{x}} - f(\mathbf{x},\mathbf{u}).
+\end{equation}
+where $f(\mathbf{x},\mathbf{u})$ refers to the right-hand side of the ROV dynamics equation \eqref{eq:rov_simplified}. When $F(\mathbf{x},\dot{\mathbf{x}},\mathbf{u}) =0$, the learned dynamics perfectly match the true dynamics. Specifically the physics residual $F\left(\cdot\right) = F\left(\hat{\mathbf{x}}_{n,m}(T_{n,m,k}^{\text{coll}}), \dot{\hat{\mathbf{x}}}_{n,m}(T_{n,m,k}^{\text{coll}}), \mathbf{u}_{n,m}(0)\right)$ is used in the physics loss. The physics loss is then computed as the mean squared error of these residuals across all collocation points, trajectories, and time steps: 
+
+\begin{equation}
+\label{eq:phys_loss}
+    \mathcal{L}_P = \frac{1}{N_B N_D N_P} \sum_{k=0}^{N_P - 1} \sum_{m=0}^{N_B - 1} \sum_{n=0}^{N_D - 1} \left\| F\left(\cdot\right) \right\|_2^2.
+\end{equation}
+
+
+
+
+
+
+\subsubsection{Initial Condition Loss}
+The initial condition loss $\mathcal{L}_{IC}$ ensures internal consistency of the network’s outputs at $t=0$, treating each data point as a new initial condition. This is formulated as follows:
+\begin{equation}
+    \mathcal{L}_{IC} = \frac{1}{N_B N_D} \sum^{N_B-1}_{m=0}\sum^{N_D-1}_{n=0}||\mathbf{x}_{n,m}(0)-\hat{\mathbf{x}}_{n,m}(0)||_2^2.
+\end{equation}
+
+\subsubsection{Rollout Loss}
+Inspired by \cite{zhao_research_2024}, an $N$-step-ahead (rollout) loss is used to penalize the accumulation of errors when predicting multiple steps forward. In a trajectory with $N_D$, points, only the first $N_R=N_D-N_{pred}$ points can be rolled out. For each trajectory, rollouts are initiated from the first $N_R$ points, and the predicted sequence is compared to the ground truth trajectory using the rollout loss function:
+\begin{equation}
+    \mathcal{L}_R = \frac{1}{{N_B N_R N_P}} \sum^{N_P}_{k=1} \sum^{N_B-1}_{m=0} \sum^{N_R-1}_{n=0} ||\mathbf{x}_{n+k,m}(0) - \hat{\mathbf{x}}_{n,m}(kT)||_2^2.
+\end{equation}
+
+%\subsubsection{Physics Rollout Loss}
+%When both the rollout loss and physics loss are included in the optimization, a physics rollout loss is also computed and incorporated to regularize the intermediate states in the multistep predictions, ensuring adherence to the governing differential equations.
+\subsubsection{Physics Rollout Loss}
+When both the rollout loss and physics loss are included in the optimization, a physics rollout loss is also computed to regularize the intermediate states in multistep predictions. This loss applies the physics residual from Eq.~\eqref{eq:phy_residual} to each state in the rollout sequence:
+
+\begin{equation}
+    \textcolor{black}{\mathcal{L}_{PR} = \frac{1}{N_{R}} \sum_{i=0}^{N_{roll}-1} \mathcal{L}_P}
+\end{equation}
+
+This term helps ensure that predicted states in the rollout sequence remain consistent with the underlying physical dynamics, preventing error accumulation over multiple steps.
+
+%\textcolor{blue}{where $N_{roll}$ is the number of rollout steps and $\mathcal{L}_P$ is the physics loss calculated at each step as defined in Eq.~\eqref{eq:phys_loss}.}
+
+\subsection{Gradient Weighting}
+\label{sec:grad_weighting}
+Multitask learning is addressed using the three methods following methods for combining gradients. The first method, simple summation, directly adds the gradients from each loss term. The second approach, ConFIG \cite{liu_config_2024}, dynamically adjusts and reorients gradients so that the combined gradient does not conflict with any individual gradient. It also scales the magnitude based on cosine similarity, making it larger (or smaller) depending on how aligned or misaligned the losses are. The final method, gradient normalization, normalizes each gradient $\mathbf{g}_n$ to match the norm of a “reference” gradient (usually the data-loss gradient $\mathbf{g}_0$), and is then weighed by user-set coefficients $w_n$. Finally, the sum is re-normalized to match the reference gradient’s norm:
+    \begin{equation}
+    \label{eq:grad_norm_scaling}
+        \bar{\mathbf{g}}_n
+        =
+        \mathbf{g}_n\,
+        \frac{\|\mathbf{g}_0\|_2}{\|\mathbf{g}_n\|_2},
+        \quad
+        \mathbf{g}
+        =
+        \sum_{n=0}^{N-1} w_n\,\bar{\mathbf{g}}_n,
+        \quad
+        \bar{\mathbf{g}}
+        =
+        \mathbf{g}\,
+        \frac{\|\mathbf{g}_0\|_2}{\|\mathbf{g}\|_2}.
+    \end{equation}
+In addition, the norm of the combined gradient is clipped at $||\bar{\mathbf{g}}||_2\leq c_{|g|,max}=5.0$ to avoid huge steps due to high variance or numeric issues.
+
+\subsection{Model Evaluation}
+\label{sec:model_eval}
+The learned models are evaluated in two ways:
+\subsubsection{Accuracy of Predictions}
+\begin{itemize}
+    \item \textit{One-step-ahead} prediction error on the development set ($\mathcal{L}_{data,dev}$) and test set ($\mathcal{L}_{data,test,interp}$ for interpolation and $\mathcal{L}_{data,test,extrap}$ for extrapolation).
+    \item \textit{Rollout} prediction error ($\mathcal{L}_{roll,dev}$) over $10$ steps, capturing cumulative error in sequential predictions.
+\end{itemize}
+\subsubsection{Long-Horizon Prediction Validity}
+The valid prediction time (VPT) is the largest time interval over which the model’s predicted position error remains below a threshold, i.e.
+
+\begin{equation}
+\|\mathbf{e}_{\text{pos}}(t)\|_2 = \sqrt{\Delta_x^2 + \Delta_y^2 + \Delta_z^2} \leq 0.05\,\mathrm{m}, 
+\end{equation}
+where $\Delta_x = x(t) - \hat{x}(t)$, $\Delta_y = y(t) - \hat{y}(t)$ and $\Delta_z = z(t) - \hat{z}(t)$. For all $t < \text{VPT}$, the predictions are considered valid up to that horizon. Once the error exceeds $0.05\,\mathrm{m}$, the prediction is deemed unsafe or unusable for control.
+
+To evaluate the VPT, each trajectory is rolled out from its first initial condition in full, using 
+$N_{steps} = 65$, so it matches the ground-truth trajectory length. The VPT is reported in seconds but can readily be converted to discrete steps by dividing by the sampling interval $T$. This metric is computed on the development, interpolation, and extrapolation test sets.
+
+The interpolation and extrapolation test sets are created using time interval sizes $T$ different from those used for training and validation while maintaining the same input types and initial condition intervals as the validation set. To assess interpolation, the time interval size is decreased, testing the model's robustness and its ability to learn the differential equation solution over the entire interval $t\in[0,T]$, aided by the physics loss. For extrapolation, the interval size $T$. is increased. Test sets are generated with the following time interval sizes:
+\begin{equation}
+\begin{cases}
+    T_{test,interp} &= T - 0.25T = 0.08 - 0.02 = 0.06 \\
+    T_{test,extrap} &= T + 0.25T = 0.08 + 0.02 = 0.1.
+\end{cases}
+\end{equation}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Simulation Results} % ~3 pages
+\label{sec:results}
+A fully translational model with yaw rotation was selected because it incorporates quadratic damping, rotational non-linearities, and gravitational and buoyancy forces. The quadratic non-linearities arise from damping effects. At the same time, the rotational non-linearity in yaw, arising from the planar velocities $u$ and $v$ being rotated from the body frame $\mathcal{F}_B$ to the world frame $\mathcal{F}_W$, in the position dynamics, introduces a limited form of rotational dynamics, allowing to test rotational effects.
+
+%Working with this model aims to explore the viability of using PINC to model underwater ROV dynamics, potentially offering an alternative to analytical first-principles models in model predictive control.
+
+%Although extending the approach to include all rotational degrees of freedom would provide a more comprehensive representation, it necessitates a significant design decision regarding best representing the ROV’s complete rotational dynamics so that the PINC can learn them effectively. This work does not address that aspect. 
+
+\begin{remark}
+All quantities are provided in SI units, i.e., time is in seconds [s], and position is in meters [m].
+\end{remark}
+
+\begin{remark}
+For ease of comparing, losses $\mathcal{L}_D$, $\mathcal{L}_R$, and $\mathcal{L}_P$ are reported on a $\log_{10}(\cdot)$ scale.
+\end{remark}
+
+
+\begin{remark}
+The loss terms in the figures are labeled as follows: $\mathcal{L}_{data,dev}$ ($L_1$), $\mathcal{L}_{roll,dev}$ ($L_2$), $\mathcal{L}_{phy,dev}$ ($L_3$), $\mathcal{L}_{data,test,interp}$ ($L_4$), and $\mathcal{L}_{data,test,extrap}$ ($L_5$). The metrics $\text{VPT}_{dev}$, $\text{VPT}_{test,interp}$, and $\text{VPT}_{test,extrap}$ are labeled as $\text{VPT}_1$, $\text{VPT}_2$, and $\text{VPT}_3$, respectively.
+\end{remark}
+
+
+
+
+
+\subsection{Data Generation}
+A dataset was generated and partitioned into training, development (validation), and test sets, each with distinct initial conditions and input types. Numerical integration of the dynamics \eqref{eq:rov_simplified} was performed using trajectories starting from randomly sampled initial states $\bm{x}_0$. Each state variable was independently drawn from uniform intervals: position $(x, y, z) \in [-x_{\max}, x_{\max}]$, $[-y_{\max}, y_{\max}]$, $[-z_{\max}, z_{\max}]$; heading angle $\psi \in [-\pi, \pi]$; linear velocities $(u, v, w)$ within specified bounds with $w \geq 0$ to simulate diving behavior; and yaw rate $r$ within a designated range.
+
+Control input sequences $\mathbf{u}(t)$ for the training set were generated using ramp-based patterns with random signs, offsets, and ramp-up/ramp-down profiles. Sine waves with fixed amplitude, random frequencies, and phases were used for the development and test sets. Each input channel was scaled to ensure realistic input magnitudes, as detailed in the respective experiments.
+
+Trajectories were integrated over a total time of $T_{tot}=5.2$ seconds with a sampling period of $T=0.08$ seconds, resulting in $N_{steps}=66$ points per trajectory. To maintain continuity in yaw, $\psi$ was represented by its sine and cosine values, i.e., $(\cos(\psi), \sin(\psi))$ instead of $\psi$ directly. For physics loss computation, additional collocation points $\tau \in [0, T]$ were sampled within each sampling interval using Latin Hypercube Sampling (LHS). The number and placement of collocation points ($N_P$) were adjustable to enforce the governing physics throughout each interval.
+
+\subsection{Experiment Protocol}
+A series of experiments is conducted to examine how different design factors influence the performance of PINC. By systematically varying these factors, the aim is to identify PINC configurations that yield the best trade-offs between accuracy, robustness, and computational efficiency. We vary:
+\begin{enumerate}
+
+    \item \textbf{Neural Network Size:} 
+        Varying the number of layers and neurons to balance expressiveness and complexity.
+    
+    \item \textbf{Residual Connection Effect:} 
+        Assessing the impact of an integral-form residual connection on model accuracy.
+    
+    \item \textbf{Activation Function Type:} 
+        Comparing adaptive activation functions to identify optimal non-linearities.
+    
+    \item \textbf{Batch Size Variations:}
+    Investigating batch size as a regularizer and its effect on convergence speed.
+    
+    \item \textbf{Physics Loss:} 
+        Evaluating whether embedding known physical dynamics in the loss improves model generalization.
+    
+    \item \textbf{Rollout Loss:}
+    Studying how penalizing multi-step prediction affects long-horizon accuracy.
+    
+    \item \textbf{Initial Condition Loss:}
+        Ensuring consistency at $T=0$ to improve predictions at future time steps.
+    
+    %\item \textbf{Structural Information:}
+    %    Rotation of planar position increments to simplify local-body-frame learning.
+    
+    \item \textbf{Gradient Weighting:}
+        Testing summation, ConFIG, and normalization-based schemes for combining gradients.
+    
+    \item \textbf{Physics Collocation:}
+    Adjusting the number and placement of collocation points to enforce system dynamics.
+    
+    \item \textbf{Noisy Inputs:}
+    Injecting Gaussian noise to evaluate the model’s resilience to sensor and measurement errors.
+    
+    \item \textbf{Learning Rate Scheduling:}
+    Exploring if a decaying learning rate improves loss convergence.
+    
+\end{enumerate}
+
+\subsection{Data and Training Parameters}
+\label{subsec:data_training_params}
+Unless otherwise stated, the following hyperparameters are used:
+\begin{itemize}
+    \item Models are trained for $N_{\text{epoch}} = 1200$ epochs (or more if needed for convergence).
+    \item A batch size of $N_{\text{batch}} = 3$ is used (unless varied in experiments on batch size).
+    \item The AdamW optimizer is applied with an initial learning rate of $\text{lr}_0 = 8\times10^{-3}$ and no scheduling, except when explicitly stated, where the scheduler uses a 'minimum value of $\text{lr}_{\min}=10^{-4}$ with a "patience" of $100$.
+    \item Layer normalization is employed on every second layer.
+    \item Gradient weighting is applied using a normalization scheme with weights: $\{w_{\text{data}} = 1.0, w_{\text{roll}} = 1.0, w_{\text{phy}} = 0.5, w_{\text{phy,roll}} = 0.5, w_{\text{ic}} = 0.5\}$.
+    \item The output planar position change is rotated by the predicted yaw (unless the structural information is ablated).
+\end{itemize}
+
+The models are trained using a dataset of $N_{\text{traj,data}} = 400$ trajectories with ramp-based inputs. The development set initially contains $N_{\text{traj,dev}} = 80$ trajectories, but for evaluation, is increased to $N_{\text{traj,dev}} = 1000$ to match the size of the interpolation and extrapolation test sets. Both the development and test sets use sinusoidal inputs. The number of steps is kept at $N_{\text{steps}} = 66$, and the total time in the test sets is varied to ensure consistent trajectory lengths.
+
+For all experiments except the last two, the training data are generated under the following initial condition ranges: $x_{\max} = y_{\max} = z_{\max} = 1.0$, $\psi_{\max} = \pi$, $u_{\max} = 1.0$, $v_{\max} =0.0$, $w_{\max} = 0.1$, $r_{\max} = 0.0$. The inputs for training are ramp-based rather than step-based. Before any sign, scaling, or offset is applied, each ramp starts at $0$, increases to $1$ (peaking at $0.5T$), and then decreases back to $0$. The offsets are sampled from a zero mean normal distribution with $\sigma^2=0.25$, the ramp's sign from a Bernoulli random variable with $p=0.5$. 
+All experiments are conducted using a single seed for randomness in data generation and network initialization. The seed is fixed at 0 for reproducibility.
+
+The development and test sets are generated with $x_{\max} = y_{\max} = z_{\max} = u_{\max} = v_{\max} = w_{\max} = r_{\max} = 0.0$ and $\psi_{\max} = \pi$, so that the models are evaluated only on their ability to handle different inputs rather than different initial conditions. The inputs are sinusoids with an amplitude of $A=3$, a random frequency sampled uniformly in the interval $[0.01, 0.2]$, and a random phase uniformly sampled in the interval $[0, 2\pi]$.
+
+\begin{remark} \textcolor{blue}{The development set used in all experiments is generated independently and distinct from the training data.} \end{remark}
+
+
+\begin{remark}
+    The inputs in all datasets are scaled as follows: $Y$ is scaled down by $0.1$, $M_z$ is scaled down by $0.05$, and $Z$ is scaled up by $5$ and then taken as an absolute, ensuring only downward motion is commanded since the ROV's static buoyancy force naturally surfaces the ROV.
+\end{remark}
+
+
+
+\subsection{Neural Network Architecture Experiments}
+\label{subsec:nn_arch}
+
+\newcommand{\PlotHeight}{6cm}
+
+%%%%%%%%%%%%%%%%
+\begin{figure}[!t]
+    %\input{Phd_thesis/chapters/3.Papers/3.paper3_pinc/IJCNN_2025/figs/pgfplots/architecture_subtables}%
+    \caption{Overview of architecture experimental results: (a) Neural Network Size: $N_L = 4$ and $N_H = 32$ yield the lowest losses and highest VPTs. (b)~Residual Connection: Ablating the residual connection causes a significant performance drop, with $\mathcal{L}_{data,dev}$ over four orders of magnitude higher. (c)~Activation Function: \lstinline|softplus| achieves better VPTs than \lstinline|tanh|.}
+    \label{fig:architecture}
+\end{figure}
+%%%%%%%%%%%%%%%%
+
+\subsubsection{Neural Network Size}
+The number of hidden layers $N_L$ and the number of neurons $N_H$ in each layer is varied in this experiment, which performance metrics are shown in Fig.~\ref{fig:neural_s}. It is found that all losses are the lowest and VPTs the highest for the configuration with $N_L = 4$ and $N_H = 32$. This configuration will, therefore, be used in all subsequent experiments.
+
+\subsubsection{Residual Connection}
+The residual connection is ablated in the experiment shown in Fig. \ref{fig:residual}, comparing the model with and without the input state residual connection. Without the residual connection that makes the model follow the integration form of an ODE solution, its performance is degraded, having a $\mathcal{L}_{data,dev}$ that is more than $4$ orders of magnitude higher. 
+%\input{tables/residual_connection_table}
+
+
+%\input{tables/architecture_subtables}
+\subsubsection{Activation Function}
+The use of an adaptive \lstinline|softplus| activation function is compared with an adaptive \lstinline|tanh| as the model's non-linearity. The hypothesis is that \lstinline|tanh| might yield smaller errors due to its bounded nature but could suffer from vanishing gradients, while \lstinline|softplus| is unbounded and generally avoids those problems.
+%\input{tables/activation_function_table}
+The results shown in Fig.~\ref{fig:adptation} indicate that while the losses are mostly lower with \lstinline|tanh|, the VPTs are significantly better when using \lstinline|softplus|. A likely explanation is that \lstinline|softplus| remains smooth and avoids saturation. 
+
+
+
+\subsection{Effect of adding Rollout Loss on Learning}
+The impact of adding the rollout loss $\mathcal{L}_P$ (Fig. \ref{fig:rollout}) to the overall learning process is explored by comparing the performance of the PINC with and without the rollout loss. While the introduction of the physics loss $\mathcal{L}_P$ alone leads to improvements in several performance metrics, the inclusion of the rollout loss does not consistently enhance the learning. In fact, in some instances, the rollout loss negatively impacts performance, suggesting that the additional regularization from the rollout transformation may not always contribute positively to the overall model training. These results highlight the complex interaction between structural information and physics-based regularization, with the rollout loss sometimes leading to suboptimal learning outcomes.
+
+%%%%%%%%%%%%%%%%
+\begin{figure}[!t]
+\input{Phd_thesis/chapters/3.Papers/3.paper3_pinc/IJCNN_2025/figs/pgfplots/rollout_exp}
+     %\setcounter{figure}{3}       
+    \caption{Effect of adding rollout loss vs. physics loss on VPT: Incorporating rollout loss with physics loss does not yield any additional performance gains compared to using physics loss alone, as shown in the Loss and VPT metrics.}
+    \label{fig:rollout}
+\end{figure}
+%%%%%%%%%%%%%%%%
+
+
+
+
+\subsection{Input Noise Robustness Experiment}
+\label{subsec:input_noise}
+Real-world ROV data often contain sensor or measurement noise. The model’s robustness to noisy inputs is assessed by injecting Gaussian noise, $\bm{\epsilon}$, with a standard deviation of $\sigma = 0.05$ into the neural network's inputs during training.
+In each epoch, a noise vector for each state in each trajectory is sampled and injected:
+\begin{equation}
+    \mathbf{x}_{\text{noisy}} = \mathbf{x} + \bm{\epsilon}.
+\end{equation}
+In Fig. \ref{fig:noise}, the no-physics and physics+rollout models degrade when noise is introduced. Nonetheless, the physics+rollout model remains more robust, implying that physics regularization can partially compensate for noisy input signals when training the model. The models are evaluated without noise.
+%\input{tables/input_noise_table}
+
+%%%%%%%%%%%%%%%%
+\begin{figure}[!t]
+    \centering
+   \input{Phd_thesis/chapters/3.Papers/3.paper3_pinc/IJCNN_2025/figs/pgfplots/noise_expirement}
+     %\setcounter{figure}{3}       
+    \caption{Effect of noise on learning: Noise was introduced into the ROV simulation model to evaluate the learning performance. Incorporating physics information significantly reduces underfitting and enhances robustness to noise, enabling more reliable learning.}
+    \label{fig:noise}
+\end{figure}
+%%%%%%%%%%%%%%%%
+
+
+
+
+\subsection{Best Model Configuration Experiments}
+\label{subsec:best_confs}
+%\input{tables/best_models_table}
+Based on our findings, we combined the optimal architectural and training choices, utilizing only data and physics losses. Additionally, we evaluated the impact of adding extra collocation points, which had previously improved Valid Prediction Times (VPTs).
+These models were trained on a more complex dataset using a learning rate scheduler and a batch size of $N_B=10$ for $2400$ and $4800$ epochs. The performance metrics are presented in Fig. \ref{fig:final_results}. 
+%With the learning rate scheduler, gradient normalization outperformed ConFIG, and adding extra collocation points did not enhance performance.
+Thus, the best PINC configuration employs the data and physics losses, learning rate scheduling, gradient normalization, a batch size of $N_B=10$, and a single collocation point in the prediction interval $T$.
+Fig.~\ref{fig:many_step_ahead_predictions} illustrates the performance differences between ConFIG and gradient normalization models.
+
+%%%%%%%%%%%%%%%%
+\begin{figure}[!t]
+\input{Phd_thesis/chapters/3.Papers/3.paper3_pinc/IJCNN_2025/figs/pgfplots/best_model_subtable}
+     %\setcounter{figure}{3}       
+    \caption{Comparison of PINC models trained with ConFIG and gradient normalization techniques for 2400 and 4800 epochs, using the best network architecture configuration determined from prior ablation studies. Results show that our proposed normalization method consistently outperforms the state-of-the-art ConFIG method in terms of VPT and loss reduction.}
+    \label{fig:final_results}
+\end{figure}
+%%%%%%%%%%%%%%%%
+
+
+\input{Phd_thesis/chapters/3.Papers/3.paper3_pinc/IJCNN_2025/figs/pgfplots/trajectory_plot}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Conclusions and Future Work} % ~0.25 pages
+\label{sec:conclusions}
+This work applied PINC to model an underwater vehicle's dynamics, mapping the current state, input, and time to the predicted next state at that given time instant. Empirically, combining one-step-ahead data loss with physics-based regularization provided the best long-horizon accuracy at minimal computational overhead. A key insight was that residual connections, treating the network output as an integral increment, are essential. Adaptive learning rate scheduling, gradient normalization and weighting, and batch sizes in the range of 10–20 all enhanced predictive performance.
+
+%Despite these promising results, several refinements remain. A single fixed collocation point consistently offered strong results, suggesting alternative architectures such as RNNs could further reduce overhead.
+
+Despite these promising results, several refinements remain. Training PINC models on real-world ROV trajectories would enable more realistic evaluation, potentially revealing limitations not captured in simulation. Furthermore, extending PINC to handle full rotational dynamics -- optimally representing roll, pitch, and yaw -- could improve accuracy for realistic manoeuvres. Finally, investigating the minimal set of losses, real-world testing, integration with MPC, and online adaptation would make PINC an even more versatile framework for ROV applications.

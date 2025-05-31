@@ -1,0 +1,20 @@
+% Please add the following required packages to your document preamble:
+% \usepackage{graphicx}
+\begin{table}[!b]
+\centering
+\caption{Batch size experiment with physics and rollout loss.}
+\label{tab:batch_size_with_pinn}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{l|r|r|r|r|r|}
+\textbf{Batch Size}                         & \textbf{3}    & \textbf{10}   & \textbf{20}   & \textbf{45}   & \textbf{80}   \\ \hline
+$\log_{10}(\mathcal{L}_{data,dev})$         & $-4.68$       & $\bm{-4.97}$  & $\bm{-4.97}$  & $-4.83$       & $-4.11$       \\ \hline
+$\log_{10}(\mathcal{L}_{roll,dev})$         & $-3.12$       & $-3.46$       & $\bm{-3.55}$  & $-3.33$       & $-2.54$       \\ \hline
+$\log_{10}(\mathcal{L}_{phy,dev})$          & $-2.69$       & $\bm{-3.04}$  & $-2.77$       & $-2.25$       & $-1.91$       \\ \hline
+$\log_{10}(\mathcal{L}_{data,test,interp})$ & $-4.88$       & $\bm{-5.16}$  & $-5.13$       & $-5.00$       & $-4.29$       \\ \hline
+$\log_{10}(\mathcal{L}_{data,test,extrap})$ & $-4.53$       & $\bm{-4.85}$  & $-4.79$       & $-4.60$       & $-3.95$       \\ \hline
+$\text{VPT}_{dev}$ [s]/[steps]              & $0.52$/$6.50$ & $0.96$/$12.0$ & $0.98$/$12.3$ & $\bm{1.71}$/$21.4$ & $0.19$/$2.38$ \\ \hline
+$\text{VPT}_{test,interp}$ [s]/[steps]      & $0.46$/$7.67$ & $\bm{0.87}$/$14.5$ & $0.78$/$13.0$ & $1.20$/$20.0$ & $0.17$/$2.83$ \\ \hline
+$\text{VPT}_{test,extrap}$ [s]/[steps]      & $0.54$/$5.40$ & $1.07$/$10.7$ & $1.06$/$10.6$ & $\bm{1.58}$/$15.8$ & $0.19$/$1.90$
+\end{tabular}
+}
+\end{table}

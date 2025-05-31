@@ -1,0 +1,124 @@
+## Main guy:
+1. [] the related work section is more of a background
+2. [] the experiment design needs improvement
+3. [X] a better problem formulation is required.
+
+4. [] There is lack of consistency in the names of the layers in the CAMETA framework.
+5. [] The results section is not comprehensive
+6. [] and there is a lack of a clear summary of the tackled research gap.
+
+## Reviewer 9525:
+### Related work
+1. [] Related work section reads more as a background for the research rather than discussing the most related research to the presented work. 
+  * I agree to some extend, however I think it is just the way of writing. I do introduce the related papers but as my problem is two folded (planning and forcasting) it might seem split to some. First I introduce the traditional path-planning related work (which is long as ICRA comments wanted it long) which is relevant as I am trying to tackle the same problem (MAPF) as the mentioned work. Secondly, the ETA or STSF (forcasting) related work is also introduced but with a focus on the way of predicting it as most of the other related work is focusing on roads and lanes which is not transferable to this type of problem as we have no one way lanes or road systems as described in the introduction.
+  * I will agree on that the II.C is rather long, but as this paper published at a robotics conference, this information is not common knowlegde and is crusual for later design.
+  * Should I change the title of the section?
+
+
+2. [X] One of the main claimed contributions is on the heterogeneity of the map but little argument is presented to support that and that is being tested.
+  * Im not sure how much more is needed as we are introducing multiple nodes and edges. I have a whole section III.B.1 explaining the graph representation.
+  * Secondly I do not claim to have a heterogeneity of the map, but I a heterogeneous graph representation to model the problem.
+    * CLAIM : A heterogeneous graph representation is proposed to model the interaction between agents and potential bottle-neck areas occurring within the map.
+
+### Experiment design
+3. The main issue of the paper is in the experiment design to support the main claims of the paper. 
+	3.1 It is not clear how many runs were used for Table I and Figs. 5 & 6. 
+	3.2 which seems to be the main result of the paper, e.g. What do the lines represent? Average? 
+	3.3 Why do we see an inconsistent drop in Fig. 4 for the proposed method? 
+	3.4 How does Table I support the claim of the paper? 
+	3.5 It's good to see different trained & tested results but what needs to be added to support the main argument of the paper? 
+
+## Reviewer 9527:
+### Related work:
+1. The related works section about traditional approaches is long, while the learning-based methods are short. I recommend the authors to expand the part related to the learning-based approach as those are most related to the proposed method. For instance, [1].
+2. If extra space is needed, the authors can shorten sections II-B and C as this section should focus on multi-robot coordination algorithms.	
+	
+### Approach
+1. In my opinion, the authors should add a problem formulation where they clearly state the main assumptions. For instance, the approaches assume local communication between the agents, etc,. This will also help to introduce the notation used, improving this paper's readability.
+2. Please make sure you introduce all variables used. For instance, if I am not wrong, eta_i variable is not presented.
+	
+### Results
+1. In section IV-A, add a reference to the WHCA* method.
+2. It is not clear where the execution noise is added. Is it to the ETA? To the WHCA* output? What are the units?
+3. In Table I, MAE is not explained. Please make sure all nomenclatures are explained.
+4. Considering that the authors do stochastic optimization because of the large memory requirements during training, it would be good for them to present the learning curve and the number of epochs used.
+
+### Contribution:
+1. Adding real robot experiments will increase this paper's contribution.
+
+
+
+## Reviewer 13861:
+
+### layer naming!
+1. [] To avoid confusion, it is recommended to be consistent with the names of the 3 layers that forms the CAMETA framework: path planning layer, 'ETA prediction layer' and path selection layer. In the abstract for instance, ETA prediction layer is called "path evaluation layer". "Path selection layer" in abstract  and Section 3C  is called the "cost validation layer" in Section 1 paragraph 2.
+
+### The description of the path planning layer in Section III.
+2. [] A is confusing and needs to be better structured. From the introduction, I assume that ETA prediction layer handles the conflicts. But in this section the authors state that path planning layer has two components, one offline planner to generate individual routes using A* and and online planner to resolve conflicts using WHCA*. Then in the third paragraph of the same section III.A, it is stated that the ETA prediction layer takes care of conflicts. I think the conflicts generated in the path planning layer are taken into account by the ETA prediction layer? If so, this needs to be stated in a "clear" sentence.
+
+### In section III.B,2 paragraph 4
+3. [] I also think the authors overstate the decentralized nature of their system by stating "As in the first layer, the second layer does not rely on a central station to process any information. However, it is known that global information is requested from a centralized station during run-time". As WHCA* is used in first layer and WHCA* requires a central authority to manage communication and coordination so the first layer is not so decentralized.
+  * I can see why this is misunderstood as WHCA* is not used in the first layer. It is used as a online planner, meaning that when the whole pipeline is done and we found the route minimizing the amount of conflicts, the conflicts that could not be resolved is then done during execution time using the online planner (WHCA*). Now as we are using the extended version of WHCA* (priority) in a local area, this can be done with no centralised unit but with just sharing the "spatiotemporal reservation table" and coordinate using the priority.
+  * If there is space for it I will add this in, and if not I will make sure to state that WHCA* is not used as part of the pipeline.
+
+
+
+### Results section:
+
+1. The results section, in general, is not very comprehensive and misses some claims that the paper made in the previous sections:
+
+2. In the Section II.A paragraph 1, 
+	the authors state that they consider four types of conflict in their system:
+	Vertex, edge, swapping, and cycle conflicts. However there is no discussion or mention of this in the experimental setup or results  section on the impact they have on ETA or at least how these four types of conflicts can occur in the environment during the experiments.  
+
+3. What is MAE in table 1? It is not defined anywhere which makes the interpretation of the table difficult.
+
+4. Section III.C talks about time constraints, however it's not clear on what basis are the time constraints chosen? Is the max time for route completion the same for all agents in a simulation? Are there cases if all paths are not valid due to time constraints not being met, for instance in a highly noisy environment?
+
+5. The effect of noise on the simulation needs to be described more clearly in Section IV.A paragraph1. 
+	It is better to mention first that "Noise can potentially increase or decrease the speed of robots in Multi-Agent Path Finding (MAPF) problems, depending on the type of noise and its impact on the agents." because the sentence "The movement of the robots and as such, the inclusion of noise in the simulation would not result in increased speed. On the contrary, the presence of noise would slow down ." is confusing and needs more clarity. Moreover, in Section IV.A noise probabilities that a system will force wait are specified, however is the time spent in the force wait linked to these probabilities? 
+
+6. The authors provide noise vs makespan and noise vs SOC plots, however is that sum of cost predicted by the CAMETA ETA or the actual sum of costs of a simulation? 
+
+### Minor comments:
+1. In section III.C, it would be better to reference some papers from the related work section to understand what commonly used metrics for evaluating ETA in MAPF are used in the literature.
+
+2. It can be more clear to define buffer times in Section III C. that "Buffer times in ETA is the additional time added
+to an predicted arrival time to account for potential delays"
+
+3. Would be nice to include an image of simulation environment populated with the agents, starting tiles and destination tiles to understand the setup better, even without the video. 
+
+
+## Reviewer 13919:
+### Related works:
+1. This review would benefit from a summary that explicitly highlights the research gap addressed by this paper. 
+
+just filler comments
+	The experimental methodology is well-explained, and the devised algorithm is clearly novel. 
+	The performance of CAMETA is compared against the offline path planners:
+	* conflict-based search (CBS),
+	* priority inheritance with backtracking (PIBT),
+	* and A* search.
+
+	The results show that CAMETA consistent results at varying levels of noise, which makes it more appropriate for real-time applications. 
+
+	The authors also demonstrate that the training process does not overfit to agent density, so generalises well to the other densities evaluated.
+
+### Results
+2. Only one map for evaluation:
+	However, it is unclear why only a single map is used for evaluating the performance of the system. Although the experiment is repeated 100 times with different random seeds, the structure of this particular environment may happen to favour one algorithm over another. Generalisation of the results would be more convincing if multiple different maps were used for the evaluation - either randomly generated, or specifically tailored edge-cases.
+	
+### Minor comments (plotting):
+
+3. Figures 4 and 5 - caption doesn't explain what the shaded regions represent. 
+	Are these the min/max values, or standard deviation, or something else? Also, each data series cannot be distinguished from each other without colour - please replot using different line/point styles to make the figures more accessible.
+
+
+
+
+
+
+
+# PLAN:
+Related work:
+1. 

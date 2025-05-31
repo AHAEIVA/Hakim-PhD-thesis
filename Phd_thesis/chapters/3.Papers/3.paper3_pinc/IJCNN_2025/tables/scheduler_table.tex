@@ -1,0 +1,20 @@
+% \begin{table}[b]
+% \centering
+% \caption{Adaptive learning rate scheduler experiment}
+% \label{tab:scheduler}
+% \resizebox{\columnwidth}{!}{%
+% \begin{tabular}{l|r|r|r|r|r|r}
+% \textbf{Scheduler}                          & \textbf{no}   & \textbf{yes}  & \textbf{no}   & \textbf{yes}  & \textbf{no}   & \textbf{yes}  \\ \hline
+% \textbf{Physics Loss}                       & \textbf{no}   & \textbf{no}   & \textbf{yes}  & \textbf{yes}  & \textbf{yes}  & \textbf{yes}  \\ \hline
+% \textbf{Rollout Loss}                       & \textbf{no}   & \textbf{no}   & \textbf{no}   & \textbf{no}   & \textbf{yes}  & \textbf{yes}  \\ \hline
+% $\log_{10}(\mathcal{L}_{data,dev})$         & $-4.45$       & $-5.21$       & $-4.85$       & $\bm{-5.62}$  & $-4.68$       & $-5.35$       \\ \hline
+% $\log_{10}(\mathcal{L}_{roll,dev})$         & $-2.89$       & $-3.74$       & $-3.37$       & $\bm{-4.15}$  & $-3.12$       & $-3.92$       \\ \hline
+% $\log_{10}(\mathcal{L}_{phy,dev})$          & $-1.84$       & $-1.78$       & $-2.67$       & $\bm{-3.30}$  & $-2.69$       & $-3.19$       \\ \hline
+% $\log_{10}(\mathcal{L}_{data,test,interp})$ & $-4.81$       & $-4.78$       & $-4.99$       & $\bm{-5.86}$  & $-4.88$       & $-5.44$       \\ \hline
+% $\log_{10}(\mathcal{L}_{data,test,extrap})$ & $-4.16$       & $-5.01$       & $-4.70$       & $\bm{-5.41}$  & $-4.53$       & $-5.30$       \\ \hline
+% $\text{VPT}_{dev}$ [s]/[steps]              & $0.46$/$5.75$ & $1.43$/$17.9$ & $1.51$/$18.9$ & $2.53$/$31.6$ & $0.52$/$6.50$ & $\bm{2.76}$/$34.5$ \\ \hline
+% $\text{VPT}_{test,interp}$ [s]              & $0.42$/$7.00$ & $0.51$/$8.50$ & $1.27$/$21.2$ & $\bm{2.56}$/$42.7$ & $0.46$/$7.67$ & $1.91$/$31.8$ \\ \hline
+% $\text{VPT}_{test,extrap}$ [s]              & $0.48$/$4.80$ & $1.86$/$18.6$ & $1.46$/$14.6$ & $2.73$/$27.3$ & $0.54$/$5.40$ & $\bm{3.05}$/$30.5$
+% \end{tabular}
+% }
+% \end{table}

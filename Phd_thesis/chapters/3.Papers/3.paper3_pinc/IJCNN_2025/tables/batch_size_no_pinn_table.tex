@@ -1,0 +1,18 @@
+\begin{table}[!b]
+\centering
+\caption{Batch size experiment without physics and rollout loss.}
+\label{tab:batch_size_no_pinn}
+%\resizebox{\columnwidth}{!}{%
+\begin{tabular}{l|r|r|r|}
+\textbf{Batch Size}                         & \textbf{3}    & \textbf{10}   & \textbf{30}   \\ \hline
+$\log_{10}(\mathcal{L}_{data,dev})$         & $-4.45$       & $\bm{-4.76}$  & $-4.56$       \\ \hline
+$\log_{10}(\mathcal{L}_{roll,dev})$         & $-2.89$       & $\bm{-3.38}$  & $-3.03$       \\ \hline
+$\log_{10}(\mathcal{L}_{phy,dev})$          & $\bm{-1.84}$  & $-1.81$       & $-1.83$       \\ \hline
+$\log_{10}(\mathcal{L}_{data,test,interp})$ & $-4.81$       & $\bm{-4.87}$  & $-4.79$       \\ \hline
+$\log_{10}(\mathcal{L}_{data,test,extrap})$ & $-4.16$       & $\bm{-4.47}$  & $-4.30$       \\ \hline
+$\text{VPT}_{dev}$ [s]/[steps]              & $0.46$/$5.75$ & $\bm{1.49}$/$18.6$ & $0.82$/$10.3$ \\ \hline
+$\text{VPT}_{test,interp}$ [s]/[steps]      & $0.42$/$7.00$ & $1.23$/$20.5$ & $\bm{1.35}$/$22.5$ \\ \hline
+$\text{VPT}_{test,extrap}$ [s]/[steps]      & $0.48$/$4.70$ & $\bm{0.85}$/$8.50$ & $0.64$/$6.40$
+\end{tabular}
+%}
+\end{table}

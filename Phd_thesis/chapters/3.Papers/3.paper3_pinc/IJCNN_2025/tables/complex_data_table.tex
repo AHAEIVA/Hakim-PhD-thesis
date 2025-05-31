@@ -1,0 +1,23 @@
+% % Please add the following required packages to your document preamble:
+% % \usepackage{graphicx}
+% \begin{table}[!b]
+% \centering
+% \caption{Increased data complexity experiment}
+% \label{tab:increased_data_complexity}
+% \resizebox{\columnwidth}{!}{%
+% \begin{tabular}{l|r|r|r|r|r|r}
+% \textbf{Physics Loss}                       & \textbf{no}    & \textbf{no}    & \textbf{yes}    & \textbf{yes}    & \textbf{yes}    & \textbf{yes}    \\ \hline
+% \textbf{Rollout Loss}                       & \textbf{no}    & \textbf{no}    & \textbf{no}    & \textbf{no}    & \textbf{yes}    & \textbf{yes}    \\ \hline
+% \textbf{Batch Size}                         & \textbf{3}    & \textbf{10}   & \textbf{3}    & \textbf{10}   & \textbf{3}    & \textbf{10}   \\ \hline
+% \textbf{Complex dataset}         & \textbf{no}    & \textbf{yes}    & \textbf{no}    & \textbf{yes}    & \textbf{no}    & \textbf{yes}    \\ \hline
+% $\log_{10}(\mathcal{L}_{data,dev})$         & $-3.04$       & $-4.42$       & $-3.04$       & $\bm{-4.62}$  & $-3.02$       & $-4.44$       \\ \hline
+% $\log_{10}(\mathcal{L}_{roll,dev})$         & $-1.96$       & $-3.28$       & $-1.96$       & $\bm{-3.53}$  & $-1.95$       & $-3.39$       \\ \hline
+% $\log_{10}(\mathcal{L}_{phy,dev})$          & $-0.56$       & $-0.97$       & $-0.58$       & $\bm{-2.35}$  & $-0.59$       & $-2.27$       \\ \hline
+% $\log_{10}(\mathcal{L}_{data,test,interp})$ & $-3.16$       & $-4.12$       & $-3.17$       & $\bm{-4.88}$  & $-3.14$       & $-4.56$       \\ \hline
+% $\log_{10}(\mathcal{L}_{data,test,extrap})$ & $-2.93$       & $-3.96$       & $-2.93$       & $\bm{-4.41}$  & $-2.92$       & $-4.28$       \\ \hline
+% $\text{VPT}_{dev}$ [s]/[steps]              & $0.08$/$1.00$ & $1.27$/$15.9$ & $0.12$/$1.50$ & $1.27$/$15.9$ & $0.05$/$0.63$ & $\bm{1.33}$/$16.6$ \\ \hline
+% $\text{VPT}_{test,interp}$ [s]              & $0.04$/$0.67$ & $0.51$/$8.50$ & $0.14$/$2.33$ & $\bm{1.21}$/$20.2$ & $0.06$/$1.00$ & $1.22$/$20.3$ \\ \hline
+% $\text{VPT}_{test,extrap}$ [s]              & $0.10$/$1.00$ & $0.50$/$5.00$ & $0.13$/$1.30$ & $\bm{1.33}$/$13.3$ & $0.06$/$0.60$ & $1.31$/$13.1$
+% \end{tabular}
+% }
+% \end{table}

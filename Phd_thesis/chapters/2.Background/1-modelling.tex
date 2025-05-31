@@ -66,19 +66,19 @@ The vehicle's state involves position, orientation, linear velocities, and angul
     \label{tab:sname_notation}
 \end{table}
 
-The position and orientation in the global frame $\mathcal{F}_G$ are represented by the vector $\vect{\eta} = [x, y, z, \phi, \theta, \psi]^T$, where $\phi$, $\theta$, and $\psi$ are the Euler angles (roll, pitch, yaw). The linear and angular velocities in the body frame $\mathcal{F}_B$ are represented by the vector $\vect{\nu} = [u, v, w, p, q, r]^T$.
+The position and orientation in the earth frame $\mathcal{F}_E$ are represented by the vector $\boldsymbol{\eta} = [x, y, z, \phi, \theta, \psi]^T$, where $\phi$, $\theta$, and $\psi$ are the Euler angles (roll, pitch, yaw). The linear and angular velocities in the body frame $\mathcal{F}_B$ are represented by the vector $\boldsymbol{\nu} = [u, v, w, p, q, r]^T$.
 
 \subsection{Newton-Euler Model}
 The dynamics of an underwater vehicle, treated as a rigid body moving in a fluid, can be derived using the Newton-Euler equations. These must account for hydrodynamic effects like added mass and damping, as well as gravitational and buoyancy forces.
 
 Fossen's vectorial formulation provides a standard framework:
 \begin{align} % Use align for multi-line equations with alignment
-    \dot{\vect{\eta}} &= \mat{J}(\vect{\eta})\vect{\nu} \label{eq:kinematics} \\
-    \mat{M}\dot{\vect{\nu}} + \mat{C}(\vect{\nu})\vect{\nu} + \mat{D}(\vect{\nu})\vect{\nu} + \mat{g}(\vect{\eta}) &= \vect{\tau} + \vect{\tau}_{env} \label{eq:dynamics}
+    \dot{\boldsymbo{\eta}} &= \mat{J}(\boldsymbo{\eta})\boldsymbo{\nu} \label{eq:kinematics} \\
+    \mat{M}\dot{\boldsymbo{\nu}} + \mat{C}(\boldsymbo{\nu})\boldsymbo{\nu} + \mat{D}(\boldsymbo{\nu})\boldsymbo{\nu} + \mat{g}(\boldsymbo{\eta}) &= \boldsymbo{\tau} + \boldsymbo{\tau}_{env} \label{eq:dynamics}
 \end{align}
-Equation \eqref{eq:kinematics} describes the kinematics, relating body-fixed velocities $\vect{\nu}$ to the rates of change of position and orientation in the global frame $\dot{\vect{\eta}}$ via the transformation matrix $\mat{J}(\vect{\eta})$:
+Equation \eqref{eq:kinematics} describes the kinematics, relating body-fixed velocities $\boldsymbo{\nu}$ to the rates of change of position and orientation in the global frame $\dot{\boldsymbo{\eta}}$ via the transformation matrix $\mat{J}(\boldsymbo{\eta})$:
 \begin{equation}
-    \mat{J}(\vect{\eta}) =
+    \mat{J}(\boldsymbo{\eta}) =
     \begin{bmatrix}
         \mat{R}(\phi,\theta,\psi) & \mat{0}_{3\times3} \\
         \mat{0}_{3\times3} & \mat{T}(\phi,\theta)
@@ -107,13 +107,13 @@ The rigid-body inertia matrix $\mat{M}_{RB}$ is given by:
 \begin{equation}
     \mat{M}_{RB} =
     \begin{bmatrix}
-        m\mat{I}_{3\times3} & -m\mat{S}(\vect{r}_G) \\
-        m\mat{S}(\vect{r}_G) & \mat{I}_G
+        m\mat{I}_{3\times3} & -m\mat{S}(\boldsymbo{r}_G) \\
+        m\mat{S}(\boldsymbo{r}_G) & \mat{I}_G
     \end{bmatrix}
 \end{equation}
-where $m$ is the mass, $\mat{I}_{3\times3}$ is the $3 \times 3$ identity matrix, $\vect{r}_G = [x_G, y_G, z_G]^T$ is the position of the CG in $\mathcal{F}_B$, $\mat{I}_G$ is the inertia tensor about the CG, and $\mat{S}(\vect{r}_G)$ is the skew-symmetric matrix:
+where $m$ is the mass, $\mat{I}_{3\times3}$ is the $3 \times 3$ identity matrix, $\boldsymbo{r}_G = [x_G, y_G, z_G]^T$ is the position of the CG in $\mathcal{F}_B$, $\mat{I}_G$ is the inertia tensor about the CG, and $\mat{S}(\boldsymbo{r}_G)$ is the skew-symmetric matrix:
 \begin{equation}
-    \mat{S}(\vect{r}_G) =
+    \mat{S}(\boldsymbo{r}_G) =
     \begin{bmatrix}
         0 & -z_G & y_G \\
         z_G & 0 & -x_G \\
@@ -134,15 +134,15 @@ The added mass matrix $\mat{M}_A$ accounts for the inertia of the surrounding fl
 \end{equation}
 where $X_{\dot{u}}$ is the added mass force in $x$-direction due to surge acceleration $\dot{u}$, etc.
 
-The matrix $\mat{C}(\vect{\nu})$ represents Coriolis and centripetal forces, including rigid-body $\mat{C}_{RB}(\vect{\nu})$ and added mass $\mat{C}_A(\vect{\nu})$ terms:
+The matrix $\mat{C}(\boldsymbo{\nu})$ represents Coriolis and centripetal forces, including rigid-body $\mat{C}_{RB}(\boldsymbo{\nu})$ and added mass $\mat{C}_A(\boldsymbo{\nu})$ terms:
 \begin{equation}
-    \mat{C}(\vect{\nu}) = \mat{C}_{RB}(\vect{\nu}) + \mat{C}_A(\vect{\nu})
+    \mat{C}(\boldsymbo{\nu}) = \mat{C}_{RB}(\boldsymbo{\nu}) + \mat{C}_A(\boldsymbo{\nu})
 \end{equation}
 These terms arise from the rotation of the body frame and the interaction of the vehicle with the fluid.
 
-The damping matrix $\mat{D}(\vect{\nu})$ represents hydrodynamic drag forces and moments opposing motion. It is often decomposed into linear $\mat{D}_{lin}$ and nonlinear (quadratic) $\mat{D}_{nonlin}(\vect{\nu})$ components:
+The damping matrix $\mat{D}(\boldsymbo{\nu})$ represents hydrodynamic drag forces and moments opposing motion. It is often decomposed into linear $\mat{D}_{lin}$ and nonlinear (quadratic) $\mat{D}_{nonlin}(\boldsymbo{\nu})$ components:
 \begin{equation}
-    \mat{D}(\vect{\nu}) = \mat{D}_{lin} + \mat{D}_{nonlin}(\vect{\nu})
+    \mat{D}(\boldsymbo{\nu}) = \mat{D}_{lin} + \mat{D}_{nonlin}(\boldsymbo{\nu})
 \end{equation}
 Linear damping is often approximated as diagonal:
 \begin{equation}
@@ -150,12 +150,12 @@ Linear damping is often approximated as diagonal:
 \end{equation}
 Nonlinear damping, mainly due to quadratic drag, is often modeled as:
 \begin{equation}
-    \mat{D}_{nonlin}(\vect{\nu}) = -\text{diag}(X_{u|u|}|u|, Y_{v|v|}|v|, Z_{w|w|}|w|, K_{p|p|}|p|, M_{q|q|}|q|, N_{r|r|}|r|)
+    \mat{D}_{nonlin}(\boldsymbo{\nu}) = -\text{diag}(X_{u|u|}|u|, Y_{v|v|}|v|, Z_{w|w|}|w|, K_{p|p|}|p|, M_{q|q|}|q|, N_{r|r|}|r|)
 \end{equation}
 
-The vector $\mat{g}(\vect{\eta})$ represents restoring forces and moments due to gravity (weight $W=mg$) and buoyancy ($B$). If the CG and center of buoyancy (CB) at $\vect{r}_B = [x_B, y_B, z_B]^T$ do not coincide, these forces create moments:
+The vector $\mat{g}(\boldsymbo{\eta})$ represents restoring forces and moments due to gravity (weight $W=mg$) and buoyancy ($B$). If the CG and center of buoyancy (CB) at $\boldsymbo{r}_B = [x_B, y_B, z_B]^T$ do not coincide, these forces create moments:
 \begin{equation}
-    \mat{g}(\vect{\eta}) =
+    \mat{g}(\boldsymbo{\eta}) =
     \begin{bmatrix}
         (W-B)\sin\theta \\
         -(W-B)\cos\theta\sin\phi \\
@@ -166,20 +166,20 @@ The vector $\mat{g}(\vect{\eta})$ represents restoring forces and moments due to
     \end{bmatrix}
 \end{equation}
 
-The vector $\vect{\tau} = [X, Y, Z, K, M, N]^T$ represents the control forces and moments generated by actuators (thrusters, fins, etc.). The vector $\vect{\tau}_{env}$ represents external environmental disturbances (currents, waves).
+The vector $\boldsymbo{\tau} = [X, Y, Z, K, M, N]^T$ represents the control forces and moments generated by actuators (thrusters, fins, etc.). The vector $\boldsymbo{\tau}_{env}$ represents external environmental disturbances (currents, waves).
 
 \subsection{Model Implementation Considerations}
 Implementing this 6-DOF model requires several steps:
 \begin{itemize}
-    \item \textbf{Parameter Estimation:} Hydrodynamic coefficients ($\mat{M}_A$, $\mat{D}(\vect{\nu})$ terms) must be determined via CFD, experiments (e.g., towing tank tests, system identification), or analytical/empirical formulas.
+    \item \textbf{Parameter Estimation:} Hydrodynamic coefficients ($\mat{M}_A$, $\mat{D}(\boldsymbo{\nu})$ terms) must be determined via CFD, experiments (e.g., towing tank tests, system identification), or analytical/empirical formulas.
     \item \textbf{Model Simplification:} Based on vehicle symmetry (e.g., port-starboard symmetry simplifies matrices) or specific operational scenarios (e.g., planar motion neglecting roll, pitch, heave), the model can be reduced in complexity.
-    \item \textbf{Actuation Model:} The control input vector $\vect{\tau}$ results from individual actuator outputs. For a vehicle with $n$ thrusters, where the $i$-th thruster produces thrust $T_i$, the total wrench is often modeled linearly:
+    \item \textbf{Actuation Model:} The control input vector $\boldsymbo{\tau}$ results from individual actuator outputs. For a vehicle with $n$ thrusters, where the $i$-th thruster produces thrust $T_i$, the total wrench is often modeled linearly:
     \begin{equation}
-        \vect{\tau} = \mat{B} \vect{T}
+        \boldsymbo{\tau} = \mat{B} \boldsymbo{T}
     \end{equation}
-    Here, $\vect{T} = [T_1, T_2, ..., T_n]^T$ is the vector of individual thruster commands, and $\mat{B}$ is the $6 \times n$ thrust configuration matrix (or allocation matrix). Each column $i$ of $\mat{B}$ maps the thrust $T_i$ to forces and moments in $\mathcal{F}_B$ based on the thruster's position $\vect{r}_i$ and orientation (unit thrust direction vector $\vect{d}_i$) in the body frame:
+    Here, $\boldsymbo{T} = [T_1, T_2, ..., T_n]^T$ is the vector of individual thruster commands, and $\mat{B}$ is the $6 \times n$ thrust configuration matrix (or allocation matrix). Each column $i$ of $\mat{B}$ maps the thrust $T_i$ to forces and moments in $\mathcal{F}_B$ based on the thruster's position $\boldsymbo{r}_i$ and orientation (unit thrust direction vector $\boldsymbo{d}_i$) in the body frame:
     \begin{equation}
-        \mat{B}_i = \begin{bmatrix} \vect{d}_i \\ \vect{r}_i \times \vect{d}_i \end{bmatrix}
+        \mat{B}_i = \begin{bmatrix} \boldsymbo{d}_i \\ \boldsymbo{r}_i \times \boldsymbo{d}_i \end{bmatrix}
     \end{equation}
     Actuator dynamics (response times, saturation limits) should also be considered for realistic simulation and control design.
 \end{itemize}
@@ -189,7 +189,7 @@ The presented model relies on several assumptions and has limitations:
 \begin{itemize}
     \item Hydrodynamic coefficients are often assumed constant or only velocity-dependent, but can vary with acceleration, Reynolds number, frequency of motion, proximity to boundaries, etc.
     \item Fluid memory effects (history of motion) are typically neglected.
-    \item Environmental disturbances need explicit modeling. Ocean currents are often included by using the relative velocity $\vect{\nu}_r = \vect{\nu} - \vect{\nu}_c$ (where $\vect{\nu}_c$ is the current velocity in $\mathcal{F}_B$) in the hydrodynamic force calculations ($\mat{C}$, $\mat{D}$ terms). Wave effects require more complex modeling (e.g., wave spectra, response amplitude operators).
+    \item Environmental disturbances need explicit modeling. Ocean currents are often included by using the relative velocity $\boldsymbo{\nu}_r = \boldsymbo{\nu} - \boldsymbo{\nu}_c$ (where $\boldsymbo{\nu}_c$ is the current velocity in $\mathcal{F}_B$) in the hydrodynamic force calculations ($\mat{C}$, $\mat{D}$ terms). Wave effects require more complex modeling (e.g., wave spectra, response amplitude operators).
     \item For tethered vehicles (ROVs), tether dynamics add significant forces and moments, requiring dedicated modeling.
     \item Effects like vortex shedding, fluid-structure interaction, or varying water density might be important in specific scenarios but are not included in the standard model.
 \end{itemize}
@@ -198,3 +198,5 @@ Despite these limitations, Fossen's model provides a robust and widely used foun
 % \end{tikzpicture}
 % % --- END: TikZ picture code ---
 % % --- END: TikZ picture code ---
+
+

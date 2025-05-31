@@ -1,0 +1,19 @@
+\begin{table}[!b]
+\caption{Residual Connection ablation experiment.}
+\label{tab:ress_conn}
+\centering
+%\resizebox{\columnwidth}{!}{%
+\begin{tabular}{l|r|r|}
+\textbf{Residual Connection}                   & \textbf{With} & \textbf{Without} \\ \hline
+$\log_{10}(\mathcal{L}_{data,dev})$            & $\bm{-4.85}$  & $-0.69$          \\ \hline
+$\log_{10}(\mathcal{L}_{roll,dev})$            & $\bm{-3.37}$  & $2.09$           \\ \hline
+$\log_{10}(\mathcal{L}_{phy,dev})$             & $\bm{-2.67}$  & $-0.83$          \\ \hline
+$\log_{10}(\mathcal{L}_{data,test,interp})$    & $\bm{-4.99}$  & $-0.79$          \\ \hline
+$\log_{10}(\mathcal{L}_{data,test,extrap})$    & $\bm{-4.70}$  & $-0.61$          \\ \hline
+$\text{VPT}_{dev}$ {[}s{]}/{[}steps{]}         & $\bm{1.51}$/$18.9$ & $0.00$/$0.00$    \\ \hline
+$\text{VPT}_{test,interp}$ {[}s{]}/{[}steps{]} & $\bm{1.27}$/$21.2$ & $0.00$/$0.00$    \\ \hline
+$\text{VPT}_{test,extrap}$ {[}s{]}/{[}steps{]} & $\bm{1.46}$/$14.6$ & $0.00$/$0.00$   
+\end{tabular}
+%}
+\end{table}
+

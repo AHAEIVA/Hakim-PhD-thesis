@@ -1,0 +1,18 @@
+\begin{table}[!hb]
+\centering
+\caption{Structural physics information experiment, physics loss included, rollout loss not included.}
+\label{tab:position_rotated_pinn_no_rollout}
+%\resizebox{\columnwidth}{!}{%
+\begin{tabular}{l|r|r|}
+\textbf{With physics informed architecture} & \textbf{yes}  & \textbf{no}   \\ \hline
+$\log_{10}(\mathcal{L}_{data,dev})$         & $\bm{-4.85}$  & $-4.26$       \\ \hline
+$\log_{10}(\mathcal{L}_{roll,dev})$         & $\bm{-3.37}$  & $-2.68$       \\ \hline
+$\log_{10}(\mathcal{L}_{phy,dev})$          & $\bm{-2.67}$  & $-2.17$       \\ \hline
+$\log_{10}(\mathcal{L}_{data,test,interp})$ & $\bm{-4.99}$  & $-4.41$       \\ \hline
+$\log_{10}(\mathcal{L}_{data,test,extrap})$ & $\bm{-4.70}$  & $-4.13$       \\ \hline
+$\text{VPT}_{dev}$ [s]/[steps]              & $\bm{1.51}$/$18.9$ & $0.57$/$7.13$ \\ \hline
+$\text{VPT}_{test,interp}$ [s]/[steps]      & $\bm{1.27}$/$21.2$ & $0.50$/$8.33$ \\ \hline
+$\text{VPT}_{test,extrap}$ [s]/[steps]      & $\bm{1.46}$/$14.6$ & $0.61$/$6.10$
+\end{tabular}
+%}
+\end{table}

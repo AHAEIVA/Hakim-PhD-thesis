@@ -1,0 +1,71 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{color}
+
+\begin{document}
+
+\title{Reviewer Comments and Actionable Points}
+\author{}
+\date{}
+\maketitle
+
+\section*{Reviewer Comments and Actionable Points}
+
+\subsection*{Reviewer \#1}
+
+\begin{itemize}
+    \item \textbf{Time Complexity Discussion:} 
+    \begin{itemize}
+        \item Action: Discuss the computational (time) complexity of the proposed method, particularly for both training and inference phases.
+        \item Context: Real-world control systems often have strict latency requirements, so it is important to explain how the proposed method handles this, or any performance trade-offs.
+    \end{itemize}
+\end{itemize}
+
+\subsection*{Reviewer \#2}
+
+\begin{itemize}
+    \item \textbf{Comparison with Traditional Methods:} 
+    \begin{itemize}
+        \item Action: Include a comparison with traditional methods, such as numerical solutions of the Fossen model, in terms of accuracy and efficiency.
+        \item Response: We have already done this comparison in the final expriments which is ground truth  (simulation model) comparison. 
+    \end{itemize}
+    
+    \item \textbf{Control Task Performance:} 
+    \begin{itemize}
+        \item Action: Clarify whether the neural network model is used for control tasks, as the name PINC suggests. Discuss the model’s performance on real-world data or plan future work to explore this aspect.
+        \item Response: It is clear that this work focuses on control, as discussed throughout the text. For example, "This work explores the potential of a specialized variant of PINNs, namely the physics-informed neural network with control (PINC) [6], for modeling the dynamics of underwater ROVs. The primary objective is to evaluate whether PINC can effectively model a simplified underwater dynamic system and provide an accurate model for control applications." For future work, have added the following: \textcolor{blue}{Training PINC models on real-world ROV trajectories would enable a more realistic evaluation of their efficacy, potentially uncovering limitations not captured in simulation.}
+
+       
+    \end{itemize}
+\end{itemize}
+
+\subsection*{Reviewer \#3}
+
+\begin{itemize}
+    \item \textbf{Novelty of the Work:} 
+    \begin{itemize}
+        \item Action: Discuss the novelty of the work in comparison to existing literature, particularly PINC applications like Section 4 of [6].
+        \item Context: Although PINC is well-established, the application to underwater robotics and your specific system may present new insights that should be highlighted.
+    \end{itemize}
+    
+    \item \textbf{Comparison with Traditional Methods:} 
+    \begin{itemize}
+        \item Action: Similar to Reviewer \#2, include comparisons with traditional methods (e.g., numerical solutions of the Fossen model) for accuracy and efficiency.
+        \item Context: This will help demonstrate the relative effectiveness of the proposed method.
+    \end{itemize}
+
+    \item \textbf{Clarification of Loss Functions:} 
+    \begin{itemize}
+        \item Action: Provide a clearer explanation of the loss functions, particularly the $f$ term in the physics loss (equation 2) and the physics rollout loss (equation 5).        
+
+        \item Context: A clearer explanation of these terms will help reviewers understand the mechanics behind your method.
+    \end{itemize}
+
+    \item \textbf{Clarification of Development Set:} 
+    \begin{itemize}
+        \item Action: Clarify the process of increasing the development set size to match the test set. Specifically, explain whether the model "saw" the part of the development set during training.
+        \item Response:  Added Remark 4.
+    \end{itemize}
+\end{itemize}
+
+\end{document}

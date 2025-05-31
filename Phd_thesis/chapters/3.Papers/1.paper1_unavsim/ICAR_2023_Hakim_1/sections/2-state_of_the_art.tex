@@ -8,46 +8,25 @@ While progress in robotics simulation tools has been rapid, underwater robotics 
 A more recent simulator, DAVE \cite{dave}, was developed as a more modern version of the UUV simulator that supports more \ac{ROV} models and underwater sensors. However, the aforementioned simulators are based on Gazebo, which has the disadvantage of unrealistic rendering. This limits their usefulness for training and testing \ac{AI} algorithms that often rely on image inputs. To address this issue, HoloOcean \cite{holoocean} was developed using \ac{UE4} for rendering and written in Python, but it lacks support for \ac{ROS} \cite{ros}. Another example is MARUS \cite{marus}, which has not yet released its open-source implementation. The simulator uses Unity3D for visualization and integrates with \ac{ROS}. However, it lacks support for essential robotics and \ac{AI} tools, such as commercial autopilots \cite{px4}, or OpenAI's Gym environments \cite{gym}, which are important tools for developing \ac{AI} and control algorithms for autonomous vehicles.
 %
 \begin{table*}[t]
-%\caption{Marine robotics simulators comparison. UNav-Sim has superior rendering quality and versatility in supporting robotics tools, making it the best candidate for vision-based robotics applications and \ac{AI} research.  }
 \caption{Marine robotics simulators comparison showing UNav-Sim's superior rendering quality and versatility.}
 \centering
-
-
-\begin{tabular}{ cccccc}
-
-
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{ cccccc }
 \toprule
-
-%\rowcolor{gray!20}
-
-Simulator & Year & Rendering  quality &ROS Support& Autopilot & OS 
-\\
+Simulator & Year & Rendering Quality & ROS Support & Autopilot & OS \\
 \midrule
-
-UWSim \cite{uwsim} & 2012 &Low& ROS 1 & None & Linux \\
-
-UUV \cite{uuv} &2016 & Low& ROS 1 & Ardupilot & Linux 
- \\
-
-URSim \cite{ursim} & 2019 & Moderate & ROS 1 & N/A& Linux \\
-
-HoloOcean \cite{holoocean} & 2022 & High  & N/A& N/A  & Linux/Windows  \\
-
-DAVE \cite{dave}& 2022 &Low &  ROS 1& PX4/Ardupilot  &Linux  \\
-
-MARUS \cite{marus} & 2022 & Moderate & ROS 1,2 & N/A & Linux/Windows
-  \\
+UWSim \cite{uwsim} & 2012 & Low & ROS 1 & None & Linux \\
+UUV \cite{uuv} & 2016 & Low & ROS 1 & Ardupilot & Linux \\
+URSim \cite{ursim} & 2019 & Moderate & ROS 1 & N/A & Linux \\
+HoloOcean \cite{holoocean} & 2022 & High & N/A & N/A & Linux/Windows \\
+DAVE \cite{dave} & 2022 & Low & ROS 1 & PX4/Ardupilot & Linux \\
+MARUS \cite{marus} & 2022 & Moderate & ROS 1,2 & N/A & Linux/Windows \\
 \midrule
-
-\textbf{UNav-Sim (Ours)} &2023 & Highest & ROS 1,2 & PX4/Ardupilot &  Linux/Windows \\
+\textbf{UNav-Sim (Ours)} & 2023 & Highest & ROS 1,2 & PX4/Ardupilot & Linux/Windows \\
 \bottomrule
-
+\end{tabular}%
+}
 \label{Tab:comparision}
-
-\end{tabular}
-
-
-\label{Tab:comparision2}
 \end{table*}
 %
 

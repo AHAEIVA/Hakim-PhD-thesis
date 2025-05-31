@@ -1,162 +1,4 @@
 
-\documentclass[letterpaper, 10 pt, conference]{ieeeconf}  % 
-\IEEEoverridecommandlockouts                             
-\pdfoutput=1
-                                                         
-\overrideIEEEmargins% Needed to meet printer requirements.
-\usepackage[nolist]{acronym}
-\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
-\usepackage{soul}
-\usepackage{mathtools}
-\usepackage{verbatim}
-\usepackage[pdftex]{graphicx}
-\usepackage{epsfig,subcaption}
-\usepackage{amsmath,amssymb,amsfonts,bm,amscd} 
-\usepackage{mathrsfs}
-\usepackage{setspace}
-\usepackage{multirow}
-\usepackage{fancyhdr}
-\usepackage{algorithm} 
-\usepackage{psfrag}
-\usepackage{multirow, makecell}
-\usepackage{svg}
-%\usepackage{flushend}
-\usepackage{cite}
-\usepackage{hyperref}
-\usepackage{color}
-\usepackage{cleveref}
-\usepackage{dblfloatfix}
-\usepackage[export]{adjustbox}% http://ctan.org/pkg/adjustbox
-
-\usepackage{xcolor}
-\usepackage{framed}
-\usepackage{lipsum}
-
-\colorlet{shadecolor}{yellow!50}
-
-%\usepackage[outdir=./]{epstopdf}
-\usepackage{algorithm}
-\usepackage{algpseudocode}
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{insight}{insight}[section]
-\newtheorem{corollary}[theorem]{Corollary}
-\newtheorem{lemma}[theorem]{Lemma}
-\newtheorem{proposition}[theorem]{Proposition}
-\newtheorem{conjecture}[theorem]{Conjecture}
-%\theoremstyle{definition}
-\newtheorem{definition}{Definition}[section]
-\newtheorem{example}{Example}[section]
-\newtheorem{assumption}{Assumption}[section]
-%\theoremstyle{remark}
-\newtheorem{remark}{Remark}[section]
-\newtheorem{problem}{Problem}[section]
-%\newtheorem{algorithm}{Algorithm}[section]
-\newcommand{\scale}{0.8}
-\newcommand{\norm}[1]{\left\Vert#1\right\Vert}
-\newcommand{\abs}[1]{\left\vert#1\right\vert}
-\newcommand{\set}[1]{\left\{#1\right\}}
-\newcommand{\Real}{\mathbb R}
-\newcommand{\Complex}{\mathbb C}
-\newcommand{\eps}{\varepsilon}
-\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
-% Color definitions
-\usepackage{xcolor,colortbl}
-\definecolor{lightgreen}{RGB}{173,213,176}
-\definecolor{lightyellow}{RGB}{255,255,204}
-\definecolor{lightblue}{RGB}{204,255,255}
-\definecolor{lightred}{RGB}{255,204,204}
-
-% notes
-\newcommand{\mmnote}[1]{{\xxnote{MM}{blue}{#1}}} %Mohit
-\newcommand{\hanote}[1]{{\xxnote{HA}{red}{#1}}} %Hakim
-\newcommand{\eknote}[1]{{\xxnote{EK}{blue}{#1}}} %Erdal
-\newcommand{\jsnote}[1]{{\xxnote{JS}{orange}{#1}}} %Jonas
-\newcommand{\xxnote}[3]{}
-\ifx\hidenotes\undefined
-  \usepackage{color}
-  \renewcommand{\xxnote}[3]{\color{#2}{#1: #3}}
-\fi
-
-%% ORCID
-\RequirePackage{tikz} % For \foreach used for Orcid icon
-% Make Orcid icon
-\newcommand{\orcidicon}{\includegraphics[width=0.32cm]{Autonomous_Robots/figures/orcid/logo-orcid.eps}}
-
-% Define link and button for each author
-\foreach \x in {A, ..., Z}{%
-\expandafter\xdef\csname orcid\x\endcsname{\noexpand\href{https://orcid.org/\csname orcidauthor\x\endcsname}{\noexpand\orcidicon}}
-}
-
-\definecolor{Bookcolor}{HTML}{00F9DE}
-\definecolor{darkgreen}{rgb}{0.0, 0.5, 0.0}
-
-\newcommand{\orcidauthorA}{0000-0001-5387-7613} % Add \orcidA{} behind the author's name
-\newcommand{\orcidauthorB}{0000-0003-1958-0263} % Add \orcidB{} behind the author's name
-\newcommand{\orcidauthorC}{0000-0002-7742-6996} % Add \orcidB{} behind the author's name  JONAS 
-\newcommand{\orcidauthorD}{0000-0002-7143-8777} % Add \orcidB{} behind the author's name  ERDAL
-
-\DeclareMathOperator*{\minimize}{{min}}
-\DeclareMathOperator*{\maximize}{{max}}
-
-\begin{acronym}
-    \acro{NMPC}{nonlinear model predictive control}
-    \acro{MPC}{model predictive control}
-    \acro{VT-NMPC}{visual tracking nonlinear model predictive control}
-    \acro{PAMPC}{perception-aware model predictive control}
-    \acro{ROI}{region of interest}
-    \acro{FOV}{field of view}
-    \acro{VS}{visual servoing}
-    \acro{PBVS}{position-based visual servoing}
-    \acro{PBVS}{position-based visual servoing}
-    \acro{IBVS}{image-based visual servoing}
-    \acro{STL}{standard triangle language}
-    \acro{KKT}{karush–kuhn–tucker}
-    \acro{TSP}{traveling salesman problem}
-\end{acronym}
-
-
-
-\title{\LARGE \bf
-Visual Tracking Nonlinear Model Predictive Control Method for Autonomous Wind Turbine Inspection
-}
-
-
-% \author{Abdelhakim Amer\orcidA{}, Mohit Mehndiratta\orcidB{}, Jonas le Fevre Sejersen\orcidC{}, Huy Xuan Pham\orcidE{}, Erdal Kayacan\orcidD{}} 
-
-
-
-% \thanks{A. Amer, J. le Fevre and H. X. Pham are with Artificial Intelligence in Robotics Laboratory (AiR Lab), the Department of Electrical and Computer Engineering, Aarhus University, 8000 Aarhus C, Denmark, \{abdelhakim, jonas.le.fevre, huy.pham\} @ece.au.dk. Mohit Mehndiratta is with Sensible 4 Oy, Helsinki, Finland, mohit.mehndiratta@sensible4.fi. E. Kayacan is with the Automatic Control Group, Department of Electrical Engineering and Information Technology, Paderborn University, Paderborn, Germany. {\tt\small \{erdal.kayacan\} at uni-paderborn.de}}
-
-
-
-\author{ 
-Abdelhakim Amer\orcidA{}, Mohit Mehndiratta\orcidB{}, Jonas le Fevre Sejersen\orcidC{}, Huy Xuan Pham\orcidE{}, Erdal Kayacan\orcidD{}% <-this % stops a space
-% <-this % stops a space
-\thanks{A. Amer, J. le Fevre and H. X. Pham are with Artificial Intelligence in Robotics Laboratory (AiR Lab), the Department of Electrical and Computer Engineering, Aarhus University, 8000 Aarhus C, Denmark, \{abdelhakim, jonas.le.fevre, huy.pham\} @ece.au.dk. Mohit Mehndiratta is with GIM Robotics, Espoo, Finland, mohit.mehndiratta@gimrobotics.fi. E. Kayacan is with the Automatic Control Group, Department of Electrical Engineering and Information Technology, Paderborn University, Paderborn, Germany,  \{erdal.kayacan\} at uni-paderborn.de.}
-}
-
-
-
-
-
-
-
-\bibliographystyle{IEEEtran}
-\begin{document}
-\maketitle
-%\thispagestyle{empty}
-%\pagestyle{empty}
-\begin{abstract}
-
-
-%Automated visual inspection of on-and offshore wind turbines using aerial robots provides several benefits, inter alia, a safe working environment by eliminating the risks where workers are suspended high above the ground, reduced inspection time, preventive maintenance, and access to hard-to-reach areas.  A novel nonlinear model predictive control (NMPC) framework alongside a global wind turbine path planner is proposed to achieve distance-optimal coverage for wind turbine inspection. 
-Automated visual inspection of on-and offshore wind turbines using aerial robots provides several benefits, namely, a safe working environment by circumventing the need for workers to be suspended high above the ground, reduced inspection time, preventive maintenance, and access to hard-to-reach areas. A novel nonlinear model predictive control (NMPC) framework alongside a global wind turbine path planner is proposed to achieve distance-optimal coverage for wind turbine inspection. Unlike traditional MPC formulations, visual tracking NMPC (VT-NMPC) is designed to track an inspection surface, instead of a position and heading trajectory, thereby circumventing the need to provide an accurate predefined trajectory for the drone. An additional capability of the proposed VT-NMPC method is that by incorporating inspection requirements as visual tracking costs to minimize, it naturally achieves the inspection task successfully while respecting the physical constraints of the drone. %Unlike the traditional MPC formulations, the designed visual tracking NMPC (VT-NMPC) method facilitates a desired relative pose between the drone and the inspection surface on the wind turbine rotor blades. An additional capability of the proposed VT-NMPC method is its direct dependence on inspection surfaces, thereby circumventing the need to provide a position and heading trajectory for the drone.
-Multiple simulation runs and real-world tests demonstrate the efficiency and efficacy of the proposed automated inspection framework, which outperforms the traditional MPC designs, by providing full coverage of the target wind turbine blades as well as its robustness to changing wind conditions. The implementation codes\footnote{\url{https://www.github.com/open-airlab/VTNMPC-Autonomous-Wind-Turbine-Inspection}} are open-sourced.
-
-\end{abstract}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{INTRODUCTION}
 
 
@@ -196,7 +38,7 @@ on a customized drone to demonstrate its real-world applicability.
     \centering
     % \includegraphics[width=0.47\textwidth]{Autonomous_Robots/figures/abstract.pdf}
     % \includesvg[width=0.98\textwidth]{Autonomous_Robots/figures/abstract_svg.svg}
-    \includegraphics[width=1\textwidth]{Autonomous_Robots/figures/abstract_vtmpc_1.pdf}
+    \includegraphics[width=1\textwidth]{Phd_thesis/figures/abstract_vtmpc_1.pdf}
     \caption{Overview of the automated inspection framework modules. The user specifies the dimensions and location of the turbines and the output is the motor commands for the drone. The model generation and global planning are calculated pre-flight (offline), while the optimization and control are performed onboard (online).} 
     \label{fig:abstract}
 \end{figure*}
@@ -306,7 +148,7 @@ While  \cite{SIP} is a general planner for any structure, the output of the plan
 \begin{figure}
     \centering
    
-    \includegraphics[width=0.5\textwidth]{Autonomous_Robots/figures/planner.pdf}
+    \includegraphics[width=0.5\textwidth]{figures/planner.pdf}
     \caption{%Time-optimal path planner which utilizes the structure of the wind turbine to create a graph based search algorithm. A node (green) is placed at the end of each surface of the blade. A graph networks is thus created between the nodes. A thick black edges represent a connection between the nodes of the same surface (group).
    A topological representation of our graph-based search algorithm for distance-optimal path planner. A node (green) is placed at the end of each blade's surface, which are all connected by (blue) edges to form a graph. The goal is to find the sequence of nodes to visit that minimizes the total distance traveled while satisfying the imposed constraints. }
     
@@ -765,7 +607,7 @@ The above cost penalizes the finite nature of the prediction horizon, which cate
     \centering
     % \includegraphics[width=0.48\textwidth]{figures/VTMPC_c.png}
     % \includesvg[width=0.49\textwidth]{Autonomous_Robots/figures/methodology_less.svg}
-    \includegraphics[width=0.5\textwidth]{Autonomous_Robots/figures/vtmpc_overview_1.pdf}
+    \includegraphics[width=0.5\textwidth]{figures/vtmpc_overview_1.pdf}
     \caption{Graphical depiction of the visual costs for the VT-NMPC for inspecting a surface of normal $\mathbf{n}$. The intersection between the line $r=r^\textrm{ref}$ , the circle $d=d^\textrm{ref}$ and the normal vector $\mathbf{n}$ represent the optimal position that the drone should attain during inspection relative to the surface. }
     %\caption{Top view of a drone using \ac{VT-NMPC} method for inspection two surfaces, 1 and 2. The two surfaces are defined by the centroid position $\mathbf{p}_1$ and $\mathbf{p}_2$ and the the surface normal  $\mathbf{n}_1$ and $\mathbf{n}_2$. The Visual Tracking costs work together to achieve a desired pose,  $\mathbf{x}_1$ and $\mathbf{x}_2$, relative to the points $\mathbf{p}_1$ and $\mathbf{p}_2$ respectively.}
     %The drone starts at $t_0$ at a distance $d_0$ and having an orientation defined by the local forward vector $\mathbf{x}_b$. The desired orientation is defined by vector  $\mathbf{a}$. $t_0<t<t_1$ and $t_1<t<t_2$ defines the transient region, where the input surface has changed and the MPC  tries to satisfy the cost functions $h, d, r$ until it reaches the desired position at at $t=t_1$ and $t=t_2$. At $t_1$ and $t_2$ the drone has reached steady state, where the cost functions are minimized. At these time instances, the orientation is aligned perfectly with vector $\mathbf{a}_1$ and the position is at the intersection between the corresponding \ac{ROI} defined by the function $r$ and the desired distance $D$.} 
@@ -1575,14 +1417,14 @@ Next, we present the experimental results, wherein the proposed VT-NMPC method a
 
 \begin{figure}[]
 \centering
-\includegraphics[width=.45\textwidth]{Autonomous_Robots/figures/distance_real.pdf}
+\includegraphics[width=.45\textwidth]{figures/distance_real.pdf}
 \caption{A plot of the distance from the blade throughout the trajectory, showing the upper and lower safety margins and the reference ($d^{ref}$). }  \label{fig:distance_r}
 \end{figure}
 
 
 \begin{figure}[]
 \centering
-\includegraphics[width=.45\textwidth]{Autonomous_Robots/figures/cm.pdf}
+\includegraphics[width=.45\textwidth]{figures/cm.pdf}
 \caption{A plot of the centering metric (CM) vs. time. VT-NMPC consistently tracks the center of the inspected surface area, even under wind disturbance, as opposed to PAMPC and NMPC.}  \label{fig:cm_r}
 \end{figure}
 
@@ -1677,57 +1519,9 @@ This work is supported by EIVA a/s and Innovation Fund Denmark under grants 2040
 
 
 
-\bibliography{refs.bib}
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-\addtolength{\textheight}{-12cm}   % This command serves to balance the column lengths
-                                  % on the last page of the document manually. It shortens
-                                  % the textheight of the last page by a suitable amount.
-                                  % This command does not take effect until the next page
-                                  % so it should come on the page before the last. Make
-                                  % sure that you do not shorten the textheight too much.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\end{document}

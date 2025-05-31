@@ -1,0 +1,20 @@
+% Please add the following required packages to your document preamble:
+% \usepackage{graphicx}
+\begin{table}[!b]
+\centering
+\caption{Effect of layer normalization on performance metrics.}
+\label{tab:layer_norm}
+%\resizebox{\columnwidth}{!}{%
+\begin{tabular}{l|r|r|}
+\textbf{Layer Normalization}                & \textbf{With} & \textbf{Without} \\ \hline
+$\log_{10}(\mathcal{L}_{data,dev})$         & $\bm{-4.68}$  & $-4.42$          \\ \hline
+$\log_{10}(\mathcal{L}_{roll,dev})$         & $\bm{-3.12}$  & $-2.85$          \\ \hline
+$\log_{10}(\mathcal{L}_{phy,dev})$          & $\bm{-2.69}$  & $-2.36$          \\ \hline
+$\log_{10}(\mathcal{L}_{data,test,interp})$ & $\bm{-4.88}$  & $-4.65$          \\ \hline
+$\log_{10}(\mathcal{L}_{data,test,extrap})$ & $\bm{-4.53}$  & $-4.26$          \\ \hline
+$\text{VPT}_{dev}$ [s]/[steps]              & $0.52$/$6.50$ & $\bm{0.81}$/$10.1$ \\ \hline
+$\text{VPT}_{test,interp}$ [s]/[steps]      & $0.46$/$7.67$ & $\bm{0.82}$/$13.7$ \\ \hline
+$\text{VPT}_{test,extrap}$ [s]/[steps]      & $0.54$/$5.40$ & $\bm{0.79}$/$7.90$ 
+\end{tabular}
+%}
+\end{table}

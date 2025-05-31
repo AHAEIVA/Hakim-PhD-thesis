@@ -1,0 +1,15 @@
+\chapter{Learning Model Residuals with Gaussian Processes Using Adaptive Forgetting Factors for Underwater Vehicles}
+
+Autonomous underwater vehicles (AUVs) present several challenges due to the complex and simultaneous interplay of various factors, including but not limited to unmodeled dynamics, highly nonlinear behavior, intercouplings, communication delays, and environmental disturbances. In particular, environmental disturbances degrade trajectory tracking performance for model-based controllers, e.g., model predictive control (MPC) algorithms. Data-driven methods such as Gaussian processes (GPs) are effective at learning disturbances in real time; however, the underlying offline hyperparameter tuning process limits their overall effectiveness.
+
+In this work, we learn the residuals of the system dynamics, assuming a known nominal model. This approach is more data-efficient since we only learn the unmodeled effects—specifically, disturbances impacting crucial aspects of the system. Particularly in underwater environments, disturbances vary over multiple timescales. To handle this, we propose a novel dynamic forgetting GP (DF-GP) methodology that compensates for operational disturbances without requiring hyperparameter retuning. This method optimally combines the predictions of several GPs designed with handcrafted forgetting factors, enabling precise disturbance estimation across varying timescales. The predicted disturbances update the model parameters within MPC, enabling a learning-based control framework that ensures accurate tracking in different underwater scenarios.
+
+The key contributions of this study are:
+
+\begin{itemize}
+\item A learning-based MPC framework built upon a GP architecture that facilitates efficient disturbance learning of varying timescales along with unmodeled uncertainties.
+\item An online adaptive framework that optimally weighs the predictions of multiple GPs with varying forgetting factors.
+\item Validation of the proposed framework through extensive simulations and real-world experiments demonstrating improved performance.
+\end{itemize}
+
+Rigorous simulation and experimental results show a 25\% improvement in disturbance estimation and tracking performance, outperforming direct competitors.

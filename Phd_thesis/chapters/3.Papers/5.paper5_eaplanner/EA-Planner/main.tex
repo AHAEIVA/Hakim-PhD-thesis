@@ -1,0 +1,277 @@
+%\documentclass[a4paper, 10 pt, conference]{ieeeconf_ilker}
+%\IEEEoverridecommandlockouts
+%\overrideIEEEmargins
+
+\documentclass[letterpaper, 10 pt, conference]{ieeetran}  % Comment this line out if you need a4paper
+                                                   
+%\documentclass[a4paper, 10pt, conference]{ieeeconf}      % Use this line for a4 paper
+
+\IEEEoverridecommandlockouts                              % This command is only needed if 
+                                                          % you want to use the \thanks command
+
+\overrideIEEEmargins                                      % Needed to meet printer requirements.
+                                                          % you want to use the \thanks command
+                                                          
+% \overrideIEEEmargins                                      % Needed to meet printer requirements.
+\pdfminorversion=4 
+
+% setup page to suit conference specification using fancyhdr
+%\usepackage{fancyhdr}
+%\setlength{\paperwidth}{215.9mm}
+%\setlength{\hoffset}{-9.7mm}
+%\setlength{\oddsidemargin}{0mm}
+%\setlength{\textwidth}{184.3mm}
+%\setlength{\columnsep}{6.3mm}
+%\setlength{\marginparsep}{0mm}
+%\setlength{\marginparwidth}{0mm}
+
+%\setlength{\paperheight}{279.4mm}
+%\setlength{\voffset}{-7.4mm}
+%\setlength{\topmargin}{19mm}
+%\setlength{\headheight}{0mm}
+%\setlength{\headsep}{0mm}
+%\setlength{\topskip}{0mm}
+%\setlength{\textheight}{235.2mm}
+%\setlength{\footskip}{12.4mm}
+
+%\setlength{\parindent}{1pc}
+
+
+% correct bad hyphenation here
+\hyphenation{op-tical net-works semi-conduc-tor}
+\usepackage{blindtext}
+\usepackage{tikz}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{subcaption}  % Add this in the preamble if not already included
+
+\usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+\usetikzlibrary{positioning}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{arrows.meta}
+\usepackage{subfig}
+\usepackage[nolist]{acronym}
+\usepackage[table, dvipsnames]{xcolor}
+\usepackage[pdftex]{graphicx} % graphics package
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+%\usepackage[lofdepth,lotdepth,caption=false]{subfig} % subplot package
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\captionsetup{compatibility=false}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows}
+\usepackage{array} % for defining custom column types
+\usepackage{amssymb} %we added the package to the document
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{amsmath}  %
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amsmath}
+\usepackage[small]{caption} % Reduce text size
+
+\usepackage{booktabs}
+\graphicspath{{figures/}} % declare the path where graphic files are
+\DeclareGraphicsExtensions{.pdf,.jpg,.png} % grafic files extensions
+\usepackage{amsmath} % math package for split
+\usepackage{amsfonts} % math package for fonts
+\usepackage{mathtools} % math package for tools like prescript
+\usepackage{tikz} % figure package
+\usetikzlibrary{shapes,arrows,fit,calc,positioning,automata,backgrounds}
+%\usepackage{dblfloatfix} % figure package for positioning figures on the bottom
+\usepackage{color} % colors package
+\usepackage{multirow} % multiple rows in table
+\usepackage{hhline} % separator in 
+\usepackage{booktabs}
+\usepackage[bookmarks=false, breaklinks]{hyperref} % hyperlink package
+\usepackage{enumerate} % enumerate package
+\usepackage{epstopdf} % package to include eps. files
+\usepackage{dsfont}
+\usepackage{siunitx} % package for international system units
+\usepackage{cite}   % for compact citations, i.e. [1, 2]
+\usepackage{diagbox}    % for making slash cell in a table
+\usepackage{pdfpages}   
+\usepackage{breqn}
+\usepackage{svg}
+\usepackage{multicol}
+\svgpath{{images/svg/}} % <- using \svgpath to avoid warning
+\colorlet{Green1}{green!90!}
+\colorlet{Green2}{green!60!}
+\colorlet{Green3}{green!40!}
+\colorlet{Green4}{green!20!}
+\colorlet{Green5}{green!10!}
+
+% Used in order to break URL into smaller sections when seeing / or -
+\usepackage{url}
+\def\UrlBreaks{\do\/\do-}
+\usepackage{breakurl}
+
+%% ORCID
+\RequirePackage{tikz} % For \foreach used for Orcid icon
+% Make Orcid icon
+\newcommand{\orcidicon}{\includegraphics[width=0.32cm]{images/orcid/logo-orcid.eps}}
+
+% Define link and button for each author
+\foreach \x in {A, ..., Z}{%
+\expandafter\xdef\csname orcid\x\endcsname{\noexpand\href{https://orcid.org/\csname orcidauthor\x\endcsname}{\noexpand\orcidicon}}
+}
+
+\newcommand{\orcidauthorA}{0000-0001-5387-7613} % Add \orcidA{} behind the author's Hakim
+\newcommand{\orcidauthorB}{0000-0003-3581-9481} % Add \orcidB{} behind the author's Olaya
+\newcommand{\orcidauthorC}{0000-0002-1609-5783} % Add \orcidC{} behind the author's name  Halil
+\newcommand{\orcidauthorD}{0000-0002-7742-6996} % Add \orcidD{} behind the author's name  Jonas
+\newcommand{\orcidauthorE}{0009-0002-0445-8126} % Add \orcidE{} behind the author's name  Yury
+\newcommand{\orcidauthorF}{0000-0002-7143-8777} % Add \orcidF{} behind the author's name  Erdal
+
+
+% TikZ style definitions
+\tikzstyle{startstop} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=blue!20]
+\tikzstyle{process} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=green!20]
+\tikzstyle{decision} = [diamond, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=red!20]
+\tikzstyle{arrow} = [thick,-{Latex[length=3mm, width=2mm]}]
+
+
+
+\definecolor{Bookcolor}{HTML}{00F9DE}
+\definecolor{darkgreen}{rgb}{0.0, 0.5, 0.0}
+\definecolor{gray}{gray}{0.9}
+\definecolor{lightgray}{rgb}{0.86, 0.86, 0.86}
+
+\makeatletter
+\def\@citex[#1]#2{\leavevmode
+\let\@citea\@empty
+\@cite{\@for\@citeb:=#2\do
+{\@citea\def\@citea{,\penalty\@m\ }%
+\edef\@citeb{\expandafter\@firstofone\@citeb\@empty}%
+\if@filesw\immediate\write\@auxout{\string\citation{\@citeb}}\fi
+\@ifundefined{b@\@citeb}{\hbox{\reset@font\bfseries ?}%
+\G@refundefinedtrue
+\@latex@warning
+{Citation `\@citeb' on page \thepage \space undefined}}%
+{\@cite@ofmt{\csname b@\@citeb\endcsname}}}}{#1}}
+\makeatother
+
+
+\newcommand{\HP}[1]{\textcolor{blue}{[HP: #1]}}
+\newcommand{\HIU}[1]{\textcolor{red}{[HIU: #1]}}
+\newcommand{\KA}[1]{\textcolor{orange}{[KA: #1]}}
+\newcommand{\EK}[1]{\textcolor{magenta}{[EK: #1]}}
+\newcommand{\JFS}[1]{\textcolor{darkgreen}{[JFS: #1]}}
+\newcommand{\note}[1]{\textcolor{red}{[NOTE: #1]}}
+
+\DeclareMathOperator*{\minimize}{{min}}
+\DeclareMathOperator*{\maximize}{{max}}
+
+\newcommand{\bm}[1]{\mathbf{#1}}
+
+\begin{acronym}
+    % \acro{CAMAP}{conflict-aware multi-agent planner}
+
+    \acro{MPC}{model predictive control}
+    \acro{GP}{Gaussian process}
+    \acro{AUV}{autonomous underwater vehicle}
+    \acro{MHE}{moving horizon estimator}
+    \acro{EKF}{extended kalman filter}
+    \acro{ROV}{remotely operated vehicle}
+    \acro{TSP}{traveling salesman problem}
+    \acro{IMU}{inertial measurement unit}
+    \acro{DVL}{doppler velocity log}
+    \acro{NED}{North East Down}
+    \acro{RTI}{real-time iteration}
+    \acro{OCP}{optimal control problem}
+    \acro{LP}{linear program}
+    \acro{MIP}{mixed integer program}
+    \acro{EA-MPC}{entanglement aware model predictive control}
+    \acro{TSDF}{ truncated signed distance field}
+    \acro{SDF}{ signed distance field}
+    \acro{CPP}{ coverage path planner}
+    \acro{OEA-PP}{online entanglement aware path planner}
+    \acro{OMPL}{open motion planning}
+        \acroplural{ROV}[ROVs]{remotely operated vehicles}
+
+\acro{REACT}{Real-time Entanglement-Aware Coverage
+Path Planning for Tethered Underwater Vehicles}
+
+  % Ensures ROVs is treated the same as ROV
+}
+
+
+\end{acronym}
+
+
+
+
+\begin{document}
+
+%
+
+%\title{Online Entanglement-Aware Path Planning for Safe Autonomous Underwater Vehicle Inspection}
+\title{REACT: Real-time Entanglement-Aware Coverage Path Planning for Tethered Underwater Vehicles}
+
+% author names and affiliations
+% use a multiple column layout for up to three different affiliations
+%\author{Abdelhakim Amer, Mohit Mehindratta, Yury Brodskiy and Erdal Kayacan
+\author{
+% <-this % stops a space
+\thanks{A. Amer is with the Artificial Intelligence in Robotics Laboratory (AiR Lab), Department of Electrical and Computer Engineering, Aarhus University, 8000 Aarhus C, Denmark {\tt\small \{abdelhakim\} at ece.au.dk}.    Mohit Mehndiratta is with GIM Robotics, Espoo, Finland, {\tt\small \{mohit.mehndiratta\} at gimrobotics.fi}.
+     Y. Brodskiy is with EIVA a/s, 8660 Skanderborg, Denmark. {\tt\small \{ybr\} at eiva.com.}
+    E. Kayacan is with the Automatic Control Group, Department of Electrical Engineering and Information Technology, Paderborn University, Paderborn, Germany. {\tt\small \{erdal.kayacan\} at uni-paderborn.de}.}%
+}
+
+\maketitle
+\begin{abstract}
+Autonomous inspection of complex underwater structures with tethered Underwater Vehicles is often hindered by the risk of tether entanglement. We propose REACT (Real-time Entanglement-Aware Coverage Path Planning for Tethered Underwater Vehicles), a framework designed to overcome this limitation. REACT comprises a fast, geometry-based tether model using the signed distance field (SDF) map for accurate, real-time simulation of taut tether configurations around arbitrary structures. This model enables an efficient online replanning strategy within REACT that enforces a maximum tether length constraint, actively preventing entanglement. By integrating REACT into a coverage path planning framework, we achieve safe and optimal inspection paths, previously challenging due to tether constraints. To ensure safe and precise path following, a model predictive controller (MPC) is employed, accounting for system dynamics while maintaining the desired trajectory. The complete REACT framework's efficacy is validated in a pipe inspection scenario, demonstrating safe, entanglement-free navigation and full coverage inspection.
+
+
+
+
+% What is the problem this paper is trying to solve?
+
+% What is the approach?
+
+
+% What does the results show?
+
+\input{sections/abstract}
+\end{abstract}
+
+\begin{IEEEkeywords}
+coverage path planning, autonomous underwater vehicle (AUV), model predictive control, signed distance field (SDF), tether modelling, tether constraints.
+\end{IEEEkeywords}
+
+\IEEEpeerreviewmaketitle
+
+%\bstctlcite{IEEEexample:BSTcontrol}
+
+% introduction and related work
+
+
+
+
+\input{sections/1-introduction} 
+\input{sections/2-related_work} 
+\input{sections/3-method} % 1.5 pages
+\input{sections/4-simulations} % 
+\input{sections/5-conclusion} % 0.25 page
+
+%\appendix
+%\section{Projection and Back-Projection}
+%\input{sections/projection}
+
+\section*{Acknowledgment}
+This research receives support from Innovation Fund Denmark grant number 2040-00032B and EIVA a/s. The authors would also like to express their gratitude to Dr. Louis Petit from Université de Sherbrooke for his valuable insights on the ropeRRT path planner method and for open-sourcing his implementation using the OMPL library.
+\bibliographystyle{IEEEtran}
+% argument is your BibTeX string definitions and bibliography database(s)
+\bibliography{References.bib}
+%
+% <OR> manually copy in the resultant .bbl file
+% set second argument of \begin to the number of references
+% (used to reserve space for the reference number labels box)
+
+\end{document}

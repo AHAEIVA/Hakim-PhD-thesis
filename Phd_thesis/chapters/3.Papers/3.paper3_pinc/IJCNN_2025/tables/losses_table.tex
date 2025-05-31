@@ -1,0 +1,18 @@
+% \begin{table}[!b]
+% \centering
+% \caption{Effect of physics, rollout, and IC losses on performance metrics}
+% \label{tab:losses_included}
+% \resizebox{\columnwidth}{!}{%
+% \begin{tabular}{l|r|r|r|r|r}
+% \textbf{Physics/Rollout/IC} & \textbf{no/no/no} & \textbf{yes/no/no} & \textbf{no/yes/no} & \textbf{yes/yes/no} & \textbf{yes/yes/yes} \\ \hline
+% $\log_{10}(\mathcal{L}_{data,dev})$         & $-4.45$       & $-4.85$       & $\bm{-5.02}$  & $-4.68$       & $-4.89$       \\ \hline
+% $\log_{10}(\mathcal{L}_{roll,dev})$         & $-2.89$       & $-3.37$       & $\bm{-3.46}$  & $-3.12$       & $-3.40$       \\ \hline
+% $\log_{10}(\mathcal{L}_{phy,dev})$          & $-1.84$       & $-2.67$       & $-1.82$       & $\bm{-2.69}$  & $-2.65$       \\ \hline
+% $\log_{10}(\mathcal{L}_{data,test,interp})$ & $-4.81$       & $-4.99$       & $-4.90$       & $-4.88$       & $\bm{-5.13}$  \\ \hline
+% $\log_{10}(\mathcal{L}_{data,test,extrap})$ & $-4.16$       & $\bm{-4.70}$  & $-4.71$       & $-4.53$       & $-4.69$       \\ \hline
+% $\text{VPT}_{dev}$ [s]/[steps]              & $0.46$/$5.75$ & $\bm{1.51}$/$18.9$ & $0.51$/$6.38$ & $0.52$/$6.50$ & $1.11$/$13.9$ \\ \hline
+% $\text{VPT}_{test,interp}$ [s]/[steps]      & $0.42$/$7.00$ & $\bm{1.27}$/$21.2$ & $0.41$/$6.83$ & $0.46$/$7.67$ & $1.02$/$17.0$ \\ \hline
+% $\text{VPT}_{test,extrap}$ [s]/[steps]      & $0.48$/$4.80$ & $\bm{1.46}$/$14.6$ & $1.36$/$13.6$ & $0.54$/$5.40$ & $1.18$/$11.8$
+% \end{tabular}
+% }
+% \end{table}

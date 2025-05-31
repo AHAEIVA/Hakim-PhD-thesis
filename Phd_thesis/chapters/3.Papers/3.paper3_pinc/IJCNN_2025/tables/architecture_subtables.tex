@@ -1,0 +1,67 @@
+% \begin{table}[!b]
+% \centering
+% \caption{Overview of architecture experimental results}
+% \label{tab:architecture_experiments}
+% \begin{subtable}{\columnwidth}
+%     \caption{Neural network size experiment}
+%     \label{tab:nn_size_exp}
+%     \resizebox{\columnwidth}{!}{%
+%     \begin{tabular}{l|r|r|r|r|r}
+%     \textbf{NN Size $N_{layer}$/$N_h$}             & \textbf{4/32} & \textbf{3/32} & \textbf{5/32} & \textbf{4/16} & \textbf{4/64} \\ \hline
+%     $\log_{10}(\mathcal{L}_{data,dev})$            & $-4.85$       & $-4.78$       & $-4.51$       & $\bm{-5.04}$  & $-4.93$       \\ \hline
+%     $\log_{10}(\mathcal{L}_{roll,dev})$            & $-3.37$       & $-3.27$       & $-2.94$       & $\bm{-3.56}$  & $-3.47$       \\ \hline
+%     $\log_{10}(\mathcal{L}_{phy,dev})$             & $-2.67$       & $-2.25$       & $-2.56$       & $\bm{-2.69}$  & $-2.60$       \\ \hline
+%     $\log_{10}(\mathcal{L}_{data,test,interp})$    & $-4.99$       & $-4.90$       & $-4.69$       & $\bm{-5.24}$  & $-5.16$       \\ \hline
+%     $\log_{10}(\mathcal{L}_{data,test,extrap})$    & $-4.70$       & $-4.60$       & $-4.37$       & $\bm{-4.87}$  & $-4.74$       \\ \hline
+%     $\text{VPT}_{dev}$ {[}s{]}/{[}steps{]}         & $\bm{1.51}$/$18.9$ & $1.23$/$15.4$ & $0.58$/$7.25$ & $1.36$/$17.0$ & $1.12$/$14$   \\ \hline
+%     $\text{VPT}_{test,interp}$ {[}s{]}/{[}steps{]} & $1.27$/$21.2$ & $0.62$/$10.3$ & $0.46$/$7.67$ & $\bm{1.32}$/$22.0$ & $1.16$/$19.3$ \\ \hline
+%     $\text{VPT}_{test,extrap}$ {[}s{]}/{[}steps{]} & $\bm{1.46}$/$14.6$ & $1.31$/$13.1$ & $0.58$/$5.8$  & $1.31$/$13.1$ & $1.11$/$11.1$
+%     \end{tabular}%
+%     }
+% \end{subtable}
+
+% \vspace{1em} 
+
+% \begin{subtable}{\columnwidth}
+%     \caption{Residual connection ablation experiment}
+%     \label{tab:ress_conn}
+%     \centering
+%     %\resizebox{\columnwidth}{!}{%
+%     \begin{tabular}{l|r|r}
+%     \textbf{Residual Connection}                   & \textbf{With} & \textbf{Without} \\ \hline
+%     $\log_{10}(\mathcal{L}_{data,dev})$            & $\bm{-4.85}$  & $-0.69$          \\ \hline
+%     $\log_{10}(\mathcal{L}_{roll,dev})$            & $\bm{-3.37}$  & $2.09$           \\ \hline
+%     $\log_{10}(\mathcal{L}_{phy,dev})$             & $\bm{-2.67}$  & $-0.83$          \\ \hline
+%     $\log_{10}(\mathcal{L}_{data,test,interp})$    & $\bm{-4.99}$  & $-0.79$          \\ \hline
+%     $\log_{10}(\mathcal{L}_{data,test,extrap})$    & $\bm{-4.70}$  & $-0.61$          \\ \hline
+%     $\text{VPT}_{dev}$ {[}s{]}/{[}steps{]}         & $\bm{1.51}$/$18.9$ & $0.00$/$0.00$    \\ \hline
+%     $\text{VPT}_{test,interp}$ {[}s{]}/{[}steps{]} & $\bm{1.27}$/$21.2$ & $0.00$/$0.00$    \\ \hline
+%     $\text{VPT}_{test,extrap}$ {[}s{]}/{[}steps{]} & $\bm{1.46}$/$14.6$ & $0.00$/$0.00$   
+%     \end{tabular}
+%     %}
+% \end{subtable}
+
+% \vspace{1em} 
+
+% \begin{subtable}{\columnwidth}
+%     \centering
+%     \caption{Adaptive activation function comparison}
+%     \label{tab:activation_function}
+%     %\resizebox{\columnwidth}{!}{%
+%     \begin{tabular}{l|r|r}
+%     \textbf{Adaptive Activation Function}       & \textbf{\lstinline|softplus|} & \textbf{\lstinline|tanh|} \\ \hline
+%     $\log_{10}(\mathcal{L}_{data,dev})$         & $-4.85$           & $\bm{-5.13}$  \\ \hline
+%     $\log_{10}(\mathcal{L}_{roll,dev})$         & $-3.37$           & $\bm{-3.64}$  \\ \hline
+%     $\log_{10}(\mathcal{L}_{phy,dev})$          & $\bm{-2.67}$      & $-2.57$       \\ \hline
+%     $\log_{10}(\mathcal{L}_{data,test,interp})$ & $-4.99$           & $\bm{-5.35}$  \\ \hline
+%     $\log_{10}(\mathcal{L}_{data,test,extrap})$ & $-4.70$           & $\bm{-4.89}$  \\ \hline
+%     $\text{VPT}_{dev}$ [s]/[steps]              & $\bm{1.51}$/$18.9$ & $0.96$/$12.0$ \\ \hline
+%     $\text{VPT}_{test,interp}$ [s]/[steps]      & $\bm{1.27}$/$21.2$ & $1.17$/$19.5$ \\ \hline
+%     $\text{VPT}_{test,extrap}$ [s]/[steps]      & $\bm{1.46}$/$14.6$ & $0.86$/$8.60$
+%     \end{tabular}
+%     %}
+% \end{subtable}
+% \end{table}
+
+
+

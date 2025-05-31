@@ -1,0 +1,21 @@
+% Please add the following required packages to your document preamble:
+% \usepackage{graphicx}
+\begin{table}[!b]
+\centering
+\caption{Comparison of adaptive activation functions on performance metrics.}
+\label{tab:activation_function}
+%\resizebox{\columnwidth}{!}{%
+\begin{tabular}{l|r|r|}
+\textbf{Adaptive Activation Function}       & \textbf{Softplus} & \textbf{tanh} \\ \hline
+$\log_{10}(\mathcal{L}_{data,dev})$         & $-4.85$           & $\bm{-5.13}$  \\ \hline
+$\log_{10}(\mathcal{L}_{roll,dev})$         & $-3.37$           & $\bm{-3.64}$  \\ \hline
+$\log_{10}(\mathcal{L}_{phy,dev})$          & $\bm{-2.67}$      & $-2.57$       \\ \hline
+$\log_{10}(\mathcal{L}_{data,test,interp})$ & $-4.99$           & $\bm{-5.35}$  \\ \hline
+$\log_{10}(\mathcal{L}_{data,test,extrap})$ & $-4.70$           & $\bm{-4.89}$  \\ \hline
+$\text{VPT}_{dev}$ [s]/[steps]              & $\bm{1.51}$/$18.9$ & $0.96$/$12.0$ \\ \hline
+$\text{VPT}_{test,interp}$ [s]/[steps]      & $\bm{1.27}$/$21.2$ & $1.17$/$19.5$ \\ \hline
+$\text{VPT}_{test,extrap}$ [s]/[steps]      & $\bm{1.46}$/$14.6$ & $0.86$/$8.60$
+\end{tabular}
+%}
+
+\end{table}

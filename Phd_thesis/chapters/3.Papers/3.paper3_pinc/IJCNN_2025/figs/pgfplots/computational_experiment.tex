@@ -1,0 +1,31 @@
+\pgfplotstableread[col sep=comma]{%
+    Method, Computational Time
+    PINC, 1.85
+    NN, 0.92
+    {Fossen's Model}, 0.35
+}\computationTimes
+
+\begin{tikzpicture}
+    \begin{axis}[
+        every axis plot post/.style={/pgf/number format/fixed},
+        width=0.8\linewidth,  % Adjust width as needed
+        ybar,
+        bar width=0.6cm,
+        enlarge x limits=0.3,
+        ymajorgrids=true,
+        grid style=dashed,
+        xtick=data,
+        xticklabel style={rotate=0, align=center},
+        ylabel={Computational Time [\si{s}]},
+        label style={font=\small},
+        tick label style={font=\small},
+        symbolic x coords={PINC, NN, {Fossen's Model}},
+        nodes near coords,  % Show values on bars
+        nodes near coords align={vertical},
+        ymin=0  % Start y-axis from 0
+    ]
+    
+    \addplot[draw=blue,fill=blue!50] table[x=Method, y=Computational Time] {\computationTimes};
+    
+    \end{axis}
+\end{tikzpicture}

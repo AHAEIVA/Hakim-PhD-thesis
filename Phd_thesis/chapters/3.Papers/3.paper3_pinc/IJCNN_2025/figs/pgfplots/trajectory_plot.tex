@@ -1,0 +1,72 @@
+\definecolor{myred}{rgb}{1.0, 0.1, 0.1}  % Pinkish red
+\definecolor{mygreen}{rgb}{0.1, 1, 0.1}  % Light green
+\definecolor{myblue}{rgb}{0.1, 0.1, 1.0}    % Cyan-ish blue
+
+\begin{figure}[t]
+    \centering
+    \begin{tikzpicture}
+    \begin{axis}[
+        width=0.50\linewidth,  % Set to full width of the column
+        height=0.50\linewidth,  % Increased height for more stretch
+        grid=both,
+        xlabel={x [m]},
+        ylabel={y [m]},
+        legend style={
+            at={(1,1)}, 
+            anchor=north east,  % Top right corner of the plot
+            legend columns=1,  % Single column for the legend
+            column sep=1ex,    % Space between columns
+            legend cell align={left},
+            thick,
+            font=\scriptsize,  % Make legend labels smaller
+            fill=none,  % No background for the legend
+            draw=none,  % No border for the legend
+        },
+        tick label style={font=\small},
+        label style={font=\small},
+        axis line style={thick},
+    ]
+
+    % Ground Truth with Transparency and Reflective Look (only line, no points)
+    \addplot[
+        draw=black,
+        line width=3pt,  % Make the line 4 times thicker
+        dashed,  % Line connecting the points
+        opacity=0.7,  % Make line 70% opaque
+        samples=20  % Reduce to 20 samples from the data
+    ] table {Phd_thesis/chapters/3.Papers/3.paper3_pinc/IJCNN_2025/figs/pgfplots/pinc_data_gt.txt};
+    \addlegendentry{Ground Truth}
+
+    % PINC with ConFig (only line, no points)
+    \addplot[
+        draw=myred,  % Set to custom red color
+        line width=3pt,  % Make the line 4 times thicker
+        solid,  % Dashed line connecting the points
+        opacity=0.6,  % Make line 60% opaque
+        samples=20  % Reduce to 20 samples from the data
+    ] table {Phd_thesis/chapters/3.Papers/3.paper3_pinc/IJCNN_2025/figs/pgfplots/pinc_data_config.txt};
+    \addlegendentry{PINC (with ConFig)}
+
+    % PINC with Normalization (only line, no points)
+    \addplot[
+        draw=mygreen,  % Set to custom green color
+        line width=3pt,  % Make the line 4 times thicker
+        solid,  % Dotted line connecting the points
+        opacity=0.7,  % Make line 70% opaque
+        samples=20  % Reduce to 20 samples from the data
+    ] table {Phd_thesis/chapters/3.Papers/3.paper3_pinc/IJCNN_2025/figs/pgfplots/pinc_data_normalization.txt};
+    \addlegendentry{PINC (with Normalization)}
+
+    % Add starting point marker at (-0.2, -0.4) as 'X' shape and label it
+    \addplot[
+        only marks,
+        mark=x,  % 'X' shaped marker
+        mark options={scale=1.5, line width=2pt, fill=black},  % Custom marker size, line width and color
+    ] coordinates {(-0.11,-0.4)};
+    \node at (axis cs:-0.1,-0.4) [anchor=north, font=\small] {Initial Position};
+    
+    \end{axis}
+    \end{tikzpicture}
+    \caption{Many-step-ahead prediction position trajectories using the best model configuration with ConFIG and gradient normalization.}
+      \label{fig:many_step_ahead_predictions}
+\end{figure}

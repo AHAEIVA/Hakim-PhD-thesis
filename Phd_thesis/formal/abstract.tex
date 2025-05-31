@@ -11,40 +11,52 @@ To improve the accuracy of dynamic modeling of underwater vehicles, learning-bas
 
 By integrating data-driven models and task-specific path planners with MPC, this work enables the development of more reliable and safer algorithms for autonomous marine inspection. The findings advance the state-of-the-art in marine robotics and contribute towards real-world deployment of fully autonomous inspection and surveying operations in complex marine environments.
 
+\newpage
 
+% Abstract in Danish or any other language
+\chapter*{Resum\'e}
+\addcontentsline{toc}{chapter}{Resum\'e (Danish)}
+Marine robotter er blevet uundværlige til inspektionsopgaver på tværs af forskellige miljøer, fra dybhavsundersøgelser til luftbåren overvågning af offshore-installationer. Autonomi i disse operationer bliver stadig vigtigere – ikke kun for at reducere driftsomkostningerne, men også for at sikre ensartet ydeevne af høj kvalitet med minimal menneskelig overvågning. Avancerede realtidsstyrings- og planlægningsalgoritmer såsom Model Prædiktiv Kontrol (MPC) er nøglen til autonomi inden for marin robotik, da de kan håndtere systemer med høj ikke-linearitet og mange frihedsgrader. Dog er den praktiske implementering af MPC i marin robotik stadig i sin vorden, med betydelige udfordringer, der endnu skal overvindes.
 
+Denne forskning udvikler optimale navigationsalgoritmer til autonome undervandsinspektionsrobotter. Den introducerer nye metoder, der integrerer læringsbaserede modelleringsteknikker med MPC for at tackle de unikke udfordringer i disse miljøer.
+
+Et centralt bidrag i dette arbejde er udviklingen af en open-source marin robotik simulator, der leverer yderst realistisk rendering og fysik, hvilket muliggør sikker, omkostningseffektiv og effektiv testning af algoritmer samt indsamling af syntetiske data. Derudover udvikles en ny MPC-baseret dækningsstiplanlægningstilgang, der tager højde for begrænsninger ved kabelføring (tethering), samtidig med at den sikrer fuldstændig områdedækning.
+
+For at forbedre nøjagtigheden af dynamisk modellering af undervandsfartøjer anvendes læringsbaserede tilgange til at fange komplekse undervandsdynamikker på tværs af flere tidsskalaer. Specifikt bruges Gaussiske Processer (GP) og Fysik-Informerede Neurale Netværk (PINN) til at forbedre modelleringen af undervandsfartøjers dynamik og derved forbedre MPC's ydeevne og sikkerhed.
+
+Ved at integrere datadrevne modeller og opgavespecifikke stiplanlæggere med MPC muliggør dette arbejde udviklingen af mere pålidelige og sikrere algoritmer til autonom marin inspektion. Resultaterne fremmer state-of-the-art inden for marin robotik og bidrager til den virkelige implementering af fuldt autonome inspektions- og opmålingsoperationer i komplekse marine miljøer.
 %%%%
 %Arabic
-\newpage
-\section{تاريخ}
+% \newpage
+% \section{تاريخ}
 
-\setcode{utf8}
+% \setcode{utf8}
 
-\begin{center}
-    \begin{RLtext}
-        \noindent\textbf{﴾ بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ ﴿}
+% \begin{center}
+%     \begin{RLtext}
+%         \noindent\textbf{﴾ بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ ﴿}
         
-        \vspace{0.3cm}
+%         \vspace{0.3cm}
         
-        \noindent\textbf{﴿ وَقُلِ ٱعْمَلُوا۟ فَسَيَرَى ٱللَّهُ عَمَلَكُمْ وَرَسُولُهُۥ وَٱلْمُؤْمِنُونَ ﴾}
+%         \noindent\textbf{﴿ وَقُلِ ٱعْمَلُوا۟ فَسَيَرَى ٱللَّهُ عَمَلَكُمْ وَرَسُولُهُۥ وَٱلْمُؤْمِنُونَ ﴾}
         
-        \vspace{0.3cm}
+%         \vspace{0.3cm}
         
-        \noindent\textbf{﴾ صَدَقَ ٱللَّهُ ٱلْعَظِيمُ ﴿}
-    \end{RLtext}
-    \vspace{0.5cm}
-\end{center}
+%         \noindent\textbf{﴾ صَدَقَ ٱللَّهُ ٱلْعَظِيمُ ﴿}
+%     \end{RLtext}
+%     \vspace{0.5cm}
+% \end{center}
 
-\begin{RLtext}
-أصبحت الروبوتات البحرية جزءًا لا غنى عنه في مهام التفتيش في البيئات المتنوعة، بدءًا من المسح في أعماق البحار وصولًا إلى المراقبة الجوية للمنشآت البحرية. ومع تزايد الحاجة إلى تقليل التكاليف التشغيلية وضمان الأداء العالي المستمر دون تدخل بشري، تزداد أهمية تعزيز مستوى الاستقلالية في هذه المهام. يُعد التحكم التنبؤي بالنموذج (\LR{MPC}) من أبرز الأدوات في تمكين هذا النوع من الاستقلالية، نظرًا لقدراته على التعامل مع الأنظمة ذات الطبيعة غير الخطية ودرجات الحرية العالية. ومع ذلك، لا يزال استخدامه العملي في الروبوتات البحرية في مراحله الأولى، حيث تواجهه تحديات كبيرة تتطلب حلولًا مبتكرة.
+% \begin{RLtext}
+% أصبحت الروبوتات البحرية جزءًا لا غنى عنه في مهام التفتيش في البيئات المتنوعة، بدءًا من المسح في أعماق البحار وصولًا إلى المراقبة الجوية للمنشآت البحرية. ومع تزايد الحاجة إلى تقليل التكاليف التشغيلية وضمان الأداء العالي المستمر دون تدخل بشري، تزداد أهمية تعزيز مستوى الاستقلالية في هذه المهام. يُعد التحكم التنبؤي بالنموذج (\LR{MPC}) من أبرز الأدوات في تمكين هذا النوع من الاستقلالية، نظرًا لقدراته على التعامل مع الأنظمة ذات الطبيعة غير الخطية ودرجات الحرية العالية. ومع ذلك، لا يزال استخدامه العملي في الروبوتات البحرية في مراحله الأولى، حيث تواجهه تحديات كبيرة تتطلب حلولًا مبتكرة.
 
-يقدم هذا البحث خوارزميات ملاحة مثلى للروبوتات البحرية الذاتية المصممة لمهام التفتيش تحت الماء. ويطرح منهجيات جديدة تجمع بين تقنيات النمذجة المعتمدة على التعلم والخوارزميات التنبؤية للتحكم، للتغلب على التحديات الخاصة بهذه البيئات.
+% يقدم هذا البحث خوارزميات ملاحة مثلى للروبوتات البحرية الذاتية المصممة لمهام التفتيش تحت الماء. ويطرح منهجيات جديدة تجمع بين تقنيات النمذجة المعتمدة على التعلم والخوارزميات التنبؤية للتحكم، للتغلب على التحديات الخاصة بهذه البيئات.
 
-من الإسهامات الأساسية في هذا العمل تطوير محاكي مفتوح المصدر للروبوتات البحرية يتميز بواقعية عالية من حيث الفيزياء والعرض المرئي، ما يوفر بيئة آمنة ومنخفضة التكلفة لاختبار الخوارزميات وجمع البيانات الاصطناعية. كما تم تطوير نهج جديد لتخطيط مسارات التغطية باستخدام \LR{MPC} يأخذ في الاعتبار قيود الحبل المرتبط بالروبوت، مع ضمان تغطية شاملة للمناطق المستهدفة.
+% من الإسهامات الأساسية في هذا العمل تطوير محاكي مفتوح المصدر للروبوتات البحرية يتميز بواقعية عالية من حيث الفيزياء والعرض المرئي، ما يوفر بيئة آمنة ومنخفضة التكلفة لاختبار الخوارزميات وجمع البيانات الاصطناعية. كما تم تطوير نهج جديد لتخطيط مسارات التغطية باستخدام \LR{MPC} يأخذ في الاعتبار قيود الحبل المرتبط بالروبوت، مع ضمان تغطية شاملة للمناطق المستهدفة.
 
-ولتحسين نمذجة ديناميكيات الروبوتات تحت الماء، تم توظيف أساليب تعلمية متقدمة تُمكِّن من التقاط سلوكيات معقدة عبر أزمنة متعددة. على وجه التحديد، تم استخدام العمليات الغاوسية والشبكات العصبية المدعومة بالمعلومات الفيزيائية (\LR{PINNs}) لتعزيز دقة النماذج الديناميكية، مما يُحسن من أداء \LR{MPC} ويزيد من موثوقيته وسلامته.
+% ولتحسين نمذجة ديناميكيات الروبوتات تحت الماء، تم توظيف أساليب تعلمية متقدمة تُمكِّن من التقاط سلوكيات معقدة عبر أزمنة متعددة. على وجه التحديد، تم استخدام العمليات الغاوسية والشبكات العصبية المدعومة بالمعلومات الفيزيائية (\LR{PINNs}) لتعزيز دقة النماذج الديناميكية، مما يُحسن من أداء \LR{MPC} ويزيد من موثوقيته وسلامته.
 
-من خلال دمج النماذج المعتمدة على البيانات مع مخططي المسارات المصممين خصيصًا للمهام المختلفة ضمن إطار التحكم التنبؤي، يسهم هذا العمل في تطوير خوارزميات أكثر كفاءة واعتمادية لمهام التفتيش البحري الذاتي. وتشكل النتائج المتحققة خطوة متقدمة نحو التشغيل الفعلي الكامل والمستقل لهذه الأنظمة في البيئات البحرية المعقدة.
-\end{RLtext}
+% من خلال دمج النماذج المعتمدة على البيانات مع مخططي المسارات المصممين خصيصًا للمهام المختلفة ضمن إطار التحكم التنبؤي، يسهم هذا العمل في تطوير خوارزميات أكثر كفاءة واعتمادية لمهام التفتيش البحري الذاتي. وتشكل النتائج المتحققة خطوة متقدمة نحو التشغيل الفعلي الكامل والمستقل لهذه الأنظمة في البيئات البحرية المعقدة.
+% \end{RLtext}
 
 

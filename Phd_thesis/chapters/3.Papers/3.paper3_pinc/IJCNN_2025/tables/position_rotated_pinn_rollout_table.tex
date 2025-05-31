@@ -1,0 +1,20 @@
+% Please add the following required packages to your document preamble:
+% \usepackage{graphicx}
+\begin{table}[!b]
+\centering
+\caption{Structural physics information experiment, both physics and rollout losses included.}
+\label{tab:position_rotated_pinn_rollout}
+%\resizebox{\columnwidth}{!}{%
+\begin{tabular}{l|r|r|}
+\textbf{With physics informed architecture} & \textbf{yes}  & \textbf{no}   \\ \hline
+$\log_{10}(\mathcal{L}_{data,dev})$         & $\bm{-4.68}$  & $-4.17$       \\ \hline
+$\log_{10}(\mathcal{L}_{roll,dev})$         & $\bm{-3.12}$  & $-2.60$       \\ \hline
+$\log_{10}(\mathcal{L}_{phy,dev})$          & $\bm{-2.69}$  & $-2.00$       \\ \hline
+$\log_{10}(\mathcal{L}_{data,test,interp})$ & $\bm{-4.88}$  & $-4.41$       \\ \hline
+$\log_{10}(\mathcal{L}_{data,test,extrap})$ & $\bm{-4.53}$  & $-3.99$       \\ \hline
+$\text{VPT}_{dev}$ [s]/[steps]              & $0.52$/$6.50$ & $\bm{0.53}$/$6.63$ \\ \hline
+$\text{VPT}_{test,interp}$ [s]/[steps]      & $0.46$/$7.67$ & $\bm{0.53}$/$8.83$ \\ \hline
+$\text{VPT}_{test,extrap}$ [s]/[steps]      & $\bm{0.54}$/$5.40$ & $0.50$/$5.00$
+\end{tabular}
+%}
+\end{table}

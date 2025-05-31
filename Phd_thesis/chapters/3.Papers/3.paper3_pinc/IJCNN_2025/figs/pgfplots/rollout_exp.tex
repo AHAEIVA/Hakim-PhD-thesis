@@ -1,0 +1,82 @@
+\pgfplotstableread[col sep=comma]{%
+    Result, {with residual connection}, {without residual connection}
+    $\mathcal{L}_1$, -4.62, -4.44
+    $\mathcal{L}_2$, -3.53, -3.39
+    $\mathcal{L}_3$, -2.35, -2.27
+    $\mathcal{L}_4$, -4.88, -4.56 
+    $\mathcal{L}_5$, -4.41, -4.28
+}\tableL
+
+\pgfplotstableread[col sep=comma]{%
+    Result, {with residual connection}, {without residual connection}
+    $\text{VPT}_1$, 1.27, 1.33
+    $\text{VPT}_2$, 1.21, 1.22
+    $\text{VPT}_3$, 1.33, 1.31
+}\tableVPT
+
+\centering
+%\begin{center}
+\begin{tikzpicture}
+    \matrix[matrix of nodes, nodes={align=left, anchor=west, font=\small}]
+        {
+            \fill[draw=red, fill=red!50] (0,-0.1) rectangle (0.2,0.1); & {without rollout loss} & [10pt]
+            \fill[draw=green, fill=green!50] (0,-0.1) rectangle (0.2,0.1); & {with rollout loss} \\
+        };
+\end{tikzpicture}
+%\end{center}
+
+
+%% Log Error
+\subfloat{
+    \subfloat{
+        \begin{tikzpicture}
+    \begin{axis}[
+        every axis plot post/.style={/pgf/number format/fixed},
+        width=\PlotHeight,
+        ybar=1,
+        x=0.7cm,
+        ylabel near ticks,
+        xtick=data,
+        enlarge x limits=0.12,
+        bar width=8,
+        ymajorgrids=true,
+        grid style=dashed,
+        xticklabel style={rotate=0},
+        label style={font=\small},
+        tick label style={font=\small},
+        ylabel={$\log_{10}~\quad~\leftarrow$},
+        symbolic x coords={$\mathcal{L}_1$,$\mathcal{L}_2$,$\mathcal{L}_3$,$\mathcal{L}_4$,$\mathcal{L}_5$}
+        ]
+    \addplot[draw=red,fill=red!50] table[x=Result, y={with residual connection}] {\tableL};
+    \addplot[draw=green,fill=green!50] table[x=Result, y={without residual connection}]  {\tableL};
+    \end{axis}
+        \end{tikzpicture}
+        \label{fig:logE_noise}}
+    \hfill
+%% VPT
+    \subfloat{
+        \begin{tikzpicture}
+    \begin{axis}[
+        every axis plot post/.style={/pgf/number format/fixed},
+        width=\PlotHeight,
+        ybar=1,
+        x=0.8cm,
+        ylabel near ticks,
+        xtick=data,
+        enlarge x limits=0.2,
+        bar width=8,
+        ymajorgrids=true,
+        grid style=dashed,
+        xticklabel style={rotate=0},
+        label style={font=\small},
+        tick label style={font=\small},
+        ylabel={time [\si{s}]$~\quad~\rightarrow$},
+        symbolic x coords={$\text{VPT}_1$,$\text{VPT}_2$,$\text{VPT}_3$}
+        ]
+    \addplot[draw=red,fill=red!50] table[x=Result, y={with residual connection}] {\tableVPT};
+    \addplot[draw=green,fill=green!50] table[x=Result, y={without residual connection}]  {\tableVPT};
+    \end{axis}
+        \end{tikzpicture}
+       \label{fig:vpt_noise}}      
+ %\setcounter{subfigure}{2}       
+}

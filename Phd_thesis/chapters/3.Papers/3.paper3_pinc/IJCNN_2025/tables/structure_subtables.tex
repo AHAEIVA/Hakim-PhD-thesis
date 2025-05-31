@@ -1,0 +1,43 @@
+% \begin{table}[!b]
+% \centering
+% \caption{Structural physics-informed experiments}
+% \label{tab:structure_experiments}
+% \begin{subtable}{\columnwidth}
+%     \centering
+%     \caption{Without physics and rollout loss}
+%     \label{tab:position_rotated_no_pinn}
+%     %\resizebox{\columnwidth}{!}{%
+%     \begin{tabular}{l|r|r}
+%     \textbf{With physics informed architecture} & \textbf{yes}  & \textbf{no}   \\ \hline
+%     $\log_{10}(\mathcal{L}_{data,dev})$         & $\bm{-4.45}$  & $-4.32$       \\ \hline
+%     $\log_{10}(\mathcal{L}_{roll,dev})$         & $-2.89$       & $\bm{-3.37}$  \\ \hline
+%     $\log_{10}(\mathcal{L}_{phy,dev})$          & $\bm{-1.84}$  & $-2.67$       \\ \hline
+%     $\log_{10}(\mathcal{L}_{data,test,interp})$ & $\bm{-4.81}$  & $-4.49$       \\ \hline
+%     $\log_{10}(\mathcal{L}_{data,test,extrap})$ & $\bm{-4.16}$  & $-4.14$       \\ \hline
+%     $\text{VPT}_{dev}$ [s]/[steps]              & $0.46$/$5.75$ & $\bm{0.50}$/$6.25$ \\ \hline
+%     $\text{VPT}_{test,interp}$ [s]/[steps]      & $0.42$/$7.00$ & $\bm{0.49}$/$8.17$ \\ \hline
+%     $\text{VPT}_{test,extrap}$ [s]/[steps]      & $\bm{0.48}$/$4.80$ & $\bm{0.48}$/$4.80$
+%     \end{tabular}
+%         %}
+% \end{subtable}
+
+% \vspace{1em}
+
+% \begin{subtable}{\columnwidth}
+%     \centering
+%     \caption{With physics loss, without rollout loss}
+%     \label{tab:position_rotated_pinn_no_rollout}
+%     %\resizebox{\columnwidth}{!}{%
+%     \begin{tabular}{l|r|r}
+%     \textbf{With physics informed architecture} & \textbf{yes}  & \textbf{no}   \\ \hline
+%     $\log_{10}(\mathcal{L}_{data,dev})$         & $\bm{-4.85}$  & $-4.26$       \\ \hline
+%     $\log_{10}(\mathcal{L}_{roll,dev})$         & $\bm{-3.37}$  & $-2.68$       \\ \hline
+%     $\log_{10}(\mathcal{L}_{phy,dev})$          & $\bm{-2.67}$  & $-2.17$       \\ \hline
+%     $\log_{10}(\mathcal{L}_{data,test,interp})$ & $\bm{-4.99}$  & $-4.41$       \\ \hline
+%     $\log_{10}(\mathcal{L}_{data,test,extrap})$ & $\bm{-4.70}$  & $-4.13$       \\ \hline
+%     $\text{VPT}_{dev}$ [s]/[steps]              & $\bm{1.51}$/$18.9$ & $0.57$/$7.13$ \\ \hline
+%     $\text{VPT}_{test,interp}$ [s]/[steps]      & $\bm{1.27}$/$21.2$ & $0.50$/$8.33$ \\ \hline
+%     $\text{VPT}_{test,extrap}$ [s]/[steps]      & $\bm{1.46}$/$14.6$ & $0.61$/$6.10$
+%     \end{tabular}
+% \end{subtable}
+% \end{table}

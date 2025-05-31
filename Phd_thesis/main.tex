@@ -35,19 +35,81 @@ twoside, % Two page layout (page indentation for binding and different headers)
 openright  % to maintain the page order if the cover is a custom pdf page
 ]{book}  % book
 \usepackage{duckuments}
+
+
+
+\newtheorem{remark}{Remark}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+
+
+
+
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage[nolist]{acronym}
+\usepackage{cite}   % for compact citations, i.e. [1, 2]
+\usepackage{caption}  % Ensure this is included for normal captioning
+
+%\usepackage{caption}     % For customizing captions
+\usepackage{subcaption}  % For creating subtables
+%\usepackage[caption=false,font=footnotesize]{subfig}
+\usepackage{tabularx}    % For flexible table widths
+\usepackage{booktabs}    % For better table lines
+\usepackage{multirow}    % For multi-row cells
+\usepackage{balance} % for balanced references across two columns on the last page
+\usepackage{bm}
+\captionsetup[subfig]{font=footnotesize}
+\captionsetup[figure]{font=footnotesize}
+\captionsetup[table]{font=footnotesize,labelfont=footnotesize}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+%\pgfplotsset{compat=newest}
+\usepackage{siunitx} % for units of meaurements
+\usepackage[colorlinks=true,allcolors=blue]{hyperref} % hyperlink
+\usepackage{balance}   %
+
+\usetikzlibrary{matrix}
+
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily}
+
+
+
+
+
+
+
+
+
+\usepackage[ruled,vlined,linesnumbered]{algorithm2e}
 \usepackage{epigraph}
 \usepackage{tabularx}
 \usepackage{tikz}
 \usepackage{tikz-3dplot}
 \usepackage{amsmath}
 \usepackage{pdfpages}
-
+\usepackage{amsmath, amssymb}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{amsmath}  %
+\usepackage{algorithm}
+\usepackage{algorithmicx}
 \usepackage{amssymb}
 \usepackage{xcolor}
 \usepackage[most]{tcolorbox} % add this in your preamble if not already there
 \usepackage{arabtex}
 \usepackage{utf8}
-
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{mathtools}
+\usepackage{optidef} % For optimization problems
 \input{template/template} % Include the structure.tex file which specifies most of the document structure and layout
 \input{formal/acronyms}
 
@@ -55,6 +117,7 @@ openright  % to maintain the page order if the cover is a custom pdf page
 \setlength\epigraphwidth{8cm}
 \setlength\epigraphrule{0pt}
   
+
 
 %%
 %\documentclass[tikz, border=10pt]{standalone} % Increased border slightly
@@ -77,7 +140,21 @@ openright  % to maintain the page order if the cover is a custom pdf page
 
 \begin{acronym}
     % \acro{CAMAP}{conflict-aware multi-agent planner}
-
+    \acro{PINC}{physics informed neural network with control}
+    \acro{PINN}{physics informed neural network}
+    \acro{DMD}{dynamic mode decomposition}
+    \acro{SINDyC}{sparse identification of non-linear dynamics with control}
+   \acro{DMDc)}{ dynamic mode decomposition with control}
+    \acro{MPC}{model predictive control}
+    \acro{GP}{Gaussian process}
+    \acroplural{GP}[GPs]{Gaussian processes}
+    \acro{AUV}{Autonomous underwater vehicle}
+    \acro{EKF}{extended kalman filter}
+    \acro{ROV}{remotely operated vehicle}
+    \acro{IMU}{inertial measurement unit}
+    \acro{DVL}{doppler velocity log}
+    \acro{NED}{North-EastDown}
+    \acro{NN}{neural network}
     \acro{MPC}{model predictive control}
     \acro{GP}{Gaussian process}
     \acro{AUV}{autonomous underwater vehicle}
@@ -98,13 +175,62 @@ openright  % to maintain the page order if the cover is a custom pdf page
     \acro{CPP}{ coverage path planner}
     \acro{OEA-PP}{online entanglement aware path planner}
     \acro{OMPL}{open motion planning}
-        \acroplural{ROV}[ROVs]{remotely operated vehicles}
-
+    \acroplural{ROV}[ROVs]{remotely operated vehicles}
+    \acro{ROV}{remotely operated vehicle}
+    \acro{AUV}{autonomous underwater vehicle}
+    \acro{UWRS}{underwater robotics simulator}
+    \acro{NMPC}{nonlinear model predictive control}
+    \acro{MPC}{model predictive control}
+    \acro{SLAM}{simultaneous localisation and mapping}
+    \acro{vSLAM}{visual SLAM}
+    \acro{RL}{reinforcement learning}
+    \acro{DRL}{deep reinforcement learning}
+    \acro{UE}{unreal engine}
+    \acro{NED}{North-East-Down}
+    \acro{UE5}{unreal engine 5}
+    \acro{UE4}{unreal engine 4}
+    \acro{ROS}{robot operating system}
+    \acro{AI}{artificial intelligence}
+    \acro{APE}{absolute positioning error}
+    \acro{RPE}{relative positioning error}
+    \acro{PWM}{pulse width modulation}
+    \acro{DFKI}{Deutsches Forschungszentrum für Künstliche Intelligenz}
+    \acro{NMPC}{nonlinear model predictive control}
+    \acro{MPC}{model predictive control}
+    \acro{VT-NMPC}{visual tracking nonlinear model predictive control}
+    \acro{PAMPC}{perception-aware model predictive control}
+    \acro{ROI}{region of interest}
+    \acro{FOV}{field of view}
+    \acro{VS}{visual servoing}
+    \acro{PBVS}{position-based visual servoing}
+    \acro{PBVS}{position-based visual servoing}
+    \acro{IBVS}{image-based visual servoing}
+    \acro{STL}{standard triangle language}
+    \acro{KKT}{karush–kuhn–tucker}
+    \acro{TSP}{traveling salesman problem}
+    \acro{MPC}{model predictive control}
+    \acro{GP}{Gaussian process}
+    \acroplural{GP}[GPs]{Gaussian processes}
+    \acro{AUV}{Autonomous underwater vehicle}
+    \acro{MHE}{moving horizon estimator}
+    \acro{ASGP}{adaptive sparse Gaussian process}
+    \acro{EKF}{extended kalman filter}
+    \acro{ROV}{remotely operated vehicle}
+    \acro{DF-GP}{dynamic forgetting Gaussian process}
+    \acro{IMU}{inertial measurement unit}
+    \acro{DVL}{doppler velocity log}
+    \acro{NED}{North-EastDown}
+    \acro{RTI}{real-time iteration}
+    \acro{NN}{neural network}
+    \acro{OCP}{optimal control problem}
+    \acro{LP}{linear program}
+%    \acro{AUVs}{Autonomous underwater vehicles}
+    \acro{ASGP}{adaptive sparse gaussian process}
 \acro{REACT}{Real-time Entanglement-Aware Coverage
 Path Planning for Tethered Underwater Vehicles}
 
   % Ensures ROVs is treated the same as ROV
-}
+
 
 
 \end{acronym}
@@ -236,7 +362,7 @@ Control and Path Planning with
 Data-Driven Models } \\
 Artificial intelligence in Robotics Laboratory (AIRLab) \\
 Ph.D. Thesis \\
-May 2024
+June 2025
 
 \vspace*{2ex}
 \textbf{Aarhus University} \\
@@ -348,6 +474,14 @@ Finlandsgade 22 \\
  \input{Phd_thesis/chapters/2.Background/2-mpc}
  \input{Phd_thesis/chapters/2.Background/3-model_learning}
 
+
+ \input{Phd_thesis/chapters/Papers_Summary/1-UNav-Sim}
+ \input{Phd_thesis/chapters/Papers_Summary/2-REACT}
+ \input{Phd_thesis/chapters/Papers_Summary/3-VTNMPC}
+ \input{Phd_thesis/chapters/Papers_Summary/4-PINC}
+ \input{Phd_thesis/chapters/Papers_Summary/5-DF-GP}
+
+
  \input{Phd_thesis/chapters/4.Conclusion/1-results_summary}
  \input{Phd_thesis/chapters/4.Conclusion/2-analysis_conclusion}
   \input{Phd_thesis/chapters/4.Conclusion/3-future_work}
@@ -372,37 +506,50 @@ Finlandsgade 22 \\
 \addcontentsline{toc}{chapter}{Paper I: UNav-Sim}
 \vspace{1cm}
 This paper was published at the \textbf{International Conference on Advanced Robotics (ICAR), 2023}.
+ \input{Phd_thesis/chapters/3.Papers/1.paper1_unavsim/ICAR_2023_Hakim_1/paper1_unavsim}
+
+%\includepdf[pages=-,pagecommand={},width=\textwidth]%{chapters/3.Papers/1.paper1_unavsim/ICAR_2023_Hakim_1/ICAR_2023_Hakim.pdf}
 
 
-\includepdf[pages=-,pagecommand={},width=\textwidth]{chapters/3.Papers/1.paper1_unavsim/ICAR_2023_Hakim_1/ICAR_2023_Hakim.pdf}
+\chapter*{Paper II: REACT: Real-time Entanglement-Aware Coverage
+Path Planning for Tethered Underwater Vehicles}
+\addcontentsline{toc}{chapter}{Paper II: Visual Tracking Nonlinear Model Predictive Control Method for Autonomous Wind Turbine Inspection}
+\vspace{1cm}
+This paper was submitted to the \textbf{Transactions on Field Robotics}.
+ \input{Phd_thesis/chapters/3.Papers/5.paper5_eaplanner/EA-Planner/paper_eaplanner}
 
 
-\chapter*{Paper II: VTNMPC}
+
+\chapter*{Paper III: Visual Tracking Nonlinear Model Predictive Control Method for
+Autonomous Wind Turbine Inspection}
 \addcontentsline{toc}{chapter}{Paper II: VTNMPC}
 \vspace{1cm}
 This paper was published at the \textbf{International Conference on Advanced Robotics (ICAR), 2023}.
 
+\input{Phd_thesis/chapters/3.Papers/2.paper2_vtnmpc/ICAR_2023_Hakim_2/Autonomous_Robots/IROS/paper2_vtnmpc}
+%\includepdf[pages=-,pagecommand={},width=\textwidth]{chapters/3.Papers/2.paper2_vtnmpc/ICAR_2023_Hakim_2/Autonomous_Robots/IROS/ICAR_2023_Hakim_2.pdf}
 
-\includepdf[pages=-,pagecommand={},width=\textwidth]{chapters/3.Papers/2.paper2_vtnmpc/ICAR_2023_Hakim_2/Autonomous_Robots/IROS/ICAR_2023_Hakim_2.pdf}
 
 
-
-\chapter*{Paper III: PINNS}
+\chapter*{Paper III: Modelling of Underwater Vehicles using
+Physics-Informed Neural Networks with Control}
 \addcontentsline{toc}{chapter}{Paper III:  PINNS}
 \vspace{1cm}
 This paper was published at the \textbf{International Joint Conference on Neural Networks (IJCNN), 2025}.
 
+\input{Phd_thesis/chapters/3.Papers/3.paper3_pinc/IJCNN_2025/paper_pinc}
 
-\includepdf[pages=-,pagecommand={},width=\textwidth]{chapters/3.Papers/3.paper3_pinc/pinc.pdf}
+%\includepdf[pages=-,pagecommand={},width=\textwidth]{chapters/3.Papers/3.paper3_pinc/pinc.pdf}
 
 
-\chapter*{Paper V: DFGP}
+\chapter*{Paper V: Empowering Autonomous Underwater Vehicles Using Learning-Based Model
+Predictive Control With Dynamic Forgetting Gaussian Processes}
 \addcontentsline{toc}{chapter}{Paper III: DFGP}
 \vspace{1cm}
 This paper was published at the \textbf{IEEE Transactions on Control Systems Technology (TCST)}.
 
-
-\includepdf[pages=-,pagecommand={},width=\textwidth]{chapters/3.Papers/4.paper4_dfgp/dfgp.pdf}
+\input{Phd_thesis/chapters/3.Papers/4.paper4_dfgp/Cont_Syst_Tech_Hakim/TCST/paper4_dfgp}
+%\includepdf[pages=-,pagecommand={},width=\textwidth]{chapters/3.Papers/4.paper4_dfgp/dfgp.pdf}
 
 
 
