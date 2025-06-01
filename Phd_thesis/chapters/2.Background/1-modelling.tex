@@ -48,23 +48,23 @@ The body-fixed reference frame, denoted $\mathcal{F}_B$, moves with the vehicle.
 
 The vehicle's state involves position, orientation, linear velocities, and angular velocities. The SNAME notation standardizes these terms:
 
-\begin{table}[h]
-    \centering
-    \begin{tabular}{|c|c|c|c|}
-        \hline
-        \textbf{DOF} & \textbf{Motion} & \textbf{Forces/Moments} & \textbf{Linear/Angular Velocities} \\
-        \hline
-        1 & Surge (longitudinal motion) & $X$ & $u$ \\
-        2 & Sway (lateral motion) & $Y$ & $v$ \\
-        3 & Heave (vertical motion) & $Z$ & $w$ \\
-        4 & Roll (rotation about $x$-axis) & $K$ & $p$ \\
-        5 & Pitch (rotation about $y$-axis) & $M$ & $q$ \\
-        6 & Yaw (rotation about $z$-axis) & $N$ & $r$ \\
-        \hline
-    \end{tabular}
-    \caption{SNAME notation for marine vehicles.}
-    \label{tab:sname_notation}
-\end{table}
+% \begin{table}[h]
+%     \centering
+%     \begin{tabular}{|c|c|c|c|}
+%         \hline
+%         \textbf{DOF} & \textbf{Motion} & \textbf{Forces/Moments} & \textbf{Linear/Angular Velocities} \\
+%         \hline
+%         1 & Surge (longitudinal motion) & $X$ & $u$ \\
+%         2 & Sway (lateral motion) & $Y$ & $v$ \\
+%         3 & Heave (vertical motion) & $Z$ & $w$ \\
+%         4 & Roll (rotation about $x$-axis) & $K$ & $p$ \\
+%         5 & Pitch (rotation about $y$-axis) & $M$ & $q$ \\
+%         6 & Yaw (rotation about $z$-axis) & $N$ & $r$ \\
+%         \hline
+%     \end{tabular}
+%     \caption{SNAME notation for marine vehicles.}
+%     \label{tab:sname_notation}
+% \end{table}
 
 The position and orientation in the earth frame $\mathcal{F}_E$ are represented by the vector $\boldsymbol{\eta} = [x, y, z, \phi, \theta, \psi]^T$, where $\phi$, $\theta$, and $\psi$ are the Euler angles (roll, pitch, yaw). The linear and angular velocities in the body frame $\mathcal{F}_B$ are represented by the vector $\boldsymbol{\nu} = [u, v, w, p, q, r]^T$.
 

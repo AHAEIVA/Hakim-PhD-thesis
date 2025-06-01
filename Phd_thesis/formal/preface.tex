@@ -8,12 +8,14 @@
 % \section*{Project Design} Innovative Training Networks (ITN) - Marie Curie Actions
 This thesis concludes a three-year research journey carried out between July 2022 and June 2025. This work was conducted out as part of the Ph.D. program at the Graduate School of Technical Sciences (GSTS) at Aarhus University, in collaboration with EIVA A/S in Denmark. 
 
-Aarhus University served as the primary academic institution for this project, with the majority of the research conducted within the Department of Electrical and Computer Engineering, specifically in the Artificial Intelligence in Robotics group. This work was carried out under the supervision of Professor Erdal Kayacan. Industrial supervision was provided by Dr. Yury Brodskiy from the Robotics \& AI department at EIVA A/S. Additionally, this project benefitted from collaborations and mentoring of Dr. Mohit Mehindratta from GIM Robotics. % Add Andiry and Bilal
+Aarhus University served as the primary academic institution for this project, with the majority of the research conducted within the Department of Electrical and Computer Engineering, specifically in the Artificial Intelligence in Robotics group. This work was carried out under the supervision of Professor Erdal Kayacan. Industrial supervision was provided by Dr. Yury Brodskiy, research lead in the Autonomy department at EIVA A/S. 
 
-This thesis focuses on the development of data-driven optimal control and navigation methods for autonomous marine robotics inspection applications. The outcomes of this project include six published scientific papers in the fields of control theory and robotics, with two additional draft publications pending submission. The author of this thesis is the main author of six of these publications and has made significant contributions to the other publication.
+The project was further enriched by the collaboration and mentorship of Dr. Mohit Mehindratta from GIM Robotics, whose expertise and ongoing guidance had a significant impact on the project's direction and outcomes. Professor Andriy Sarbakha from Aarhus University also contributed critical insights and guidance. In addition, during my research stay at the the German Research Center for Artificial Intelligence (DFKI), Dr. Bilal Wehbe provided thoughtful input and technical support that helped conduct the experimental aspects of the work.
+
+This thesis focuses on the development of data-driven optimal control and navigation methods for autonomous marine robotics inspection applications. The outcomes of this project include six published scientific papers in the fields of control theory and robotics and one submitted journal paper under review. The author of this thesis is the main author of six of these publications.
 
 
-The thesis is structured as a cohesive monograph, comprising an introduction to the research topics and state-of-the-art developments, a detailed description of the proposed research questions, the most relevant manuscripts produced during the Ph.D. project, and concluding remarks.
+%The thesis is structured as a collection of articles, comprising an introduction to the research topics and state-of-the-art developments, a detailed description of the proposed research questions, the most relevant manuscripts produced during the Ph.D. project, and concluding remarks.
 
 \section*{Recognition of funding and grants}
 \addcontentsline{toc}{section}{Recognition of funding and grants}
@@ -23,12 +25,15 @@ This research receives support from Innovation Fund Denmark grant number 2040-00
 \addcontentsline{toc}{section}{Reading guide}
 The contents of the individual Chapters in this dissertation with published manuscripts are introduced with an abstract summarising the contents of the Chapter and a reference to the original published work. References throughout the dissertation are listed at the end of the main document. The standard numbered style denounces the references. Hence, a citation is referred to by [Number]. Bibliographical citations appear at the end of the document where journal and proceedings papers are referred by author, article title between quotes, and journal names in \textit{italics}. Books are referred by author, title in \textit{italics}, publisher, edition, and year, while websites are referred by author, title, year, URL, and time of last visit. Figures, tables, and equations are numbered according to the particular Chapter they are placed in, where uppercase Roman numerals number Chapters. Therefore, the first figure in Chapter Three is assigned with figure number III.1 and the second III.2, etc. Descriptive captions for tables are found above relevant tables, and captions for figures are found under relevant figures. Additional explanatory concepts are added with footnotes, labeled with $\ast$, $\dagger$, $\ddagger$, and so forth.
 
-% \subsection*{Chapter's Guide}
-The thesis is structured into five parts, each containing chapters aligned with the published content within the thesis. The chapters based on published manuscripts remain identical to their original versions, except for adjustments to figures to fit the thesis format or updates in experimental results conducted after publication.
+\subsection*{Chapter's Guide}
+This thesis follows a collection-of-papers format and is organized into two main parts. 
 
-The first Part introduces the thesis topic and research questions and outlines the project's structure. Additionally, it presents a comprehensive state-of-the-art review aimed at identifying gaps in the literature that the subsequent Parts of the project will address.
+\textbf{Part I} provides a comprehensive overview and contextual foundation for the research. It begins with a general introduction to the problem domain, followed by the formulation of the research hypothesis and an outline of the thesis structure. A background chapter on Model Predictive Control (\ac{MPC}) is included to support readers unfamiliar with the control framework. The core contributions of the thesis are presented across five dedicated chapters, each corresponding to one of the included peer-reviewed publications. These chapters provide contextual framing and technical insight, and in some cases, incorporate updated figures or results from post-publication experiments. Part I concludes with a final chapter that summarizes the main findings, discusses their implications, and outlines potential directions for future research in autonomous marine robotics and control.
 
-Parts II and III focus on addressing these identified gaps and are titled accordingly. Part IV discusses preliminary future work conducted during the Ph.D. project. Finally, Part V provides the concluding remarks, summarizing the main conclusions and research outcomes and highlighting future research directions in the field.
+\textbf{Part II} includes the full versions of the four published (or accepted) research papers that constitute the core scientific contributions of the thesis. These are presented in their original form, with only minor formatting adaptations to align with the thesis layout.
+
+
+
 
 
 
@@ -81,11 +86,11 @@ Additionally, as part of this PhD, several outcomes of the research have been re
     \href{https://github.com/open-airlab/UNav-Sim}{\texttt{github.com/open-airlab/UNav-Sim}}
 
     \item \textbf{VT-NMPC: Autonomous Wind Turbine Inspection} \\
-    An open-source implementation of Visual Tracking Nonlinear Model Predictive Control for autonomous drone-based wind turbine inspection, integrating perception and control modules.\\
+    An open-source implementation of Visual Tracking Nonlinear Model Predictive Control for autonomous drone-based wind turbine inspection.\\
     \href{https://github.com/open-airlab/VTNMPC-Autonomous-Wind-Turbine-Inspection}{\texttt{github.com/open-airlab/VTNMPC-Autonomous-Wind-Turbine-Inspection}}
 
     \item \textbf{Physics-Informed Neural Control (PINC)} \\
-    A PyTorch-based Physics-Informed Neural Network framework for learning BlueROV dynamics from simulated. Developed in collaboration with EIVA.\\
+    A PyTorch-based Physics-Informed Neural Network framework for learning BlueROV dynamics. \\
     \href{https://github.com/eivacom/pinc-xyz-yaw}{\texttt{github.com/eivacom/pinc-xyz-yaw}}
 \end{itemize}
 

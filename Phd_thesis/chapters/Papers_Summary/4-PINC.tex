@@ -1,6 +1,9 @@
-\chapter{Full Data-Driven Model Learning for Underwater Vehicle Dynamics Using Physics-Informed Neural Networks with Control}
+\chapter{Data-Driven Model Learning Using Physics-Informed Neural Networks}
 
-This chapter introduces an application of Physics-Informed Neural Networks with Control (PINC) for modeling the dynamics of underwater vehicles, particularly remotely operated vehicles (ROVs). PINC combines data-driven neural network modeling with embedded physical laws to improve prediction accuracy and generalization over traditional purely data-driven models. The approach leverages control inputs and time as inputs to produce physically consistent state transitions, extending reliable predictions beyond the training domain.
+
+In this chapter, we address the challenge of learning accurate dynamic models for underwater vehicles—an essential requirement for precise trajectory tracking, and consequently, successful inspection and coverage. Developing reliable models for marine vehicles is particularly difficult due to the complex hydrodynamic interactions they encounter and the presence of uncertain or poorly known physical parameters, which makes deriving models from first principles highly challenging. While neural networks offer powerful function approximation capabilities and can model highly nonlinear behaviors such as vehicle dynamics, they are prone to overfitting, require large amounts of data, and often lack physical interpretability. To address these limitations, Physics-Informed Neural Networks (PINNs) have emerged as a promising approach by incorporating known physical laws—such as differential equations—directly into the learning process. This integration allows the model to remain consistent with physical constraints, improves generalization from limited data, and enhances interpretability.
+
+Building on this, we introduce an application of Physics-Informed Neural Networks with Control (PINC) for modeling the dynamics of underwater vehicles. PINC combines data-driven neural network modeling with embedded physical laws to improve prediction accuracy and generalization over traditional purely data-driven models. The approach leverages control inputs and time as inputs to produce physically consistent state transitions, extending reliable predictions beyond the training domain.
 
 The work details the design and evaluation of various PINC configurations, investigating effects of network architecture, loss functions, gradient weighting, and training strategies on model performance. The framework includes physics-based regularization terms that enforce dynamic consistency and integrates autoregressive prediction techniques to improve long-horizon forecasting accuracy.
 
@@ -8,4 +11,3 @@ Experimental validation on a simulated underwater vehicle demonstrates that PINC
 
 The chapter contributes an open-source implementation of the PINC framework along with a synthetic underwater vehicle simulator for data generation, facilitating reproducibility and future research.
 
-Future work highlights include extending the model to capture full rotational dynamics (roll, pitch, yaw) and validating the approach on real-world ROV datasets to further enhance applicability in underwater robotics.

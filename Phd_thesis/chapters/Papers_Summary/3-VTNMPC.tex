@@ -1,13 +1,12 @@
 \chapter{Visually Robust Coverage Path Planning}
-
-This chapter presents a novel Visual Tracking Nonlinear Model Predictive Control (VT-NMPC) framework designed to enable automated, safe, and efficient inspection of wind turbine blades using aerial robots. In contrast to traditional MPC-based approaches that track predefined position and heading trajectories, VT-NMPC introduces a surface-tracking paradigm, allowing the drone to follow inspection surfaces directly. This shift eliminates the need for precisely planned trajectories and enhances robustness to disturbances such as wind.
+In this chapter, we address another critical challenge in coverage path planning: achieving visually robust inspection. We tackle this by incorporating perception objectives directly into the control framework. Specifically, we propose a novel Visual Tracking Nonlinear Model Predictive Control (VT-NMPC) framework designed to enable automated, safe, and efficient inspection of wind turbine blades using aerial robots. In contrast to traditional MPC-based approaches that track predefined position and heading trajectories, VT-NMPC introduces a surface-tracking paradigm, allowing the drone to follow inspection surfaces directly. This shift eliminates the need for precisely planned trajectories and enhances robustness to disturbances such as wind.
 
 The proposed inspection framework consists of two key components:
 \begin{itemize}
     
 \item A global path planner that generates a distance-optimal sequence of surface regions to inspect across all turbine blades.
 
-\item  A VT-NMPC controller that dynamically regulates the drone’s pose to maintain optimal distance and orientation relative to the blade surfaces, thereby ensuring high-resolution imaging while avoiding collisions.
+\item  A VT-NMPC controller that dynamically adjusts the drone’s pose to maintain optimal distance and orientation relative to the blade surfaces, thereby ensuring high-resolution imaging while avoiding collisions.
 
 \end{itemize}
 

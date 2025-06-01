@@ -1,5 +1,5 @@
-\subsection{Critical Barriers to \ac{MPC} Adoption in Marine Robotics Inspection Tasks}
-\label{subsec:mpc_barriers}
+%\subsection{\ac{MPC} Challenges in Marine Robotics Autonomous Inspection Tasks}
+%\label{subsec:mpc_barriers}
 
 While \ac{MPC} improves autonomous capabilities, there are fundamental challenges that could hinder \ac{MPC}'s performance and deployment in marine environments, which include:
 
@@ -7,8 +7,11 @@ While \ac{MPC} improves autonomous capabilities, there are fundamental challenge
 
 \textbf{2. Environmental Uncertainty:} Marine disturbances—waves, currents, —exhibit multi-scale spatiotemporal variations that defy analytical modeling. Traditional \ac{MPC} performance degrades rapidly when hydrodynamic predictions from reality.
 
-\textbf{3. Mission-Safety Tradeoffs:} Simultaneously optimizing inspection coverage while preventing tether entanglement requires solving high-dimensional constraints in real time—a computationally intractable problem for conventional planners.
+\textbf{3. Handling Tether Constraints:} Simultaneously optimizing inspection coverage while avoiding tether entanglement remains a significant challenge. The tether is inherently difficult to model accurately, and its nonlinear, dynamic behavior is hard to incorporate effectively within MPC frameworks. 
 
-\textbf{4. Perception-Control Decoupling:} Current frameworks treat trajectory tracking and visual inspection as separate objectives, often sacrificing coverage quality for path accuracy or vice versa. This disconnect leads to incomplete data collection in turbid or cluttered environments.
+\textbf{4. Perception-Control Decoupling:} Most current approaches treat visual inspection and trajectory tracking as separate objectives. This decoupling often leads to trade-offs—sacrificing coverage quality for path accuracy or vice versa—resulting in reduced robustness to environmental disturbances and system uncertainties.
 
-These challenges form a self-reinforcing cycle: poor simulation prevents controller refinement, environmental uncertainty degrades predictions, and safety constraints limit mission complexity. Overcoming this requires co-designing robust simulation tools, adaptive modeling techniques, and task-aware control architectures—the focus of this work.
+
+Despite the potential of \ac{MPC} to enhance autonomous inspection in marine robotics, key limitations persist due to modeling inaccuracies, environmental uncertainties, and system-level decoupling between perception and control. These challenges highlight the need for more robust, adaptive control strategies that can handle real-world disturbances, incorporate perception-driven feedback, and respect complex physical constraints such as tether dynamics. 
+
+In the following section, we propose a research hypothesis aimed at addressing these limitations by integrating entanglement-aware planners, a visual tracking-based cost function, and data-driven models into the \ac{MPC} framework. Additionally, we leverage advanced simulation environments to enable more reliable and effective autonomous inspection in complex and uncertain marine settings.

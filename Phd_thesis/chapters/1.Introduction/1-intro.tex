@@ -22,18 +22,18 @@
 
 
 
-\section{Marine Robotics: Advancing Autonomy for Underwater and Aerial Applications}
+\section{Marine Robotics: Advancing Autonomy for Underwater and Aerial Applications Through Optimal Control}
 
-Marine robotics encompasses a diverse array of platforms, including remotely operated vehicles (ROVs), autonomous underwater vehicles (AUVs), unmanned surface vehicles (USVs), and marine-focused unmanned aerial vehicles (UAVs or drones) (see Fig. \ref{fig:underwater_robotics_applications}). These systems are increasingly vital across multiple domains. In the energy sector, they can perform essential inspections of offshore wind turbines and subsea pipelines, detecting critical structural defects or leaks. Beyond industry, applications span environmental monitoring, archaeological surveying, scientific research, and defense operations like mine countermeasures and surveillance.
+Marine robotics encompasses a diverse array of platforms, including remotely operated vehicles (ROVs), autonomous underwater vehicles (AUVs), unmanned surface vehicles (USVs), as well as unmanned aerial vehicles (UAVs) (see Fig. \ref{fig:underwater_robotics_applications}). These systems are increasingly vital across multiple domains. In the energy sector, they can perform essential inspections of offshore wind turbines and subsea pipelines, detecting critical structural defects or leaks. Beyond industry, applications span environmental monitoring, archaeological surveying, scientific research, and defense operations like mine countermeasures and surveillance.
 
 
 \begin{figure*}[!h]
     \centering
     % First Row
-    \begin{subfigure}[b]{0.49\textwidth}
+    \begin{subfigure}[b]{0.44\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{Phd_thesis/chapters/1.Introduction/figures/eelume.jpg}
-        \caption{Kongsberg Eelume "snake" underwater robot \cite{kongsberg_eelume_nodate}.}
+        \includegraphics[width=\textwidth]{Phd_thesis/figs/lark.png}
+        \caption{Upteko inspection drone.}
         \label{fig:subfig1}
     \end{subfigure}
     \hfill
@@ -47,7 +47,7 @@ Marine robotics encompasses a diverse array of platforms, including remotely ope
     \vspace{0.5cm} % Adjust vertical space between rows
     
     % Second Row
-    \begin{subfigure}[b]{0.49\textwidth}
+    \begin{subfigure}[b]{0.46\textwidth}
         \centering
         \includegraphics[width=\textwidth]{Phd_thesis/chapters/1.Introduction/figures/cuttlefish.jpg}
         \caption{DFKI Cuttlefish autonomous underwater vehicle \cite{christensen_cuttlefish_nodate}.}
@@ -75,23 +75,16 @@ The drive towards fully autonomous marine systems stems from the need to enhance
 Achieving reliable underwater autonomy, however, requires overcoming fundamental challenges inherent to the complex and dynamic marine environment. Key among these are:
 
 \begin{itemize}
-    \item \textbf{Robustness to Disturbances:} Marine robots must maintain stable operation and achieve mission objectives despite unpredictable environmental factors. For instance, an \ac{AUV} mapping the seafloor needs to adhere to its planned trajectory even when strong, unmodelled currents attempt to push it off course.
-    \item \textbf{Generalizability Across Diverse Missions and Platforms:} Control strategies should be adaptable to various marine vehicle types (e.g., \acp{AUV}, \acp{ROV}) and a wide range of tasks (e.g., inspection, survey, manipulation) without requiring complete redesign for each specific case.
-    \item \textbf{Execution of Complex Maneuvers:} True autonomy demands the capability to perform intricate and precise tasks, such as docking with an underwater charging station, coordinating multi-robot search patterns while avoiding collisions, or navigating complex subsea structures for close inspection.
+    \item \textbf{Safe Navigation:} Ensuring safe navigation is essential, including robust obstacle avoidance and adherence to physical constraints. Many marine robots are tethered, so preventing tether entanglement during operation is a critical safety consideration.
+
+    \item \textbf{Precise and Robust Trajectory Following:} The ability to accurately follow desired trajectories under disturbances such as ocean currents is fundamental for mission success in complex marine environments.
+
+    \item \textbf{Generalizability Across Different Platforms:} Control and planning methods should transfer across a wide range of robotic platforms—such as UAVs, AUVs, and systems with varying sizes and degrees of freedom—without the need for substantial redesign or tuning.
 \end{itemize}
 
-% The drive towards fully autonomous marine systems stems from the need to enhance operational safety, efficiency, capability, and reduce operational costs. By minimizing human intervention, autonomy lowers error risks and enables longer, and complex missions improving effectiveness and lowering expenses.
 
 
-% Achieving reliable underwater autonomy requires overcoming some fundamental challenges, and importantly, these include:
 
-% \textbf{Robustness in the Face of Disturbances:} Marine robots must maintain operation despite unpredictable environmental factors. For example, an \ac{AUV} mapping the seafloor needs to stay on its planned path even when strong currents try to push it off course.
-
-% \textbf{Generalizability Across Diverse Missions and Platforms:} Control systems should be adaptable to various marine vehicles and tasks without significant redesign. For instance, the core control logic for an ROV inspecting a pipeline should be transferable, with adjustments, to a  conducting oceanographic surveys.
-
-% \textbf{Execution of Complex Maneuvers:} Autonomous systems must be capable of performing intricate tasks. This could involve an \ac{AUV} precisely docking with an underwater charging station or a group of UAVs coordinating to perform a complex search pattern while avoiding collisions.
-
-% These challenges underscore the value of model-based strategies like \ac{MPC}, whose predictive capabilities and constraint handling directly address marine autonomy's core requirements. 
 
 
 
