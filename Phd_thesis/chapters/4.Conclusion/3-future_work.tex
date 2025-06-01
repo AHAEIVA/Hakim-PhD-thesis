@@ -13,24 +13,27 @@ While this thesis presents significant advancements, it also opens avenues for f
     \item \textbf{Enhancing Simulation Capabilities (UNav-Sim):}
         \begin{itemize}
             \item Incorporate a wider range of underwater sensors (e.g., various sonar types, acoustic modems, chemical sensors) with realistic noise models.
-            \item Expand the library of vehicle models (different \acp{AUV}/\acp{ROV} with varying dynamics) and diverse, complex environmental scenarios (e.g., shipwrecks, coral reefs, offshore structures).
-            \item Improve hydrodynamic modeling, potentially integrating learned components (from PINC/DF-GP) back into the simulator for higher fidelity.
+        
+           \item Enhance the accuracy of hydrodynamic modeling by making it geometry-dependent. Integrate differentiable physics capabilities to enable gradient computation for learning-based algorithms, facilitating efficient optimization and control.
+
         \end{itemize}
 
-    \item \textbf{Advancing Control and Planning Algorithms:}
-        \begin{itemize}
-            \item Extend REACT to handle dynamic obstacles, multi-robot coordination with shared tethers, and optimize for energy consumption alongside coverage and safety.
-            \item Fully adapt and validate the VT-NMPC framework for underwater visual inspection, considering challenges like poor visibility, variable lighting, and marine fouling. Explore fusion with other sensor modalities (e.g., sonar) for perception-aware control in low visibility.
-            \item Investigate adaptive planning strategies that modify coverage paths based on real-time sensor feedback or areas of interest identified during the mission.
-        \end{itemize}
+\item \textbf{Online Mapping and Adaptive Planning Integration:}
+    \begin{itemize}
+        \item Extend REACT to handle dynamic obstacles and support online map updates, for example by utilizing continuously updated maps instead of relying on a static environment representation.
+        
+        \item Investigate adaptive planning strategies that adjust coverage paths in real time based on sensor feedback and dynamically identified areas of interest during the mission.
+    \end{itemize}
 
-    \item \textbf{Refining Data-Driven Modeling Techniques:}
-        \begin{itemize}
-           
-            \item Investigate methods for \textcolor{black}{online adaptation and lifelong learning} for both PINC and DF-GP, allowing models to continuously improve and adapt to changing vehicle dynamics or environmental conditions over long deployments.
-            \item Explore \textcolor{black}{minimal loss configurations} for PINC to optimize computational efficiency, potentially investigating alternative architectures like Recurrent Neural Networks (RNNs) as suggested.
-            \item Further investigate \textcolor{black}{dynamic input and inducing point selection} strategies for \ac{DF-GP} to optimize performance and computational cost for online learning.
-        \end{itemize}
+\item \textbf{Continual Learning and Safe Model Predictive Control:}
 
 
-\end{enumerate}
+    \begin{itemize}
+        \item Investigate methods for \textcolor{black}{online adaptation and lifelong learning} in both PINC and DF-GP frameworks, enabling continuous model refinement in response to evolving vehicle dynamics and environmental conditions during extended deployments.
+
+        \item Explore \textcolor{black}{minimal-loss configurations} for PINC to improve computational efficiency, including the potential use of alternative architectures such as Recurrent Neural Networks (RNNs) for better temporal representation.
+
+        \item Further develop \textcolor{black}{automated tuning of MPC weights} using black-box optimization techniques, such as Bayesian optimization or reinforcement learning, to enhance control performance with minimal manual intervention.
+
+        \item Investigate the design of \textcolor{black}{safe terminal sets} using learning-based methods to ensure constraint satisfaction and long-term safety, while maintaining computational tractability for real-time implementation.
+    \end{itemize}
