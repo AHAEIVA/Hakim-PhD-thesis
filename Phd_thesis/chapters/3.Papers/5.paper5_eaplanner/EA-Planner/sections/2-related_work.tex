@@ -1,22 +1,32 @@
 \section{State of the art}
 \label{sec:related_work}
 
+% Paragraph 1: Introduction to Tether Importance and Entanglement Definition
+Tethers play a vital role in numerous mobile robotics applications, offering crucial power delivery and reliable data transmission. It enables extended operational periods and ensures consistent communication links for the robot. However, the risk of entanglement with obstacles represents a significant planning challenge. To systematically address this, a taxonomy of entanglement definitions has been presented in \cite{definitions}, cataloging existing interpretations from the literature and introducing new definitions, paving the way for developing new path planning strategies that account for entanglement.
 
-Tether considerations in autonomous robot planning has drawn increasingly attention in robotics literature due to their critical role in enabling robots to operate autonomously in unknown environments for a wide range of mobile robots. A comprehensive survey of entanglement definitions relevant to path planning is presented in \cite{definitions}. The survey not only catalogs existing definitions from the literature but also introduces six new definitions, designed to be general and applicable to 3D navigation scenarios.  These newly proposed definitions extend the state-of-the-art by addressing scenarios involving slack tethers and non-taut configurations, which are particularly relevant in 3D navigation.   
+% Paragraph 2: Early Approaches - 2D Offline Path Planning (Single Robot)
+Initial efforts to develop entaglement-aware path planners often focused on two-dimensional environments and employed offline computation strategies. For instance, \cite{rov_mccammon} and \cite{mechsy2017novel} proposed methods for planning paths in 2D to cover a predefined set of waypoints while considering tether constraints. Notably, \cite{mechsy2017novel} formulated the path planning problem for a \ac{ROV} as a mixed-integer programming problem. Their approach first solves a \ac{TSP} to find an optimal waypoint sequence and then incorporates homotopic constraints during path generation to minimize the likelihood of tether entanglement. While effective for predefined scenarios, these offline methods lack the adaptability required for dynamic environments.
 
-In the literature, various 2-D path planning methods have been proposed to address the challenge of avoiding tether entanglement. \cite{rov_mccammon} and \cite{mechsy2017novel} present offline planning approaches that specifically consider the dynamics of tethered vehicles. In particular, \cite{mechsy2017novel} formulate the path planning problem for a \ac{ROV} as a mixed-integer programming model. Their method solves a \ac{TSP} to determine the optimal sequence of waypoint visits, while incorporating homotopic constraints to reduce the likelihood of tether entanglement.
+% Paragraph 3: Advancements - 2D Online Path Planning (Single Robot)
+Addressing the need for real-time adaptability, subsequent research explored online path planning algorithms, still primarily in 2D. \cite{kim} introduced a homotopy-augmented topological approach combined with graph search techniques, allowing for dynamic adjustments to the path based on environmental perception. Similarly, \cite{withy} developed a hybrid A* variant that utilizes a modified tangent graph. This method efficiently plans curvature-constrained paths for tethered robots subject to winding angle constraints, demonstrating guarantees and providing simulation results for online entanglement avoidance. %These online planners represent a significant step towards real-time tether management.
 
-A homotopy-augmented topological approach, combined with graph search techniques, addresses the entanglement planning problem \cite{kim}. In addition to offline methods, online path planners allow real-time entanglement avoidance \cite{kim}, \cite{withy}. One approach applies winding angle constraints to an A* path planner, ensuring the tether stays within user-defined limits throughout the mission \cite{withy}.
+% Paragraph 4: Scaling Complexity - Multi-Robot Systems in 2D
+The complexity of tether management increases significantly when coordinating multiple robots. Several approaches have tackled this challenge in 2D. Early work by \cite{hert1996ties} laid groundwork in this area, followed by methods like \cite{zhang2019planning}. More recently, \cite{cao2023neptune} presented an efficient online path planner for multi-robot systems. Their method integrates a homotopy-based high-level planner with trajectory optimization and smoothing techniques to generate entanglement-free paths. However, despite its online capability, this approach remains constrained to 2D environments.
 
-Other approaches address the tether constraints problem for the multi-robot case in \cite{zhang2019planning}, \cite{hert1996ties}, and \cite{cao2023neptune}. An efficient online path planner is presented in \cite{cao2023neptune}, combining a homotopy-based high-level planner with trajectory optimization and smoothing to generate entanglement-free paths for multi-robot systems. However, this approach is limited to 2-D environments. 
+% Paragraph 5: Moving to Three Dimensions - 3D Path Planning (Single Robot)
+Real-world applications frequently require navigation in 3D environments, such as with underwater robots. Consequently, work by  \cite{bhattacharya2012topological} and \cite{martinez2021optimization} explored topological aspects and optimization techniques for 3D tethered navigation. \cite{petit2022tape} specifically presented a 3D exploration path planner that incorporates explicit contact avoidance constraints for the tether, facilitating safer navigation for single tethered robots in complex three-dimensional spaces.
 
-Entanglement avoidance has also been investigated in 3-D environments, as demonstrated in \cite{petit2022tape}, \cite{martinez2021optimization}, and \cite{bhattacharya2012topological}. In particular, \cite{petit2022tape} presents a 3-D exploration path planner that incorporates contact avoidance constraints on the tether, enabling safe navigation for tethered robots in three-dimensional spaces. For multi-robot operations, \cite{hert1999motion} extends earlier work to handle the increased complexity of coordinating multiple tethered robots. Further advancements by \cite{patil2023coordinating} and \cite{cao2023path} introduce improved coordination strategies that consider topological constraints imposed by multiple tethers. However, these approaches are not designed for real-time, online path planning.
+% Paragraph 6: 3D Multi-Robot Path Planning
+ \cite{hert1999motion} extended their earlier 2D work to handle the increased complexity of 3D multi-robot scenarios. Further advancements by \cite{patil2023coordinating} and  \cite{cao2023path} introduced path planning strategies that explicitly consider the topological constraints imposed by multiple interacting tethers in 3D. While these methods advance the state-of-the-art in multi-robot coordination, they are generally designed for offline computation and are not suited for online path planning where real-time implementation is essential.
 
-In summary, most existing planners suffer from limitations that hinder their use in practical, online coverage path planning applications. Many are too computationally intensive for real-time implementation, and there is a lack of coverage path planning frameworks that explicitly account for the tether during planning. Existing tether-aware methods often rely on simplifying assumptions, such as 2-D environments or simplistic obstacle shapes (e.g., circles or cylinders), and thus fail to generalize to complex, real-world environments—particularly in inspection tasks.
-
+% Paragraph 7: Identifying the Research Gap
+% Summarize the limitations of existing work: 
+In summary, existing tether-aware planners often face limitations for practical online coverage path planning (CPP) in complex 3D settings. Many are too computationally intensive for real-time use \cite{mechsy2017novel, hert1999motion, patil2023coordinating, cao2023path}, lack integrated tether-aware CPP frameworks, or rely on simplifying assumptions like 2D environments or basic obstacle shapes \cite{kim, withy, cao2023neptune}, hindering generalization to real-world inspection tasks.
+% Paragraph 8: Introducing the Proposed Solution (REACT) based on its key contributions
 To address these limitations, we propose \ac{REACT}, a novel approach that enables real-time, entanglement-aware path planning in arbitrary 3-D environments.
 
-%% Niche why our method is new?
+
+% --- End of Literature Review Section ---
 
 
 
@@ -30,7 +40,54 @@ To address these limitations, we propose \ac{REACT}, a novel approach that enabl
 
 
 
-%The aforementioned methods treat control and planning as separate problems, typically employing a search-based path planner alongside a low-level controller. However, the coupling between these two problems is not addressed using approaches such as receding horizon control or \ac{MPC}. Additionally, these methods consider only the current state, without accounting for future entanglement, resulting in reactive rather than predictive behavior. A continuous entanglement metric is also lacking, as existing approaches generally classify states as either entangled or non-entangled, failing to account for partial entanglement. Furthermore, most approaches have limited integration with environmental uncertainty, particularly in partially mapped or changing environments where tether behavior becomes less predictable. Computational efficiency remains a challenge for many sophisticated tether-aware planners, constraining their applicability in resource-limited platforms or real-time applications.Our work addresses these limitations by introducing a novel approach that provides a continuous metric for quantifying entanglement severity, integrates planning and control through MPC framework, and adopts a predictive strategy for tether management. This approach enables more nuanced decision-making in complex environments, allowing robots to select paths that minimize entanglement rather than simply avoiding it completelyentangled, failing to account for partial entanglement.
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% % Introduce tether in literature
+% Tether considerations in autonomous robot planning has drawn increasingly attention in robotics literature due to their critical role in enabling robots to operate autonomously in unknown environments for a wide range of mobile robots. 
+% % Entaglement definitions
+% A taxonomy of entanglement definitions is presented in \cite{definitions} which catalogs existing definitions from the literature and also introduces six new definitions.  These definitions open the door to the design of new entanglement aware path planning approaches.
+
+% % 2-D , offline
+% Regarding the path planners, many path planning methods have been proposed to address tether entanglement in 2-D environments. \cite{rov_mccammon} and \cite{mechsy2017novel} propose 2-D offline path planning to cover a set a way-points. In particular, \cite{mechsy2017novel} formulate the path planning problem for a \ac{ROV} as a mixed-integer programming problem. Their method solves a \ac{TSP} to determine the optimal sequence of waypoint visits, while incorporating homotopic constraints to reduce the likelihood of tether entanglement.
+% % 2-D , online
+% Also in 2-D, but in an online fashion, a homotopy-augmented topological approach, combined with graph search techniques is proposed by \cite{kim}. In addition to offline methods, online path planners allow real-time entanglement avoidance \cite{kim}, \cite{withy}. A hybrid A* variant uses a modified tangent graph to efficiently plan curvature-constrained, tethered robot paths under winding angle constraints, with guarantees and simulation results provided \cite{withy}.
+% % 2-D , Multirobot
+% Other approaches, also in 2-D address the tether constraints problem for the multi-robot case in \cite{zhang2019planning}, \cite{hert1996ties}, and \cite{cao2023neptune}. An efficient online path planner is presented in \cite{cao2023neptune}, combining a homotopy-based high-level planner with trajectory optimization and smoothing to generate entanglement-free paths for multi-robot systems. However, this approach is limited to 2-D environments. 
+% % 3-D , Multirobot
+% Entanglement avoidance has also been investigated in 3-D environments, as demonstrated in \cite{petit2022tape}, \cite{martinez2021optimization}, and \cite{bhattacharya2012topological}. In particular, \cite{petit2022tape} presents a 3-D exploration path planner that incorporates contact avoidance constraints on the tether, enabling safe navigation for tethered robots in three-dimensional spaces. For multi-robot operations, \cite{hert1999motion} extends earlier work to handle the increased complexity of coordinating multiple tethered robots. Further advancements by \cite{patil2023coordinating} and \cite{cao2023path} introduce improved coordination strategies that consider topological constraints imposed by multiple tethers. However, these approaches are not designed for real-time, online path planning.
+
+% % NICHE and summary of research gap 
+% In summary, most existing planners suffer from limitations that hinder their use in practical, online coverage path planning applications. Many are too computationally intensive for real-time implementation, and there is a lack of coverage path planning frameworks that explicitly account for the tether during planning. Existing tether-aware methods often rely on simplifying assumptions, such as 2-D environments or simplistic obstacle shapes (e.g., circles or cylinders), and thus fail to generalize to complex, real-world environments—particularly in inspection tasks.
+% % Introduce REACT
+% To address these limitations, we propose \ac{REACT}, a novel approach that enables real-time, entanglement-aware path planning in arbitrary 3-D environments.
 

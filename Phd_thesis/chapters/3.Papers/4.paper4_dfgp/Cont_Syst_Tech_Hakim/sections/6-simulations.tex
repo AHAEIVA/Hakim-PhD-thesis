@@ -123,7 +123,7 @@ Particularly, regarding the motivation for dynamic forgetting compared to a stat
 
 
 \begin{figure}[t]
-	\centering	\includegraphics[width=0.7\linewidth]{figures/traj_err_mhe.pdf}
+	\centering	\includegraphics[width=0.6\linewidth]{figures/traj_err_mhe.pdf}
 	\caption{Trajectory tracking error results. The peaks in the error correspond to when the disturbance profile changes and the applied disturbance reaches a maximum magnitude.} %The \ac{DF-GP} method consistently outperforms baselines throughout the trajectory, after applying three different disturbance profiles. }
 	\label{fig:traj_error}
 \end{figure}
@@ -157,8 +157,8 @@ The experiment is conducted with a circular reference trajectory of 1-meter diam
 Figures \ref{fig:error-real} and \ref{fig:pred_dist_real} demonstrate that the \ac{DF-GP} strategy can learn the unmodelled effects of the inaccuracies and achieve a better trajectory tracking accuracy than nominal \ac{MPC} by improving the tracking error by $34.5\%$. This allows for learning unmodeled disturbances, such as tether effects, \ac{AUV}-generated currents, thrust degradation, and other factors.
 
 
-\begin{figure}[t]
-	\centering	\includegraphics[width=0.7\linewidth]{figures/error_real.pdf}
+\begin{figure}[b]
+	\centering	\includegraphics[width=0.6\linewidth]{figures/error_real.pdf}
 	\caption{Trajectory error obtained in real experiments for  \ac{DF-GP} and nominal \ac{MPC}. Dynamic disturbance learning through \ac{DF-GP} enhances tracking performance significantly.}
 	\label{fig:error-real}
 \end{figure}

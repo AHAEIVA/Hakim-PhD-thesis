@@ -1,31 +1,51 @@
+
+
 \section{Overall \ac{REACT}  Framework}
 \label{sec:framework}
-\ac{REACT} framework, as depicted in \ref{fig:abstract}, consists of two main components: an offline planning phase and an online execution phase.
+\ac{REACT} framework, as depicted in \ref{fig:abstract}, consists of two main components: an offline planning phase and an online execution phase. In the offline phase, the environment is provided as a point cloud, including the object to be inspected. A \ac{SDF} map is then generated from this point cloud using the nvblox library \cite{nvblox}. The extracted point cloud of the structure to be inspected is then processed by the FC-Planner \cite{feng2024fc} to compute an optimal ordered sequence of waypoints, to acheive a path that performs full inspection coverage, initially disregarding tether constraints.
 
-In the offline phase, the environment is provided as a point cloud, including the object to be inspected. A \ac{SDF} map is then generated from this point cloud using the nvblox library \cite{nvblox}. The extracted point cloud of the structure to be inspected is then processed by the FC-Planner \cite{feng2024fc} to compute an optimal ordered sequence of waypoints, to acheive a path that performs full inspection coverage, initially disregarding tether constraints.
-
-In the online phase, tether constraints are handled by a dedicated planner that ensures the maximum tether length is not exceeded due to entanglement. This is achieved using our developed tether model, which continuously updates based on the current state of the tether and the new position of the \ac{ROV}, denoted as $\textbf{p}_{rov}$. The online planner then provides the reference state to an \ac{MPC} controller, which computes and applies the optimal wrench (forces and torques) to the \ac{ROV}.
-
+%Online Phase
+In the online phase, tether constraints are handled by a entanglement-aware re-planner that ensures that the maximum tether length is not exceeded due to entanglement. This is achieved using our developed tether model, which continuously updates based on the current state of the tether and the new position of the \ac{ROV}, denoted as $\textbf{p}_{rov}$. The online planner then provides the reference state to an \ac{MPC} controller, which computes and applies the optimal wrench (forces and torques) to the \ac{ROV}.
 
 
+
+%%%%%%%%%%%%%%%%%%%%%
+%%%%%%  Tether Figure  
+%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure*}[t!]
+    \centering
+    \includegraphics[width=1\linewidth]{Phd_thesis/figures/tether_model.pdf}
+    \caption{Tether shortcutting during \ac{ROV} motion from \( t_1 \) to \( t_2 \). (1) Initial tether with new \ac{ROV} position \( \mathbf{p}_{\text{rov}} \) appended; (2) Successful shortcut from the end node; (3) Collision encountered when attempting further shortcutting, prompting move to the next node; (4) Another collision detected from the new node; (5) Successful shortcut from a subsequent node; (6) Final tether configuration (yellow) after applying all feasible shortcuts.}
+    \label{fig:tether}
+\end{figure*}
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%% Tether Model Section
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Tether Model}
 \label{sec:tether_model}
-In this section, we introduce a computationally efficient kinematic \ac{ROV} tether model. Inspired by the shortcutting algorithm used in the ropeRRT path planner \cite{roperrt}, which simplifies sampled trajectories in a manner analogous to a rope tightening around an obstacle. The model is based on the following assumptions:
-
-\begin{itemize}  
-    \item The tether remains in a taut state at all times (fully stretched).  
-    \item There is no bending along the length of the tether.  
-\end{itemize}  
+In this section, we introduce a computationally efficient kinematic \ac{ROV} tether model. Inspired by the shortcutting algorithm used in the ropeRRT path planner \cite{roperrt}, which simplifies sampled trajectories in a manner analogous to a rope tightening around an obstacle. The key assumption in the proposed model is that we assume a geometry-based constraint where the tether remains taut and fully stretched at all times.
 
 \subsection{Tether model description}
 Let the tether path at time \( t \) be denoted by \( \mathbf{P}^{tether}(t) = \{ p_i(t) \}_{i=1}^{N} \), where each node \( p_i(t) \in \mathbb{R}^3 \) represents the position of the \( i \)-th node in 3D space at time \( t \), and \( N \) is the total number of nodes in the tether path. The position of the ROV at time \( t \), denoted by \( \mathbf{p}_{rov}(t) \in \mathbb{R}^3 \), is appended \( p_{N+1}(t) \) at the end of the tether path, ensuring that the ROV's position is included in the configuration. 
 
 The proposed tether model iteratively optimizes the tether path via two main mechanisms: shortcutting and pulling. For each pair of nodes \( (p_i(t), p_j(t)) \) where \( i < j \), the algorithm attempts to shortcut the path segment between them. If the line of sight between \( p_i(t) \) and \( p_j(t) \) is collision-free, determined via a \ac{SDF} map \( \mathcal{M}_{sdf} \), the intermediate nodes are replaced with a straight segment sampled at a resolution \( \delta_n \).
 
-If the shortcut is obstructed or the endpoint node \( p_j(t) \) is in collision, the model applies a pulling operation. This simulates disentanglement by moving \( p_j(t) \) incrementally toward the tether endpoint \( p_{N+1}(t) \), ensuring the new configuration remains collision-free. This iterative process continues until no further shortcutting or pulling is possible, resulting in an updated, taut, and obstacle-free tether path \( \mathbf{P}^{tether}(t+1) \). An example of the shortcutting operation is illustrated in Fig.~\ref{fig:tether}.
 
 
-%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%  Tether Model Algorithm  %%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 \begin{algorithm}[H]
 %\SetAlgoLined
 \LinesNotNumbered  % Disable line numbers
@@ -44,13 +64,13 @@ parameters: $\delta_{n}$
 \tcp{Extend tether path to include the current ROV position as the endpoint}
 Append $\mathbf{p}_{rov}(t)$ to $\mathbf{P}^{tether}(t).end()$\;
 
-\tcp{Iteratively attempt to shortcut path segments by skipping intermediate nodes}
-
+%\tcp{Iterative shortcutting path segments by skipping intermediate nodes}
+\tcp{Iterative shortcutting}
 \For{$i \gets len(\mathbf{P}^{tether}(t)) - 2$ \textbf{to} $1$}{
     \For{$j \gets i+1$ \textbf{to} $len(\mathbf{P}^{tether}(t)) - 1$}{
         \tcp{Check if shortcutting the path is valid between nodes $i$ and $j$}
         \If{checkshortcut($\mathbf{P}^{tether}(t), i, j$)}{
-            \tcp{Replace intermediate nodes between $i$ and $j$ with straight segment}
+            \tcp{Replace intermediate nodes $i-j$ }
             ReplaceIntermediateNodes($\mathbf{P}^{tether}(t)$, $i$, $j$, $\delta_{n}$)\;
         }
         \Else{
@@ -72,503 +92,203 @@ Append $\mathbf{p}_{rov}(t)$ to $\mathbf{P}^{tether}(t).end()$\;
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Homotopy equivelance proof
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% \subsection{Homotopic Equivalence of the Shortcutting-Based Tether Path}
+% \label{sec:homotopy_proof}
+
+% In this subsection, we demonstrate that the taut-tether path generated primarily through the shortcutting mechanism is homotopically equivalent to the Remotely Operated Vehicle's (ROV) actual trajectory. This argument focuses on the geometric simplification provided by shortcutting, assuming the tether behaves like a rope tightening around obstacles.
+
+% \subsubsection{Preliminaries and Definitions}
+% Let the ambient Euclidean space be $X = \mathbb{R}^3$. The static obstacle region, $O \subset X$, is a closed set. The \textbf{free configuration space} is defined as $C_{free} = X \setminus O$. A \textbf{path} in $C_{free}$ is a continuous function $\gamma: [0,1] \to C_{free}$.
+
+% Two paths $\gamma_0, \gamma_1: [0,1] \to C_{free}$ sharing the same endpoints (i.e., $\gamma_0(0)=\gamma_1(0)$ and $\gamma_0(1)=\gamma_1(1)$) are said to be \textbf{homotopic in $C_{free}$} (denoted $\gamma_0 \sim \gamma_1$) if there exists a continuous function $H: [0,1] \times [0,1] \to C_{free}$, called a \textbf{homotopy}, such that:
+% \begin{itemize}
+%     \item $H(s,0) = \gamma_0(s)$ for all $s \in [0,1]$,
+%     \item $H(s,1) = \gamma_1(s)$ for all $s \in [0,1]$,
+%     \item $H(0,\tau) = \gamma_0(0)$ for all $\tau \in [0,1]$ (startpoints fixed),
+%     \item $H(1,\tau) = \gamma_0(1)$ for all $\tau \in [0,1]$ (endpoints fixed).
+% \end{itemize}
+% Let $p_A \in C_{free}$ denote the fixed anchor point of the tether and $p_R(t) \in C_{free}$ be the ROV's position at time $t$. The actual continuous trajectory of the ROV up to time $t$ is a path $\Gamma_{ROV}: [0,1] \to C_{free}$, with $\Gamma_{ROV}(0) = p_A$ (assuming the path starts at the anchor for simplicity) and $\Gamma_{ROV}(1) = p_R(t)$.
+
+% A \textbf{piecewise linear (PL) path}, $\mathbf{P}$, connecting $p_A$ to $p_R(t)$ is defined by an ordered sequence of $N+1$ vertices $(v_0, v_1, \ldots, v_N)$ where $v_0=p_A$, $v_N=p_R(t)$, and each $v_k \in C_{free}$. The path consists of line segments $L(v_k, v_{k+1}) = \{ (1-s)v_k + s v_{k+1} \mid s \in [0,1] \}$. For $\mathbf{P}$ to be a path in $C_{free}$, each segment $L(v_k, v_{k+1})$ must be entirely contained in $C_{free}$.
+
+% \subsubsection{Initial Tether Path and Shortcutting as a Homotopy}
+% Let $\mathbf{P}_{init}(t)$ be an initial PL path representing the tether before shortcutting optimization at time $t$. This path connects $p_A$ to $p_R(t)$ and is assumed to be a PL approximation of $\Gamma_{ROV}$ lying in $C_{free}$. It is a standard result in algebraic topology that $\Gamma_{ROV} \sim \mathbf{P}_{init}(t)$ if $\mathbf{P}_{init}(t)$ is a sufficiently fine approximation.
+
+% The shortcutting mechanism iteratively refines a PL path. Let $\mathbf{P}_{k} = (v_0, \ldots, v_M)$ be the PL tether path at iteration $k$. A shortcutting step selects two non-consecutive vertices $v_i, v_j \in \mathbf{P}_{k}$ (where $i < j-1$). Let $\sigma_{old}$ be the subpath of $\mathbf{P}_{k}$ from $v_i$ to $v_j$, and let $\sigma_{new}$ be the straight-line segment $L(v_i, v_j)$. If $\sigma_{new} \subset C_{free}$ (i.e., the line of sight is collision-free), the path $\mathbf{P}_{k+1}$ is formed by replacing $\sigma_{old}$ with $\sigma_{new}$.
+
+% \textbf{Claim:} If $\sigma_{new} \subset C_{free}$, then $\sigma_{old} \sim \sigma_{new}$ in $C_{free}$ relative to their common endpoints $v_i$ and $v_j$.
+
+% \textit{Proof of Claim:}
+% The tether model is "analogous to a rope tightening around an obstacle." When a flexible rope segment, initially following $\sigma_{old} \subset C_{free}$, is pulled taut between $v_i$ and $v_j$, and the direct path $\sigma_{new}$ is also in $C_{free}$, the rope physically deforms into $\sigma_{new}$ by moving exclusively through $C_{free}$.
+% This continuous deformation can be represented by a homotopy. Let $\sigma_{old}(s)$ parameterize the PL path $\sigma_{old}$ for $s \in [0,1]$, and $\sigma_{new}(s) = (1-s)v_i + s v_j$ parameterize the segment $\sigma_{new}$. A straight-line homotopy is $H(s, \tau) = (1-\tau)\sigma_{old}(s) + \tau\sigma_{new}(s)$ for $s, \tau \in [0,1]$.
+% The "rope tightening" analogy implies that if $\sigma_{new} \subset C_{free}$, then the entire region swept by the deformation from $\sigma_{old}$ to $\sigma_{new}$ is also contained in $C_{free}$. Thus, $H(s, \tau) \in C_{free}$ for all $s, \tau$. This ensures that $\sigma_{old} \sim \sigma_{new}$ in $C_{free}$.
+% Since $\mathbf{P}_{k+1}$ is obtained from $\mathbf{P}_{k}$ by substituting $\sigma_{old}$ with a homotopic segment $\sigma_{new}$, it follows that $\mathbf{P}_{k} \sim \mathbf{P}_{k+1}$.
+% \hfill $\qed$
+
+% \subsubsection{Iterative Application and Final Equivalence}
+% The shortcutting algorithm generates a sequence of PL paths $\mathbf{P}_{init}(t) = \mathbf{P}_0, \mathbf{P}_1, \ldots, \mathbf{P}_{final}$, where $\mathbf{P}_{final}$ is the resulting taut-tether path, denoted $\mathbf{P}^{tether}(t)$. Since each step is a homotopy, $\mathbf{P}_0 \sim \mathbf{P}_1 \sim \ldots \sim \mathbf{P}_{final}$. By the transitivity of the homotopy relation, $\mathbf{P}_{init}(t) \sim \mathbf{P}^{tether}(t)$.
+
+% Given that $\Gamma_{ROV} \sim \mathbf{P}_{init}(t)$, and $\mathbf{P}_{init}(t) \sim \mathbf{P}^{tether}(t)$, we conclude by transitivity that:
+% $$ \Gamma_{ROV} \sim \mathbf{P}^{tether}(t) $$
+% Thus, the taut-tether path $\mathbf{P}^{tether}(t)$, resulting from the shortcutting operations, is homotopically equivalent to the ROV's actual trajectory $\Gamma_{ROV}$ within the free configuration space $C_{free}$. The shortcutting process simplifies the path to a tighter representative within its original homotopy class with respect to the obstacles.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+If the shortcut is obstructed or the endpoint node \( p_j(t) \) is in collision, the model applies a pulling operation. This simulates disentanglement by moving \( p_j(t) \) incrementally toward the tether endpoint \( p_{N+1}(t) \), ensuring the new configuration remains collision-free. This iterative process continues until no further shortcuts or pulling is possible, resulting in an updated, taut, and obstacle-free tether path \( \mathbf{P}^{tether}(t+1) \). An example of the shortcut operation is illustrated in Fig.~\ref{fig:tether}.
+
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%% REACT Planner %%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{algorithm}[H]
+\LinesNotNumbered  % Disable line numbers
+
+\SetKwInOut{Input}{Input}
+\SetKwInOut{Output}{Return}
+\Input{
+Waypoints $\mathbf{W}$, 
+Maximum tether length $L_{\max}$, 
+Current tether configuration $\mathbf{P}^{tether}(t)$, 
+Current ROV position $\mathbf{p}_{\text{rov}}(t)$, 
+Current waypoint index $k$, $d_{thresh}$}
+
+\Output{Target point for controller $\mathbf{p}_{\text{target}}$}
+\BlankLine
+
+Compute $L_{\text{tether}}(t)$ 
+
+\If{$L_{\text{tether}}(t) > L_{\max}$ \textbf{and not} finding\_safe\_path}{
+    finding\_safe\_path $\gets$ True\; \tcp{Activate recovery mode}
+    $\mathbf{P}_{\text{recovery}} \gets \text{SearchAlternativePath}(\mathbf{P}^{tether}(t), \mathbf{W}[k], L_{\max})$\; \tcp{Find path within tether limits}
+    $\mathbf{P}_{\text{safe}} \gets \text{RefineRecoveryPath}(\mathbf{P}_{\text{recovery}})$\; %\tcp{Optimize the recovery path}
+    path\_is\_safe $\gets \text{CheckPathValidity}(\mathbf{P}_{\text{safe}})$\; \tcp{Check if recovery path is valid}
+    safe\_path\_index $\gets 0$\; \tcp{Start from the beginning of the recovery path}
+}
+
+\If{finding\_safe\_path \textbf{and} path\_is\_safe}{
+    $\mathbf{p}_{\text{target}} \gets \text{GetPointAlongPath}(\mathbf{P}_{\text{safe}}, \text{safe\_path\_index})$\; \tcp{Get target from recovery path}
+    \If{$\|\mathbf{p}_{\text{rov}}(t) - \mathbf{p}_{\text{target}}\| < d_{thresh}$}{
+        safe\_path\_index $\gets$ safe\_path\_index + 1\; \tcp{Advance to next point}
+    }
+    \If{safe\_path\_index $\ge$ $|\mathbf{P}_{\text{safe}}|$}{
+        finding\_safe\_path $\gets$ False\; \tcp{Recovery complete}
+        $\mathbf{p}_{\text{target}} \gets \mathbf{W}[k]$\; \tcp{Resume wp tracking}
+    }
+}
+\Else{
+    finding\_safe\_path $\gets$ False\; \tcp{Reset recovery}
+    $\mathbf{p}_{\text{target}} \gets \mathbf{W}[k]$\; \tcp{Default to current wp}
+
+    \If{$\|\mathbf{p}_{\text{rov}}(t) - \mathbf{p}_{\text{target}}\| < d_{thresh}$}{
+         $k \gets k + 1$\; \tcp{Advance to next wp}
+    }
+}
+\Return{$\mathbf{p}_{\text{target}}$}\;
+\caption{Real-time Entanglement-Aware Path Planning}
+\label{alg:main_loop}
+\end{algorithm}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Alg. 3 Recovery Path  Algorithm %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{algorithm}[t]
+\LinesNotNumbered  % Disable line numbers
+\SetKwInOut{Input}{Require}
+\SetKwInOut{Output}{Return}
+\Input{
+Current tether $\mathbf{P}(t)$,
+Goal waypoint $\mathbf{p}_{\text{goal}}$,
+Maximum length $L_{\max}$
+}
+\Output{Recovery path segment $\mathbf{P}_{\text{recovery}}$}
+\BlankLine
+best\_path $\gets$ None\;
+prev\_len $\gets \infty$\;
+found\_suitable $\gets$ False\;
+\For{$i \gets |\mathbf{P}(t)| - 3$ \textbf{downto} 3}{
+    $\mathbf{P}_{\text{candidate}} \gets \text{GeneratePath}(i, \mathbf{P}(t), \mathbf{p}_{\text{goal}})$\;
+    $L_{\text{candidate}} \gets \text{ComputeLength}(i, \mathbf{P}(t), \mathbf{P}_{\text{candidate}})$\;\\
+    \If{$L_{\text{candidate}} < 0.7L_{\max}$} %\textbf{and} $L_{\text{candidate}} < 0.65 \cdot \text{prev\_len}$}
+    {
+         best\_path $\gets \text{ExtractSegment}(i+2, \mathbf{P}(t))$\;
+         found\_suitable $\gets$ True\;
+         \textbf{break}\;
+    }
+    prev\_len $\gets \text{ComputeLength}(i-3, \mathbf{P}(t), \text{GeneratePath}(i-3, \mathbf{P}(t), \mathbf{p}_{\text{goal}}))$\;
+}
+\If{\textbf{not} found\_suitable}{
+    $\mathbf{p}_{\text{rov}} \gets \mathbf{P}(t)[|\mathbf{P}(t)|-1]$\; \tcp{Fallback}
+    $\mathbf{P}_{\text{recovery}}$ $\gets \text{PlanShortestPath}(\mathbf{p}_{\text{rov}}, \mathbf{p}_{\text{goal}})$\;
+}
+\Return{$\mathbf{P}_{\text{recovery}}$}\;
+\caption{Search Alternative Recovery Path}
+\label{alg:search_alternative}
+\end{algorithm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Refine Path  Algorithm
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{algorithm}[b]
+\LinesNotNumbered  % Disable line numbers
+\SetKwInOut{Input}{Input}
+\SetKwInOut{Output}{Return}
+\Input{
+    Recovery path $\mathbf{P}_{\text{recovery}}$;\\
+    Offset distance $\delta_{\text{offset}}$;\\
+    Sampling distance $\delta_{\text{sample}}$
+}
+\Output{Refined safe path $\mathbf{P}_{\text{safe}}$}
+\BlankLine
+$\mathbf{P}_{\text{offset}} \gets \text{TetherPathOffset}(\mathbf{P}_{\text{recovery}}, \delta_{\text{offset}})$\;
+\\
+$\mathbf{P}_{\text{sampled}} \gets \text{PerturbTetherPath}(\mathbf{P}_{\text{offset}}, \delta_{\text{sample}})$\;
+\\
+$\mathbf{P}_{\text{safe}} \gets \text{SmoothTetherPath}(\mathbf{P}_{\text{sampled}})$\;
+\\
+\Return{$\mathbf{P}_{\text{safe}}$}\;
+\caption{Refine Recovery Path}
+\label{alg:refine_path}
+\end{algorithm}
+
+
+%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%% PLANNER %%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
 
-
-
-
-
-% \begin{algorithm}[H]
-% \SetKwInOut{Input}{Require}
-% \SetKwInOut{Output}{Return}
-% \Input{
-% Path states $\mathbf{P}$,
-% SDF map $\mathcal{M}_{sdf}$,
-% Distance parameter $\delta$
-% }
-% \Output{Path with added intermediate states}
-% \BlankLine
-% \For{$i \gets 0$ \textbf{to} $|\mathbf{P}| - 2$}{
-%     $dist \gets distance(\mathbf{P}[i], \mathbf{P}[i+1])$\;
-%     \If{$dist > \delta$}{
-%         $numIntermediateStates \gets \lfloor dist / \delta \rfloor$\;
-%         $t \gets 1.0 / (numIntermediateStates + 1)$\;
-%         \For{$k \gets 0$ \textbf{to} $numIntermediateStates - 1$}{
-%             $newState \gets allocState()$\;
-%             $interpolate(\mathbf{P}[i], \mathbf{P}[i+1], t \cdot (k+1), newState)$\;
-%             Insert $newState$ into $\mathbf{P}$ at position $i+1+k$\;
-%         }
-%     }
-% }
-% \caption{AddIntermediateStatesToPath}
-% \label{alg:add_intermediate_states}
-% \end{algorithm}
-
-% \begin{algorithm}[H]
-% \SetKwInOut{Input}{Require}
-% \SetKwInOut{Output}{Return}
-% \Input{
-% Path states $\mathbf{P}$,
-% Index $i$,
-% Index $j$,
-% Distance parameter $\delta$
-% }
-% \Output{Path with intermediate states between nodes $i$ and $j$}
-% \BlankLine
-% $dist \gets distance(\mathbf{P}[i], \mathbf{P}[j])$\;
-% \If{$dist > \delta$}{
-%     $numIntermediateStates \gets \lfloor dist / \delta \rfloor$\;
-%     $t \gets 1.0 / (numIntermediateStates + 1)$\;
-%     \For{$k \gets 0$ \textbf{to} $numIntermediateStates - 1$}{
-%         $newState \gets allocState()$\;
-%         $interpolate(\mathbf{P}[i], \mathbf{P}[i+1+k], t \cdot (k+1), newState)$\;
-%         Insert $newState$ into $\mathbf{P}$ at position $i+1+k$\;
-%     }
-% }
-% \caption{AddIntermediateStatesBetweenNodes}
-% \label{alg:add_intermediate_states_between_nodes}
-% \end{algorithm}
-
-% \begin{algorithm}[H]
-% \SetKwInOut{Input}{Require}
-% \SetKwInOut{Output}{Return}
-% \Input{
-% Path states $\mathbf{P}$,
-% Cost vector $costs$,
-% Optimization objective $obj$
-% }
-% \Output{Updated cumulative costs for path}
-% \BlankLine
-% Resize $costs$ to $|\mathbf{P}|$ with $obj.identityCost()$\;
-% \For{$i \gets 1$ \textbf{to} $|costs| - 1$}{
-%     $costs[i] \gets obj.combineCosts(costs[i-1], obj.motionCost(\mathbf{P}[i-1], \mathbf{P}[i]))$\;
-% }
-% \caption{CalculateCumulativeCosts}
-% \label{alg:calculate_cumulative_costs}
-% \end{algorithm}
-
-% \begin{algorithm}[H]
-% \SetKwInOut{Input}{Require}
-% \SetKwInOut{Output}{Return}
-% \Input{
-% Path states $\mathbf{P}$,
-% Cost vector $costs$,
-% Optimization objective $obj$,
-% Start index $startIdx$
-% }
-% \Output{Updated cumulative costs starting from $startIdx$}
-% \BlankLine
-% Resize $costs$ to $|\mathbf{P}|$ with $obj.identityCost()$\;
-% \For{$k \gets startIdx$ \textbf{to} $|costs| - 1$}{
-%     $costs[k] \gets obj.combineCosts(costs[k-1], obj.motionCost(\mathbf{P}[k-1], \mathbf{P}[k]))$\;
-% }
-% \caption{UpdateCumulativeCosts}
-% \label{alg:update_cumulative_costs}
-% \end{algorithm}
-
-% \begin{algorithm}[H]
-% \SetKwInOut{Input}{Require}
-% \SetKwInOut{Output}{Return}
-% \Input{
-% Path states $\mathbf{P}$,
-% SDF map $\mathcal{M}_{sdf}$,
-% Index $i$,
-% Index $j$,
-% Boolean $freeStates$
-% }
-% \Output{Path with states removed between $i$ and $j$}
-% \BlankLine
-% \If{$freeStates$}{
-%     \For{$k \gets i+1$ \textbf{to} $j-1$}{
-%         Free state $\mathbf{P}[k]$\;
-%     }
-% }
-% Erase states from $\mathbf{P}$ starting at index $i+1$ up to but not including index $j$\;
-% \caption{RemoveIntermediateStates}
-% \label{alg:remove_intermediate_states}
-% \end{algorithm}
-
-% \begin{algorithm}[H]
-% \SetKwInOut{Input}{Require}
-% \SetKwInOut{Output}{Return}
-% \Input{
-% SDF map $\mathcal{M}_{sdf}$,
-% Contact points vector $contactPoints$,
-% Path states $\mathbf{P}$
-% }
-% \Output{Boolean indicating if line of sight exists}
-% \BlankLine
-% \If{$contactPoints$ is not empty}{
-%     \If{not $checkMotion(contactPoints.back(), \mathbf{P}.back())$}{
-%         \Return{false}\;
-%     }
-% }
-% \Return{true}\;
-% \caption{CheckLineOfSight}
-% \label{alg:check_line_of_sight}
-% \end{algorithm}
-
-% \begin{algorithm}[H]
-% \SetKwInOut{Input}{Require}
-% \SetKwInOut{Output}{Return}
-% \Input{
-% State $state1$,
-% State $state2$,
-% Distance parameter $\delta$
-% }
-% \Output{Boolean indicating success of state adjustment}
-% \BlankLine
-% $dist \gets distance(state1, state2)$\;
-% $newState \gets allocState()$\;
-% \eIf{$dist > \delta$}{
-%     $interpolate(state1, state2, \delta/dist, newState)$\;
-% }{
-%     $copyState(newState, state2)$\;
-% }
-% \If{$isValid(newState)$}{
-%     $state1 \gets newState$\;
-%     \Return{true}\;
-% }
-% Free state $newState$\;
-% \Return{false}\;
-% \caption{PopState}
-% \label{alg:pop_state}
-% \end{algorithm}
-
-% \begin{algorithm}[H]
-% \SetKwInOut{Input}{Require}
-% \SetKwInOut{Output}{Return}
-% \Input{
-% Optimization objective $obj$,
-% Cost $alongPath$,
-% Cost $shortcutCost$,
-% Cost $equivalenceCost$
-% }
-% \Output{Boolean indicating if path segment is optimal}
-% \BlankLine
-% \Return{$obj.isCostBetterThan(obj.subtractCosts(alongPath, shortcutCost), equivalenceCost)$}\;
-% \caption{IsPathSegmentOptimal}
-% \label{alg:is_path_segment_optimal}
-% \end{algorithm}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-%%%%%%
-% %%%%%%
-% \begin{algorithm}[H]
-% \SetAlgoLined
-% \SetKwInOut{Input}{Input}
-% \SetKwInOut{Output}{Return}
-
-% \Input{
-% Tether path $\mathbf{P}^{tether}(t) = \{ p_i(t) \}_{i=1}^{N}$, indices $i, j$, distance parameter $\delta_n$
-% }
-% \Output{Shortcut path: $\mathbf{P}(t+1)$}
-
-% \BlankLine
-% \tcp{Remove nodes between $p_i(t)$ and $p_j(t)$}
-% Remove nodes between $p_i(t)$ and $p_j(t)$\;
-
-% \tcp{Add nodes along the straight line between $p_i(t)$ and $p_j(t)$ with distance $\delta_n$}
-% Add nodes along the straight line between $p_i(t)$ and $p_j(t)$ with distance $\delta_n$\;
-
-% \tcp{Update path with new nodes between $(p_i(t), p_j(t))$}
-% Update path with new nodes between $(p_i(t), p_j(t))$\;
-
-% \Return{$\mathbf{P}(t+1)$}\;
-
-% \caption{ShortcutPath}
-% \label{alg:shortcut}
-% \end{algorithm}
-% %%%%%
-% %%%%%
-
-
-
-
-%%%%
-
-
-
-
-
-
-
-%In the algorithm, we loop over the nodes of the tether path, starting from the second-last node and moving towards the first node. For each node, we examine the subsequent nodes to check if a shortcut is possible which verifies if a direct path between two nodes is valid based on the TSDF map and collision-free regions. If the shortcut is valid, the algorithm removes the intermediate nodes between the two endpoints and adds new intermediate nodes, placed at a distance $\delta_{n}$ apart, to maintain the tether's structure. In addition, it updates the cumulative cost associated with the path after the shortcut operation.
-
-
-
-
-
-%
-\begin{figure}[t!]
-	\centering	\includegraphics[width=1\linewidth]{EA-Planner/figures/tether_shortcut.pdf}
-\caption{Shortcutting a 4-node tether by removing $P_2$ when a clear line of sight exists (e.g., $P_3$ to $P_1$). A new node is added at distance $\delta_n$ from $P_1$. Updated tether is depicted in blue.}
-    \label{fig:tether}
-\end{figure}
-%
-
-
-
-
-
-% \section{real-time entanglement-Aware Path Planner}
-% \label{sec:planner}
-
-% In this section, we present the real-time entanglement-aware path planner, a local planner designed to handle real-time adjustments for an autonomous system navigating with a tether. The planner operates in an online manner, continuously updating the path to avoid exceeding the maximum allowable tether length, \( L_{\text{max}} \), and ensuring safe, collision-free motion.
-
-% At each time step, the planner receives the current tether configuration $ \mathbf{P}^{tether}(t) = \{ p_i(t) \}_{i=1}^{N} $, where each $ p_i(t) \in \mathbb{R}^3 $ represents the position of the $ i $-th node on the tether at time $ t $, and $ N $ is the total number of nodes in the tether. Additionally, the planner is provided with a list of reference waypoints $ \{\mathbf{p}_{\text{waypoint}}(k)\}_{k=1}^{M} $, where each $ \mathbf{p}_{\text{waypoint}}(k) \in \mathbb{R}^3 $ denotes the position of the $ k $-th waypoint in 3D space, and $ M $ is the total number of waypoints in the list.
-
-
-
-
-
-
-
-% The planner operates by first checking if the maximum allowable tether length \( L_{\text{max}} \) has been exceeded. This is done by calculating the Euclidean distance between the ROV's current position, \( \mathbf{p}_{\text{rov}}(t) \), and the last node \( p_N(t) \) in the tether configuration, as well as the total length of the tether path up to the ROV. Specifically, we calculate the tether length at time \( t \) as:
-
-% \[
-% L_{\text{tether}}(t) = \sum_{i=1}^{N-1} \| p_i(t) - p_{i+1}(t) \|
-% \]
-
-% where \( \| \cdot \| \) denotes the Euclidean norm.
-
-% \subsection{Non-Exceedance Condition}
-% If the tether length \( L_{\text{tether}}(t) \leq L_{\text{max}} \), the planner proceeds by sequentially passing each waypoint \( \mathbf{p}_{\text{waypoint}}(k) \) to the controller. The path to each waypoint is then planned directly, ensuring that the \ac{ROV} follows a collision-free trajectory while adhering to the tether length constraints.
-
-
-% \begin{figure*}[t] % Use * for double-column width
-%     \centering
-%     \includegraphics[width=\textwidth]{EA-Planner/figures/planner.pdf} % Adjust width as needed
-%     \caption{The local path planner computes an alternative path \(\mathbf{P}^{r_2}\) instead of \(\mathbf{P}^{r_1}\) to prevent tether entanglement while respecting the maximum tether length. The exit point \(\mathbf{p}_{exit}\) is chosen as the nearest point ensuring tether length feasibility going to waypoint $\mathbf{x}_{wp}$. }
-%     \label{fig:planner}
-% \end{figure*}
-
-
-% \subsection{Entanglement Condition}
-% If, at any point, the tether length exceeds \( L_{\text{max}} \), the entanglement state is activated. In this state, rerouting of the path becomes necessary to avoid further entanglement. The planner computes a new path by identifying an exit point, \( \mathbf{p}_{\text{exit}} \in \mathbb{R}^3 \), which serves as a temporary destination to help disentangle the tether. 
-
-% To find the exit point, the planner iterates backwards through the tether path, testing different candidate exit points. The backward search proceeds from the last node \( p_N(t) \) towards the initial node \( p_1(t) \), evaluating the potential for reducing the tether length while maintaining a valid path to each waypoint. At each step, the new tether configuration is computed by appending the candidate exit point to the path, ensuring that the length of the tether remains within the permissible bound:
-
-% \[
-% L_{\text{tether}}(\mathbf{P}_{\text{new}}(t)) \leq L_{\text{max}}
-% \]
-
-
-
-
-% The planner continues this iterative process until a valid exit point \( \mathbf{p}_{\text{exit}} \) is found, which allows the planner to improve the tether length and maintain the length constraint \( L_{\text{tether}}(t) \leq L_{\text{max}} \). Once the exit point is determined, the planner then calculates the collision-free path from the exit point to the next waypoint in the list, ensuring the system follows a safe route while adhering to the constraints imposed by the tether.
-
-
-
-% \subsection{Path offsetting}
-% Once the exit point \( \mathbf{p}_{\text{exit}} \) is determined, the planner reconfigures the tether path \( \mathbf{P}^{tether}(t) \) by modifying the path until the exit point. The segment of the tether path up to the exit point is used as a reference for generating an alternative path. The alternative path is offset from the original tether path to ensure a safe distance away from obstacles. This reconfigured path is then passed to the controller, which guides the ROV from the exit point to the next waypoint. The process continues iteratively, adjusting the path until all waypoints are reached, or the tether length remains within the allowable limit.
-% %%%%%
-% %%%%%
-
-% \begin{algorithm}[H]
-% \caption{real-time entanglement-Aware Path Planning}
-% \SetAlgoLined
-% \SetKwInOut{Input}{Input}
-% \SetKwInOut{Output}{Output}
-% \Input{
-% Waypoints $\mathbf{W}$, 
-% Maximum tether length $L_{\max}$, 
-% Goal point $\mathbf{p}_{\text{goal}}$
-% }
-% \Output{Optimized path}
-% \BlankLine
-%     \State $\mathbf{P}_{tether} \gets$ Initialize empty tether path
-%     \State $\mathbf{p}_{\text{current}} \gets \mathbf{W}[0]$
-    
-%     \While{$\mathbf{p}_{\text{current}} \neq \mathbf{p}_{\text{goal}}$}
-%         \State Append $\mathbf{p}_{\text{current}}$ to $\mathbf{P}_{tether}$
-        
-%         \If{$\text{ComputeTetherLength}(\mathbf{P}_{tether}) > L_{\max}$}
-%             \State $\mathbf{p}_{\text{exit}}, \mathbf{P}_{\text{alternative}} \gets \text{FindAlternativePath}(\mathbf{P}_{tether}, L_{\max}, \mathbf{p}_{\text{goal}})$
-%             \State $\mathbf{P}_{\text{offset}} \gets \text{ComputeOffsetPath}(\mathbf{P}_{\text{alternative}})$
-%             \State $\mathbf{p}_{\text{current}} \gets \text{TraverseOffsetPath}(\mathbf{P}_{\text{offset}}, \mathbf{p}_{\text{goal}})$
-%         \Else
-%             \State $\mathbf{p}_{\text{current}} \gets \text{NextWaypoint}(\mathbf{W})$
-%         \EndIf
-%     \EndWhile
-%     \Return $\mathbf{P}_{tether}$
-% \end{algorithm}
-
-
-
-% \begin{algorithm}[H]
-% \caption{Find Exit Point}
-% \label{alg:find_exit_point}
-% \SetAlgoLined
-% \SetKwInOut{Input}{Require}
-% \SetKwInOut{Output}{Return}
-
-% \Input{
-% Tether path $\mathbf{P}^{tether}(t)$, 
-% Maximum tether length $L_{\max}$,
-% Goal point $\mathbf{p}_{\text{goal}}$
-% }
-% \Output{Exit point $p_{\text{exit}}$, Alternative path}
-
-% \For{$i \gets |\mathbf{P}^{tether}(t)| \text{ downto } 1$}{
-%     \If{$\text{TetherLength}(\mathbf{P}^{tether}(t)[1:i]) \leq L_{\max}$}{
-%         $p_{\text{exit}} \gets \mathbf{P}^{tether}(t)[i]$\;
-%         \Return{$p_{\text{exit}}, \mathbf{P}^{tether}(t)[i:|\mathbf{P}^{tether}(t)|]$}\;
-%     }
-% }
-% \Return{$\text{None}, \text{None}$}\;
-% \end{algorithm}
-
-% \begin{algorithm}[H]
-% \caption{Compute Offset Path}
-% \label{alg:compute_offset_path}
-% \SetAlgoLined
-% \SetKwInOut{Input}{Require}
-% \SetKwInOut{Output}{Return}
-
-% \Input{
-% Alternative path $\text{alt\_path}$
-% }
-% \Output{Offset path}
-
-% \tcp{Compute path centroid}
-% $\text{centroid} \gets \frac{1}{|\text{alt\_path}|} \sum_{i=1}^{|\text{alt\_path}|} \text{alt\_path}[i]$\;
-
-% \tcp{Generate offset path}
-% $\text{offset\_path} \gets []$\;
-% \For{$p \in \text{alt\_path}$}{
-%     $\text{offset\_dir} \gets \text{normalize}(p - \text{centroid})$\;
-%     $p_{\text{offset}} \gets p + \epsilon \cdot \text{offset\_dir}$\;
-%     Append $p_{\text{offset}}$ to $\text{offset\_path}$\;
-% }
-
-% \Return{$\text{offset\_path}$}\;
-% \end{algorithm}
-
-
-
-% %%%%
-% %%%%
-% % \begin{figure}[!t*]
-% %     \centering
-% %     \begin{minipage}{0.48\textwidth}
-% %         \begin{tikzpicture}[node distance=1.8cm, every node/.style={font=\small}]
-% %             \tikzstyle{startstop} = [rectangle, rounded corners, minimum width=2.5cm, minimum height=0.8cm, text centered, draw=black, fill=red!30]
-% %             \tikzstyle{process} = [rectangle, minimum width=2.5cm, minimum height=0.8cm, text centered, draw=black, fill=blue!20]
-% %             \tikzstyle{decision} = [diamond, minimum width=3cm, minimum height=0.8cm, text centered, draw=black, fill=green!20]
-% %             \tikzstyle{arrow} = [thick,->,>=stealth]
-
-% %             \node (start) [startstop] {Start Mission};
-% %             \node (init_wp) [process, below of=start] {Load Waypoints};
-% %             \node (select_wp) [process, below of=init_wp] {Select Next Waypoint};
-% %             \node (check_tether) [decision, below of=select_wp, node distance=2.5cm] {Tether Length\\$\leq$ Max?};
-% %             \node (follow_wp) [process, right of=check_tether, xshift=4.5cm] {Follow Waypoint Path};
-% %             \node (alt_path) [process, below of=check_tether, node distance=2.5cm] {Generate Alternative Path};
-% %             \node (offset_path) [process, below of=alt_path, node distance=2cm] {Offset Path};
-% %             \node (smooth_path) [process, below of=offset_path, node distance=2cm] {Smooth Path};
-% %             \node (validate_path) [decision, below of=smooth_path, node distance=2.5cm] {Path Safe?};
-
-% %             \draw [arrow] (start) -- (init_wp);
-% %             \draw [arrow] (init_wp) -- (select_wp);
-% %             \draw [arrow] (select_wp) -- (check_tether);
-% %             \draw [arrow] (check_tether) -- node[midway, above] {Yes} (follow_wp);
-% %             \draw [arrow] (check_tether) -- node[midway,left] {No} (alt_path);
-% %             \draw [arrow] (alt_path) -- (offset_path);
-% %             \draw [arrow] (offset_path) -- (smooth_path);
-% %             \draw [arrow] (smooth_path) -- (validate_path);
-% %         \end{tikzpicture}
-% %     \end{minipage}
-% %     \hfill
-% %     \begin{minipage}{0.48\textwidth}
-% %         \begin{tikzpicture}[node distance=1.8cm, every node/.style={font=\small}]
-% %             \tikzstyle{startstop} = [rectangle, rounded corners, minimum width=2.5cm, minimum height=0.8cm, text centered, draw=black, fill=red!30]
-% %             \tikzstyle{process} = [rectangle, minimum width=2.5cm, minimum height=0.8cm, text centered, draw=black, fill=blue!20]
-% %             \tikzstyle{decision} = [diamond, minimum width=3cm, minimum height=0.8cm, text centered, draw=black, fill=green!20]
-% %             \tikzstyle{arrow} = [thick,->,>=stealth]
-
-% %             \node (validate_path) [decision, at={(0,-7.2cm)}] {Path Safe?};
-% %             \node (follow_alt) [process, right of=validate_path, xshift=4.5cm] {Follow Alternative Path};
-% %             \node (check_complete) [decision, below of=validate_path, node distance=2.5cm] {All Waypoints\\Completed?};
-% %             \node (end) [startstop, below of=check_complete, node distance=2cm] {Mission Complete};
-% %             \node (offset_path2) [process, above of = validate_path, node distance=2cm] {Offset Path};
-
-% %             \draw [arrow] (validate_path) -- node[midway, above] {Yes} (follow_alt);
-% %             \draw [arrow] (validate_path) -- node[midway,left] {No} (offset_path2);
-% %             \draw [arrow] (offset_path2) -- (smooth_path);
-
-% %             \draw [arrow] (follow_wp) |- (check_complete);
-% %             \draw [arrow] (follow_alt) |- (check_complete);
-
-% %             \draw [arrow] (check_complete) -- node[midway,left] {No} (select_wp);
-% %             \draw [arrow] (check_complete) -- node[midway,right] {Yes} (end);
-% %         \end{tikzpicture}
-% %     \end{minipage}
-% %     \caption{Tether-Aware Path Planning State Machine}
-% %     \label{fig:tether_planner_flowchart}
-% % \end{figure}
-% % \subsection{Entanglement Prediction}
-
-% % The first component of our approach involves predicting the potential for entanglement based on the future motion of the ROV relative to obstacles. The key idea is to identify when the ROV might come into contact with an obstacle in a way that leads to entanglement, and then modify the ROV's path to avoid such situations. This is achieved through a cost function that incorporates a vector sum of the relative positions of the goal (G), anchor (A), and obstacle (O), as well as the position of the ROV (R) and the future predicted position of the ROV.
-
-% % The entanglement prediction cost function, $c_{ent_1}$, is based on the relative vectors between the goal, anchor, and ROV positions, and it calculates a vector sum that quantifies the entanglement risk. The vectors are normalized, taking into account the obstacle's geometry, and a rotational transformation is applied based on the obstacle's orientation (yaw, pitch, and roll).
-
-% % The vector components are as follows:
-
-% % \begin{equation}
-% % OG_x = \frac{goal_x - ob_x}{\sqrt{(goal_x - ob_x)^2 + (goal_y - ob_y)^2 + (goal_z - ob_z)^2 + \epsilon}}
-% % \end{equation}
-
-% % Similar expressions are defined for the vectors $OG_y$, $OG_z$, $OA_x$, $OA_y$, $OA_z$, $OR_x$, $OR_y$, and $OR_z$. The cost function is computed by summing these normalized vector components, which are then projected into a local coordinate system aligned with the obstacle. This projection allows us to assess the relative positions in a more robust way that accounts for the geometry and orientation of the obstacle.
-
-% % Finally, the activation function is introduced to enforce a rapid response as the ROV approaches the entanglement threshold:
-
-% % \begin{equation}
-% % activation\_vector\_sum = \exp\left(-10.0 \cdot \frac{vector\_sum\_local}{ent\_allowance}\right)
-% % \end{equation}
-
-% % The resulting entanglement prediction cost function is given by:
-
-% % \begin{equation}
-% % c_{ent_1} = -\left(60 \cdot obs\_radius - dot\_XO\_OA\_local \right) \cdot activation\_vector\_sum
-% % \end{equation}
-
-% % where $dot\_XO\_OA\_local$ is the dot product between the obstacle's anchor point and the future position of the ROV in the local coordinate system.
-
-
-
-
-
-% % \subsection{Entanglement Metric}
 
 \section{Real-Time Entanglement-Aware Path Planner}
 \label{sec:planner}
 
-In this section, we present the real-time entanglement-aware path planner, a local planner designed to handle real-time entagelemnt-free path finding for autonomous system navigating operating with a tether. The planner runs in an online manner, continuously monitoring the tether configuration and adapting the \ac{ROV}'s path to avoid exceeding the maximum allowable tether length, \( L_{\text{max}} \), while ensuring safe, collision-free motion towards a sequence of reference waypoints.
+In this section, we present the real-time entanglement-aware path planner, a local planner designed to handle real-time entanglement-free path finding for autonomous system navigating operating with a tether. The planner runs in an online manner, continuously monitoring the tether configuration and adapting the \ac{ROV}'s path to avoid exceeding the maximum allowable tether length, \( L_{\text{max}} \), while ensuring safe, collision-free motion towards a sequence of reference waypoints.
 
 At each time step \( t \), the planner utilizes the current estimated tether configuration  $\mathbf{P}^{tether}(t)$. The planner also maintains a list of reference waypoints \( \mathbf{W} = \{\mathbf{p}_{\text{waypoint}}(k)\}_{k=1}^{M} \), where \( \mathbf{p}_{\text{waypoint}}(k) \in \mathbb{R}^3 \) denotes the \( k \)-th target waypoint. The current tether length \( L_{\text{tether}}(t) \) is computed by summing the Euclidean distances between consecutive tether points, i.e., \( L_{\text{tether}}(t) = \sum_{i=1}^{N-1} \| p_i(t) - p_{i+1}(t) \| \), and is subsequently compared to the predefined maximum allowable length \( L_{\text{max}} \), to activate the re-planner.
 
@@ -578,11 +298,20 @@ If the tether length constraint is satisfied, i.e., \( L_{\text{tether}}(t) \leq
 
 
 \subsection{Entanglement Avoidance Strategy}
-If the tether length exceeds the maximum allowable limit, \( L_{\text{tether}}(t) > L_{\text{max}} \), the entanglement avoidance strategy is activated. This strategy aims to guide the \ac{ROV} along a temporary recovery path to alleviate the tether tension before resuming navigation towards the original target waypoint.
+If the tether length exceeds the maximum allowable limit, \( L_{\text{tether}}(t) > L_{\text{max}} \), the entanglement avoidance strategy is activated. This strategy aims to guide the \ac{ROV} along a temporary recovery path to de-tangle the tether before resuming navigation towards the original target waypoint.
 
-The planner initiates a search for a suitable recovery path by iteratively evaluating potential path modifications based on the current tether configuration \( \mathbf{P}^{tether}(t) \). Starting from the \ac{ROV}'s end of the tether (node \( p_{N-1}(t) \)) and moving backward towards the anchor point \( p_1(t) \), the planner considers each node \( p_i(t) \) as a potential pivot point. For each \( i \), a candidate alternative trajectory is implicitly generated, consisting of the segment from the \ac{ROV} back to \( p_i(t) \) followed by a newly planned path segment from \( p_i(t) \) to the current target waypoint \( \mathbf{p}_{\text{waypoint}}(k) \). The planner computes the estimated length of this candidate alternative tether configuration.
+The planner initiates a search for a suitable recovery path by iteratively evaluating potential de-tangle paths based on the current tether configuration \( \mathbf{P}^{tether}(t) \). Starting from the \ac{ROV}'s end of the tether (node \( p_{N-1}(t) \)) and moving backward towards the anchor point \( p_1(t) \), the planner considers each node \( p_i(t) \) as a potential pivot point. For each \( i \), a candidate alternative trajectory is implicitly generated, consisting of the segment from the \ac{ROV} back to \( p_i(t) \) followed by a newly planned path segment from \( p_i(t) \) to the current target waypoint \( \mathbf{p}_{\text{waypoint}}(k) \). The planner computes the estimated length of this candidate alternative tether configuration.
 
-A recovery path is selected based on length criteria: the planner seeks a pivot point \( p_i(t) \) such that the corresponding alternative path length is significantly shorter than \( L_{\text{max}} \) (e.g., \( < 0.7 L_{\text{max}} \)) and offers substantial improvement compared to alternatives generated using nearby pivot points (e.g., \( p_{i-3}(t) \)). Once such an index \( i \) is found, the recovery path segment \( \mathbf{P}_{\text{recovery}} \) is defined as the portion of the current tether from the \ac{ROV} back to a point slightly further back along the tether, specifically \( p_{i+2}(t) \). This segment represents the initial trajectory the \ac{ROV} must follow to begin resolving the entanglement. If no suitable recovery path is found during the backward search, a direct path from the \ac{ROV}'s current position to the goal waypoint is generated as a fallback.
+A recovery path is selected based on length criteria: the planner seeks a pivot point \( p_i(t) \) such that the corresponding alternative path length is significantly shorter than \( L_{\text{max}} \) (e.g., \( < 0.7 L_{\text{max}} \)) and offers substantial improvement compared to alternatives generated using nearby pivot points (e.g., \( p_{i-3}(t) \)). Once such an index \( i \) is found, the recovery path segment \( \mathbf{P}_{\text{recovery}} \) is defined as the portion of the current tether from the \ac{ROV} back to a point slightly further back along the tether, specifically \( p_{i+2}(t) \). This segment represents the initial trajectory the \ac{ROV} must follow to begin resolving the entanglement. If no suitable recovery path is found during the backward search, a direct path from the \ac{ROV}'s current position to the goal waypoint is generated as a fallback. This recovery path search process is illustrated in Fig. \ref{fig:planner_search}.  
+
+
+
+
+
+
+
+
+
 
 \subsection{Recovery Path Refinement and Execution}
 The initially selected recovery path \( \mathbf{P}_{\text{recovery}} \) undergoes further refinement to enhance safety and smoothness before execution. This involves several steps:
@@ -596,91 +325,46 @@ The resulting refined path is denoted as \( \mathbf{P}_{\text{safe}} \). The pla
 The core logic can be summarized in the following algorithms. Algorithm~\ref{alg:main_loop} outlines the main planning cycle, Algorithm~\ref{alg:search_alternative} details the search for the recovery path, and Algorithm~\ref{alg:refine_path} describes the path refinement process.
 
 
-\begin{figure*}[t] % Use * for double-column width
+
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Figure : Planner search 
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[t!]
     \centering
-    \includegraphics[width=\textwidth]{EA-Planner/figures/planner.pdf} % Adjust width as needed (Placeholder path)
-    \caption{Illustration of the entanglement-aware planning process. When the nominal path to the next waypoint \( \mathbf{p}_{\text{waypoint}}(k) \) would violate the tether length constraint (hypothetical path \( \mathbf{P}^{r_1} \)), the planner searches backward along the current tether configuration \( \mathbf{P}^{tether}(t) \). It identifies a suitable recovery path segment (e.g., from \( p_N(t) \) back to \( p_{i+2}(t) \)) that initiates a maneuver (\( \mathbf{P}^{r_2} \)) allowing the system to eventually reach \( \mathbf{p}_{\text{waypoint}}(k) \) while respecting \( L_{\text{max}} \).}
-    \label{fig:planner}
+    \includegraphics[width=\textwidth]{Phd_thesis/figures/planner.pdf}
+    \caption{Recovery path search process: 
+    (1) Following the path from node \( \mathbf{p}_3 \), denoted as \( \mathbf{P}_{r_3} \), causes the tether length \( L_{\text{tether}} \) to exceed the maximum allowed length \( L_{\text{max}} \); 
+    (2) a backward recovery search is initiated from node \( \mathbf{p}_2 \) along the tether trajectory \( \mathbf{P}_{tether}(t) \), but the resulting path yields no improvement in tether length; 
+    (3) continuing the search further back to node \( \mathbf{p}_1 \) leads to a feasible path and an updated, valid tether configuration; 
+    (4) the final planned safe path \( \mathbf{P}_{safe} \) (green) satisfies the tether constraint (\( L_{\text{tether}} \leq L_{\text{max}} \)), ensuring an entanglement-free configuration.}
+    \label{fig:planner_search}
 \end{figure*}
-
-
-
-%%%%
-%path planner
-%%%%
-\begin{algorithm}[t]
-\LinesNotNumbered  % Disable line numbers
-
-\SetKwInOut{Input}{Input}
-\SetKwInOut{Output}{Return}
-\Input{
-Waypoints $\mathbf{W}$, 
-Maximum tether length $L_{\max}$, 
-Current tether configuration $\mathbf{P}^{tether}(t)$, 
-Current ROV position $\mathbf{p}_{\text{rov}}(t)$, 
-Current waypoint index $k$
-}
-\Output{Target point for controller $\mathbf{p}_{\text{target}}$}
-\BlankLine
-
-Compute $L_{\text{tether}}(t)$ from $\mathbf{P}^{tether}(t)$\; \tcp{Measure current tether length}
-
-\If{$L_{\text{tether}}(t) > L_{\max}$ \textbf{and not} finding\_safe\_path}{
-    finding\_safe\_path $\gets$ True\; \tcp{Activate recovery mode}
-    $\mathbf{P}_{\text{recovery}} \gets \text{SearchAlternativePath}(\mathbf{P}^{tether}(t), \mathbf{W}[k], L_{\max})$\; \tcp{Find a path to waypoint within tether limits}
-    $\mathbf{P}_{\text{safe}} \gets \text{RefineRecoveryPath}(\mathbf{P}_{\text{recovery}})$\; \tcp{Optimize the recovery path}
-    path\_is\_safe $\gets \text{CheckPathValidity}(\mathbf{P}_{\text{safe}})$\; \tcp{Check if recovery path is valid}
-    safe\_path\_index $\gets 0$\; \tcp{Start from the beginning of the recovery path}
-}
-
-\If{finding\_safe\_path \textbf{and} path\_is\_safe}{
-    $\mathbf{p}_{\text{target}} \gets \text{GetPointAlongPath}(\mathbf{P}_{\text{safe}}, \text{safe\_path\_index})$\; \tcp{Get current target from recovery path}
-    \If{$\|\mathbf{p}_{\text{rov}}(t) - \mathbf{p}_{\text{target}}\| < \text{threshold}$}{
-        safe\_path\_index $\gets$ safe\_path\_index + 1\; \tcp{Advance to next point if target is reached}
-    }
-    \If{safe\_path\_index $\ge$ $|\mathbf{P}_{\text{safe}}|$}{
-        finding\_safe\_path $\gets$ False\; \tcp{Recovery complete}
-        $\mathbf{p}_{\text{target}} \gets \mathbf{W}[k]$\; \tcp{Resume original waypoint tracking}
-    }
-}
-\Else{
-    finding\_safe\_path $\gets$ False\; \tcp{Reset recovery if no valid path}
-    $\mathbf{p}_{\text{target}} \gets \mathbf{W}[k]$\; \tcp{Default to current waypoint}
-
-    \If{$\|\mathbf{p}_{\text{rov}}(t) - \mathbf{p}_{\text{target}}\| < \text{threshold}$}{
-         $k \gets k + 1$\; \tcp{Advance to next waypoint}
-    }
-}
-\Return{$\mathbf{p}_{\text{target}}$}\;
-\caption{Real-time Entanglement-Aware Path Planning}
-\label{alg:main_loop}
-\end{algorithm}
-
-
-
-
-\begin{algorithm}[H]
-\LinesNotNumbered  % Disable line numbers
-
-\LinesNotNumbered  % Disable line numbers
-
-
-
-
-
-\SetKwInOut{Input}{Input}
-\SetKwInOut{Output}{Return}
-\Input{
-Recovery path $\mathbf{P}_{\text{recovery}}$,
-Offset distance $\delta_{\text{offset}}$,
-Sampling distance $\delta_{\text{sample}}$
-}
-\Output{Refined safe path $\mathbf{P}_{\text{safe}}$}
-\BlankLine
-$\mathbf{P}_{\text{offset}} \gets \text{PopTetherCentroid}(\mathbf{P}_{\text{recovery}}, \delta_{\text{offset}})$\;
-$\mathbf{P}_{\text{sampled}} \gets \text{PopPathSample}(\mathbf{P}_{\text{offset}}, \delta_{\text{sample}})$\;
-$\mathbf{P}_{\text{safe}} \gets \text{SmoothPathWithPolynomial}(\mathbf{P}_{\text{sampled}})$\;
-\Return{$\mathbf{P}_{\text{safe}}$}\;
-\caption{Refine Recovery Path}
-\label{alg:refine_path}
-\end{algorithm}
+%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%

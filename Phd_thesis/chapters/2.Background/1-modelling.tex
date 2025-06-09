@@ -15,114 +15,94 @@
 
 
 
-\chapter{Background on Model Predictive Control for Marine Robots}
+\chapter{Background on Data-Driven Model Predictive Control for Marine Robots}
 \label{ch:background}
+
+This chapter establishes the foundation for MPC design and implementation. We begin with first-principles modeling of marine robots using the 6-DOF framework, examine data-driven approaches to address modeling limitations, and conclude with MPC fundamentals including trajectory optimization and Sequential Quadratic Programming solution methods.
+
 \section{Modelling Marine Robots}
 \label{sec:modelling}
-
-This section explains the common principles of modelling marine robotics, particularly underwater vehicles, using first principles. A well-formulated mathematical model is fundamental for simulation, control system design, and mission planning, enabling prediction of vehicle behavior under various conditions and control inputs. Such models are crucial for developing simulators, designing model-based controllers like MPC, and providing insights into system dynamics and limitations.
+Accurate dynamic models are fundamental to MPC performance. This section develops the 6-DOF mathematical framework for underwater vehicles using first principles, then examines data-driven approaches to address modeling limitations.
+This section introduces the common principles of modelling marine robotics, particularly underwater vehicles, using first principles. A motion model is crucial for developing simulators, designing model-based controllers such as MPC.
 
 \subsection{Frames of Reference}
-Underwater vehicle motion is typically described using two coordinate systems: an earth fixed(inertial) reference frame and a body-fixed reference frame attached to the vehicle.
+Underwater vehicle motion is typically described using two coordinate systems: an earth-fixed (inertial) reference frame and a body-fixed reference frame attached to the vehicle.
 
-The global reference frame, denoted $\mathcal{F}_E$, is fixed relative to the Earth. For marine applications, the North-East-Down (NED) coordinate system is commonly used. Its origin is often set at a convenient location (e.g., deployment point), with axes defined as:
-\begin{itemize}
-    \item $x$-axis pointing toward true North
-    \item $y$-axis pointing toward East
-    \item $z$-axis pointing downward, perpendicular to the Earth's surface
-\end{itemize}
+The global reference frame, denoted $\mathcal{F}_E$, is fixed relative to the Earth. For marine applications, the North-East-Down (NED) coordinate system is commonly used. Its origin is often set at a convenient location (e.g., deployment point), with axes defined as follows: the $x$-axis points toward true North, the $y$-axis points toward East, and the $z$-axis points downward, perpendicular to the Earth's surface.
 
-The body-fixed reference frame, denoted $\mathcal{F}_B$, moves with the vehicle. Its origin is usually placed at the vehicle's center of gravity (CG) or geometric center. Following the Society of Naval Architects and Marine Engineers (SNAME) convention, the axes are:
-\begin{itemize}
-    \item $x$-axis pointing forward along the longitudinal axis
-    \item $y$-axis pointing starboard (right)
-    \item $z$-axis pointing downward
-\end{itemize}
+The body-fixed reference frame, denoted $\mathcal{F}_B$, moves with the vehicle. Its origin is usually placed at the vehicle's center of gravity (see Fig.~\ref{fig:coordinate_frame_brov}). Following the Society of Naval Architects and Marine Engineers (SNAME) convention, the axes are defined such that the $x$-axis points forward along the longitudinal axis, the $y$-axis points starboard (right), and the $z$-axis points downward.
 
 \begin{figure}[h!] % Changed [b!] to [h!] for better placement flexibility, adjust as needed
     \centering
     \includegraphics[width=0.5\textwidth]{Phd_thesis/chapters/1.Introduction/figures/brov4.pdf} % Ensure path is correct
-    \caption{Coordinate frame of the ROV ($\mathcal{F}_B$) in relation to the world frame ($\mathcal{F}_G$).}
-    \label{fig:rov-coord-frame}
+    \caption{Coordinate frames of the BlueROV underwater vehicle: the body-fixed frame, $\mathcal{F}_B$, is attached to the vehicle’s center of gravity, and the earth-fixed frame, $\mathcal{F}_E$, is inertial. The thruster configuration is also shown: vertical thrusters in green, horizontal thrusters in blue.}
+    \label{fig:coordinate_frame_brov}
 \end{figure}
 
-The vehicle's state involves position, orientation, linear velocities, and angular velocities. The SNAME notation standardizes these terms:
+The vehicle's state involves position, orientation, linear velocities, and angular velocities. The position and orientation in the earth frame $\mathcal{F}_E$ are represented by the vector $\boldsymbol{\eta} = [x, y, z, \phi, \theta, \psi]^T$, where $\phi$, $\theta$, and $\psi$ are the Euler angles (roll, pitch, yaw). The linear and angular velocities in the body frame $\mathcal{F}_B$ are represented by the vector $\boldsymbol{\nu} = [u, v, w, p, q, r]^T$.
 
-% \begin{table}[h]
-%     \centering
-%     \begin{tabular}{|c|c|c|c|}
-%         \hline
-%         \textbf{DOF} & \textbf{Motion} & \textbf{Forces/Moments} & \textbf{Linear/Angular Velocities} \\
-%         \hline
-%         1 & Surge (longitudinal motion) & $X$ & $u$ \\
-%         2 & Sway (lateral motion) & $Y$ & $v$ \\
-%         3 & Heave (vertical motion) & $Z$ & $w$ \\
-%         4 & Roll (rotation about $x$-axis) & $K$ & $p$ \\
-%         5 & Pitch (rotation about $y$-axis) & $M$ & $q$ \\
-%         6 & Yaw (rotation about $z$-axis) & $N$ & $r$ \\
-%         \hline
-%     \end{tabular}
-%     \caption{SNAME notation for marine vehicles.}
-%     \label{tab:sname_notation}
-% \end{table}
-
-The position and orientation in the earth frame $\mathcal{F}_E$ are represented by the vector $\boldsymbol{\eta} = [x, y, z, \phi, \theta, \psi]^T$, where $\phi$, $\theta$, and $\psi$ are the Euler angles (roll, pitch, yaw). The linear and angular velocities in the body frame $\mathcal{F}_B$ are represented by the vector $\boldsymbol{\nu} = [u, v, w, p, q, r]^T$.
-
-\subsection{Newton-Euler Model}
+\subsection{Newton-Euler Equations of Motion}
 The dynamics of an underwater vehicle, treated as a rigid body moving in a fluid, can be derived using the Newton-Euler equations. These must account for hydrodynamic effects like added mass and damping, as well as gravitational and buoyancy forces.
 
 Fossen's vectorial formulation provides a standard framework:
-\begin{align} % Use align for multi-line equations with alignment
-    \dot{\boldsymbo{\eta}} &= \mat{J}(\boldsymbo{\eta})\boldsymbo{\nu} \label{eq:kinematics} \\
-    \mat{M}\dot{\boldsymbo{\nu}} + \mat{C}(\boldsymbo{\nu})\boldsymbo{\nu} + \mat{D}(\boldsymbo{\nu})\boldsymbo{\nu} + \mat{g}(\boldsymbo{\eta}) &= \boldsymbo{\tau} + \boldsymbo{\tau}_{env} \label{eq:dynamics}
+\begin{align}
+    \dot{\boldsymbol{\eta}} &= \mathbf{J}(\boldsymbol{\eta})\boldsymbol{\nu} \label{eq:kinematics} \\
+    \mathbf{M}\dot{\boldsymbol{\nu}} + \mathbf{C}(\boldsymbol{\nu})\boldsymbol{\nu} + \mathbf{D}(\boldsymbol{\nu})\boldsymbol{\nu} + \mathbf{g}(\boldsymbol{\eta}) &= \mathbf{u} + \boldsymbol{\Delta} \label{eq:dynamics}
 \end{align}
-Equation \eqref{eq:kinematics} describes the kinematics, relating body-fixed velocities $\boldsymbo{\nu}$ to the rates of change of position and orientation in the global frame $\dot{\boldsymbo{\eta}}$ via the transformation matrix $\mat{J}(\boldsymbo{\eta})$:
-\begin{equation}
-    \mat{J}(\boldsymbo{\eta}) =
-    \begin{bmatrix}
-        \mat{R}(\phi,\theta,\psi) & \mat{0}_{3\times3} \\
-        \mat{0}_{3\times3} & \mat{T}(\phi,\theta)
-    \end{bmatrix}
-\end{equation}
-where $\mat{R}(\phi,\theta,\psi)$ is the rotation matrix from $\mathcal{F}_B$ to $\mathcal{F}_G$ (using ZYX Euler angle convention):
-\begin{equation}
-    \mat{R}(\phi,\theta,\psi) = \mat{R}_z(\psi)\mat{R}_y(\theta)\mat{R}_x(\phi)
-\end{equation}
-and $\mat{T}(\phi,\theta)$ transforms body angular velocities to Euler angle rates:
-\begin{equation}
-    \mat{T}(\phi,\theta) =
-    \begin{bmatrix}
-        1 & \sin\phi\tan\theta & \cos\phi\tan\theta \\
-        0 & \cos\phi & -\sin\phi \\
-        0 & \sin\phi/\cos\theta & \cos\phi/\cos\theta
-    \end{bmatrix}
-\end{equation}
-Note that $\mat{T}(\phi,\theta)$ becomes singular when $\theta = \pm 90^\circ$.
 
-Equation \eqref{eq:dynamics} describes the dynamics. The matrix $\mat{M}$ is the system inertia matrix, including rigid-body mass $\mat{M}_{RB}$ and hydrodynamic added mass $\mat{M}_A$:
+Equation \eqref{eq:kinematics} describes the kinematics, relating the body-fixed velocity vector $\boldsymbol{\nu} = [u, v, w, p, q, r]^T$, where $[u, v, w]$ are linear velocities and $[p, q, r]$ are angular velocities, to the rate of change of position and orientation in the global frame $\dot{\boldsymbol{\eta}} = [\dot{x}, \dot{y}, \dot{z}, \dot{\phi}, \dot{\theta}, \dot{\psi}]^T$ through the transformation matrix $\mathbf{J}(\boldsymbol{\eta})$. The pose vector $\boldsymbol{\eta} = [x, y, z, \phi, \theta, \psi]^T$ consists of position coordinates $[x, y, z]$ and Euler angles (roll $\phi$, pitch $\theta$, yaw $\psi$). The vector $\mathbf{u} = [X, Y, Z, K, M, N]^T$ represents the control forces and moments generated by actuators (thrusters, fins, etc.). The vector $\boldsymbol{\Delta}$ represents external environmental disturbances (currents, waves).
+
+The transformation matrix $\mathbf{J}(\boldsymbol{\eta})$ is defined as
 \begin{equation}
-    \mat{M} = \mat{M}_{RB} + \mat{M}_A
-\end{equation}
-The rigid-body inertia matrix $\mat{M}_{RB}$ is given by:
-\begin{equation}
-    \mat{M}_{RB} =
+    \mathbf{J}(\boldsymbol{\eta}) =
     \begin{bmatrix}
-        m\mat{I}_{3\times3} & -m\mat{S}(\boldsymbo{r}_G) \\
-        m\mat{S}(\boldsymbo{r}_G) & \mat{I}_G
+        \mathbf{R}(\phi,\theta,\psi) & \mathbf{0}_{3\times3} \\
+        \mathbf{0}_{3\times3} & \mathbf{T}(\phi,\theta)
     \end{bmatrix}
 \end{equation}
-where $m$ is the mass, $\mat{I}_{3\times3}$ is the $3 \times 3$ identity matrix, $\boldsymbo{r}_G = [x_G, y_G, z_G]^T$ is the position of the CG in $\mathcal{F}_B$, $\mat{I}_G$ is the inertia tensor about the CG, and $\mat{S}(\boldsymbo{r}_G)$ is the skew-symmetric matrix:
+where $\mathbf{R}(\phi,\theta,\psi)$ is the rotation matrix from the body-fixed frame $\mathcal{F}_B$ to the global frame $\mathcal{F}_G$ using the ZYX Euler angle convention:
 \begin{equation}
-    \mat{S}(\boldsymbo{r}_G) =
+    \mathbf{R}(\phi,\theta,\psi) = \mathbf{R}_z(\psi)\mathbf{R}_y(\theta)\mathbf{R}_x(\phi)
+\end{equation}
+and $\mathbf{T}(\phi,\theta)$ is the transformation matrix that maps body angular velocities to Euler angle rates:
+\begin{equation}
+    \mathbf{T}(\phi,\theta) =
+    \begin{bmatrix}
+        1 & \sin\phi \tan\theta & \cos\phi \tan\theta \\
+        0 & \cos\phi & -\sin\phi \\
+        0 & \sin\phi / \cos\theta & \cos\phi / \cos\theta
+    \end{bmatrix}
+\end{equation}
+%Note that $\mathbf{T}(\phi,\theta)$ becomes singular when the pitch angle $\theta$ approaches $\pm 90^\circ$.
+
+Equation \eqref{eq:dynamics} represents the dynamics of the vehicle. The system inertia matrix $\mathbf{M}$ is composed of the rigid-body inertia matrix $\mathbf{M}_{RB}$ and the hydrodynamic added mass matrix $\mathbf{M}_A$:
+\begin{equation}
+    \mathbf{M} = \mathbf{M}_{RB} + \mathbf{M}_A.
+\end{equation}
+The rigid-body inertia matrix $\mathbf{M}_{RB}$ is expressed as
+\begin{equation}
+    \mathbf{M}_{RB} =
+    \begin{bmatrix}
+        m \mathbf{I}_{3\times3} & -m \mathbf{S}(\boldsymbol{r}_G) \\
+        m \mathbf{S}(\boldsymbol{r}_G) & \mathbf{I}_G
+    \end{bmatrix}
+\end{equation}
+where $m$ is the vehicle mass, $\mathbf{I}_{3\times3}$ is the $3 \times 3$ identity matrix, $\boldsymbol{r}_G = [x_G, y_G, z_G]^T$ is the position vector of the center of gravity (CG) relative to the body-fixed frame, and $\mathbf{I}_G$ is the inertia tensor about the CG. The matrix $\mathbf{S}(\boldsymbol{r}_G)$ is the skew-symmetric matrix associated with $\boldsymbol{r}_G$, given by
+\begin{equation}
+    \mathbf{S}(\boldsymbol{r}_G) =
     \begin{bmatrix}
         0 & -z_G & y_G \\
         z_G & 0 & -x_G \\
         -y_G & x_G & 0
-    \end{bmatrix}
+    \end{bmatrix}.
 \end{equation}
-The added mass matrix $\mat{M}_A$ accounts for the inertia of the surrounding fluid accelerated by the vehicle's motion. It is typically represented using hydrodynamic derivatives:
+
+
+The Coriolis-centripetal matrix $\mathbf{C}(\boldsymbol{\nu})$ represents the Coriolis and centripetal forces arising from vehicle motion, while the damping matrix $\mathbf{D}(\boldsymbol{\nu})$ models hydrodynamic drag forces. The restoring forces and moments due to gravity and buoyancy are encapsulated in the vector $\mathbf{g}(\boldsymbol{\eta})$. 
+ 
+The added mass matrix $\mathbf{M}_A$ accounts for the inertia contribution of the fluid accelerated by the vehicle motion. It is typically represented using hydrodynamic derivatives:
 \begin{equation}
-    \mat{M}_{A} = -
+    \mathbf{M}_{A} = -
     \begin{bmatrix}
         X_{\dot{u}} & X_{\dot{v}} & X_{\dot{w}} & X_{\dot{p}} & X_{\dot{q}} & X_{\dot{r}} \\
         Y_{\dot{u}} & Y_{\dot{v}} & Y_{\dot{w}} & Y_{\dot{p}} & Y_{\dot{q}} & Y_{\dot{r}} \\
@@ -134,28 +114,31 @@ The added mass matrix $\mat{M}_A$ accounts for the inertia of the surrounding fl
 \end{equation}
 where $X_{\dot{u}}$ is the added mass force in $x$-direction due to surge acceleration $\dot{u}$, etc.
 
-The matrix $\mat{C}(\boldsymbo{\nu})$ represents Coriolis and centripetal forces, including rigid-body $\mat{C}_{RB}(\boldsymbo{\nu})$ and added mass $\mat{C}_A(\boldsymbo{\nu})$ terms:
+The matrix $\mathbf{C}(\boldsymbol{\nu})$ represents Coriolis and centripetal forces, including rigid-body $\mathbf{C}_{RB}(\boldsymbol{\nu})$ and added mass $\mathbf{C}_A(\boldsymbol{\nu})$ terms:
 \begin{equation}
-    \mat{C}(\boldsymbo{\nu}) = \mat{C}_{RB}(\boldsymbo{\nu}) + \mat{C}_A(\boldsymbo{\nu})
+    \mathbf{C}(\boldsymbol{\nu}) = \mathbf{C}_{RB}(\boldsymbol{\nu}) + \mathbf{C}_A(\boldsymbol{\nu})
 \end{equation}
 These terms arise from the rotation of the body frame and the interaction of the vehicle with the fluid.
 
-The damping matrix $\mat{D}(\boldsymbo{\nu})$ represents hydrodynamic drag forces and moments opposing motion. It is often decomposed into linear $\mat{D}_{lin}$ and nonlinear (quadratic) $\mat{D}_{nonlin}(\boldsymbo{\nu})$ components:
+The damping matrix $\mathbf{D}(\boldsymbol{\nu})$ represents hydrodynamic drag forces and moments opposing motion. It is often decomposed into linear $\mathbf{D}_{lin}$ and nonlinear (quadratic) $\mathbf{D}_{nonlin}(\boldsymbol{\nu})$ components:
 \begin{equation}
-    \mat{D}(\boldsymbo{\nu}) = \mat{D}_{lin} + \mat{D}_{nonlin}(\boldsymbo{\nu})
+    \mathbf{D}(\boldsymbol{\nu}) = \mathbf{D}_{lin} + \mathbf{D}_{nonlin}(\boldsymbol{\nu})
 \end{equation}
 Linear damping is often approximated as diagonal:
 \begin{equation}
-    \mat{D}_{lin} = -\text{diag}(X_u, Y_v, Z_w, K_p, M_q, N_r)
+    \mathbf{D}_{lin} = -\text{diag}(X_u, Y_v, Z_w, K_p, M_q, N_r)
 \end{equation}
-Nonlinear damping, mainly due to quadratic drag, is often modeled as:
+Nonlinear damping, modeled as a quadratic function of the velocity, is expressed as:
+
+
+
 \begin{equation}
-    \mat{D}_{nonlin}(\boldsymbo{\nu}) = -\text{diag}(X_{u|u|}|u|, Y_{v|v|}|v|, Z_{w|w|}|w|, K_{p|p|}|p|, M_{q|q|}|q|, N_{r|r|}|r|)
+    \mathbf{D}_{nonlin}(\boldsymbol{\nu}) = -\text{diag}(X_{u|u|}|u|, Y_{v|v|}|v|, Z_{w|w|}|w|, K_{p|p|}|p|, M_{q|q|}|q|, N_{r|r|}|r|)
 \end{equation}
 
-The vector $\mat{g}(\boldsymbo{\eta})$ represents restoring forces and moments due to gravity (weight $W=mg$) and buoyancy ($B$). If the CG and center of buoyancy (CB) at $\boldsymbo{r}_B = [x_B, y_B, z_B]^T$ do not coincide, these forces create moments:
+The vector $\mathbf{g}(\boldsymbol{\eta})$ represents restoring forces and moments due to gravity (weight $W=mg$) and buoyancy ($B$). If the CG and center of buoyancy (CB) at $\boldsymbol{r}_B = [x_B, y_B, z_B]^T$ do not coincide, these forces create moments:
 \begin{equation}
-    \mat{g}(\boldsymbo{\eta}) =
+    \mathbf{g}(\boldsymbol{\eta}) =
     \begin{bmatrix}
         (W-B)\sin\theta \\
         -(W-B)\cos\theta\sin\phi \\
@@ -166,37 +149,82 @@ The vector $\mat{g}(\boldsymbo{\eta})$ represents restoring forces and moments d
     \end{bmatrix}
 \end{equation}
 
-The vector $\boldsymbo{\tau} = [X, Y, Z, K, M, N]^T$ represents the control forces and moments generated by actuators (thrusters, fins, etc.). The vector $\boldsymbo{\tau}_{env}$ represents external environmental disturbances (currents, waves).
 
-\subsection{Model Implementation Considerations}
-Implementing this 6-DOF model requires several steps:
-\begin{itemize}
-    \item \textbf{Parameter Estimation:} Hydrodynamic coefficients ($\mat{M}_A$, $\mat{D}(\boldsymbo{\nu})$ terms) must be determined via CFD, experiments (e.g., towing tank tests, system identification), or analytical/empirical formulas.
-    \item \textbf{Model Simplification:} Based on vehicle symmetry (e.g., port-starboard symmetry simplifies matrices) or specific operational scenarios (e.g., planar motion neglecting roll, pitch, heave), the model can be reduced in complexity.
-    \item \textbf{Actuation Model:} The control input vector $\boldsymbo{\tau}$ results from individual actuator outputs. For a vehicle with $n$ thrusters, where the $i$-th thruster produces thrust $T_i$, the total wrench is often modeled linearly:
-    \begin{equation}
-        \boldsymbo{\tau} = \mat{B} \boldsymbo{T}
-    \end{equation}
-    Here, $\boldsymbo{T} = [T_1, T_2, ..., T_n]^T$ is the vector of individual thruster commands, and $\mat{B}$ is the $6 \times n$ thrust configuration matrix (or allocation matrix). Each column $i$ of $\mat{B}$ maps the thrust $T_i$ to forces and moments in $\mathcal{F}_B$ based on the thruster's position $\boldsymbo{r}_i$ and orientation (unit thrust direction vector $\boldsymbo{d}_i$) in the body frame:
-    \begin{equation}
-        \mat{B}_i = \begin{bmatrix} \boldsymbo{d}_i \\ \boldsymbo{r}_i \times \boldsymbo{d}_i \end{bmatrix}
-    \end{equation}
-    Actuator dynamics (response times, saturation limits) should also be considered for realistic simulation and control design.
-\end{itemize}
 
-\subsection{Model Limitations and Extensions}
-The presented model relies on several assumptions and has limitations:
-\begin{itemize}
-    \item Hydrodynamic coefficients are often assumed constant or only velocity-dependent, but can vary with acceleration, Reynolds number, frequency of motion, proximity to boundaries, etc.
-    \item Fluid memory effects (history of motion) are typically neglected.
-    \item Environmental disturbances need explicit modeling. Ocean currents are often included by using the relative velocity $\boldsymbo{\nu}_r = \boldsymbo{\nu} - \boldsymbo{\nu}_c$ (where $\boldsymbo{\nu}_c$ is the current velocity in $\mathcal{F}_B$) in the hydrodynamic force calculations ($\mat{C}$, $\mat{D}$ terms). Wave effects require more complex modeling (e.g., wave spectra, response amplitude operators).
-    \item For tethered vehicles (ROVs), tether dynamics add significant forces and moments, requiring dedicated modeling.
-    \item Effects like vortex shedding, fluid-structure interaction, or varying water density might be important in specific scenarios but are not included in the standard model.
-\end{itemize}
-Despite these limitations, Fossen's model provides a robust and widely used foundation for the simulation and control of underwater vehicles, balancing physical fidelity with mathematical tractability.
+Combining the kinematic and dynamic equations \eqref{eq:kinematics} and \eqref{eq:dynamics}, the nonlinear state-space model of the underwater vehicle can be expressed compactly as
+\begin{equation}
+    \dot{\boldsymbol{x}} = f(\boldsymbol{x}, \mathbf{u}) = 
+    \begin{bmatrix}
+        \dot{\boldsymbol{\eta}} \\
+        \dot{\boldsymbol{\nu}}
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        \mathbf{J}(\boldsymbol{\eta}) \boldsymbol{\nu} \\
+        \mathbf{M}^{-1} \big( \mathbf{u} + \boldsymbol{\Delta} - \mathbf{C}(\boldsymbol{\nu}) \boldsymbol{\nu} - \mathbf{D}(\boldsymbol{\nu}) \boldsymbol{\nu} - \mathbf{g}(\boldsymbol{\eta}) \big)
+    \end{bmatrix}.
+\end{equation}
+Here, the state vector is defined as \(\boldsymbol{x} = [\boldsymbol{\eta}^T, \boldsymbol{\nu}^T]^T\).
 
-% \end{tikzpicture}
-% % --- END: TikZ picture code ---
-% % --- END: TikZ picture code ---
+
+
+The control wrench \(\mathbf{u}\) is generated by the individual thruster outputs. For a vehicle equipped with \(n\) thrusters, where the \(i\)-th thruster produces thrust \(T_i\), the total wrench is modeled as
+\begin{equation}
+    \mathbf{u} = \mathbf{B} \boldsymbol{T},
+\end{equation}
+where \(\boldsymbol{T} = [T_1, T_2, \ldots, T_n]^T\) is the vector of thruster commands, and \(\mathbf{B}\) is the \(6 \times n\) thrust allocation matrix. Each column \(\mathbf{B}_i\) maps the thrust \(T_i\) to forces and moments in the body frame \(\mathcal{F}_B\), based on the thruster’s position \(\boldsymbol{r}_i\) and unit thrust direction vector \(\boldsymbol{d}_i\):
+\begin{equation}
+    \mathbf{B}_i = \begin{bmatrix} \boldsymbol{d}_i \\ \boldsymbol{r}_i \times \boldsymbol{d}_i \end{bmatrix}.
+\end{equation}
+
+%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+% DATA-DRIVEN 
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+
+\subsection{Data-Driven Modeling of Underwater Vehicle Dynamics}
+%\subsection{Model Limitations and model learning}
+Given these inherent modeling limitations, there is a growing interest in leveraging data-driven techniques to enhance the fidelity of underwater vehicle dynamics. While physics-based models like Fossen’s provide a solid foundation, they often fail to capture complex or unmodeled phenomena such as unsteady hydrodynamics, fluid-structure interactions, or environmental disturbances with sufficient accuracy. To address these gaps, learning-based approaches have emerged as powerful tools that can either replace or augment traditional models. These methods generally fall into two main categories: \textit{full model learning}, where the entire system dynamics are inferred directly from data, and \textit{residual dynamics learning}, where a correction term is learned to compensate for inaccuracies in an existing physics-based model. Both strategies offer complementary pathways for improving model accuracy and generalization in real-world, uncertain, and dynamic underwater environments.
+
+
+
+\subsubsection{Full Parametric Model Learning}
+
+In the full parametric model learning approach, the entire dynamic behavior of the vehicle is learned directly from data. This method assumes that the governing dynamics are either unknown or too complex to model accurately from first principles. The objective is to identify a parameterized function $\hat{f}(\boldsymbol{x}, \mathbf{u}; \boldsymbol{\theta})$ that approximates the true system dynamics:
+
+\begin{equation}
+    \dot{\boldsymbol{x}} = \hat{f}(\boldsymbol{x}, \mathbf{u}; \boldsymbol{\theta})
+\end{equation}
+
+Here, $\boldsymbol{\theta}$ represents the vector of model parameters that are learned from data. The learning process begins by collecting a dataset of time-series measurements, where the corresponding time derivatives $\dot{\boldsymbol{x}}_i$ are typically estimated using numerical differentiation. This results in a dataset of input-output pairs:
+\[
+\mathcal{D} = \left\{ \big((\boldsymbol{x}_i, \mathbf{u}_i),\ \dot{\boldsymbol{x}}_i \big) \right\}_{i=1}^N,
+\]
+
+
+
+The goal is to find the optimal parameters $\boldsymbol{\theta}^*$ that minimize the discrepancy between the model's predictions and the observed data. This can be formulated as a least-squares regression problem:
+
+\begin{equation}
+    \boldsymbol{\theta}^* = \arg \min_{\boldsymbol{\theta}} \sum_{i=1}^N \left\| \dot{\boldsymbol{x}}_i - \hat{f}(\boldsymbol{x}_i, \mathbf{u}_i; \boldsymbol{\theta}) \right\|^2
+\end{equation}
+
+Various function approximators can be used for $\hat{f}$~\cite{brunton2025machine}. Neural networks offer great flexibility in capturing complex nonlinearities but often require large datasets and lack interpretability. For more interpretable models, the Sparse Identification of Nonlinear Dynamics (SINDy) method identifies a sparse set of governing equations from a library of candidate functions. Another approach is Gaussian process regression, a non-parametric method that provides uncertainty quantification. Its hyperparameters are typically optimized by maximizing the marginal log-likelihood~\cite{rasmussen_gaussian_2008}.
+
+\subsubsection{Residual Dynamics Learning}
+While full model learning captures the entire system behavior from data, an alternative is to retain the nominal physics-based model and learn only the discrepancy. This leads to the residual dynamics learning approach. To train the correction model, the same time-series dataset used for full model learning—comprising state, velocity, acceleration, and control inputs—is utilized. Rather than learning the complete dynamics, the residual approach leverages the nominal model to estimate the predicted acceleration and isolates the discrepancy as a residual term. This residual force and moment vector is computed by rearranging the nominal dynamics equation~\eqref{eq:dynamics}:
+
+\begin{equation}
+    \boldsymbol{\Delta }= \mathbf{M} \dot{\boldsymbol{\nu}} + \mathbf{C}(\boldsymbol{\nu}) \boldsymbol{\nu} + \mathbf{D}(\boldsymbol{\nu}) \boldsymbol{\nu} + \mathbf{g}(\boldsymbol{\eta}) - \mathbf{u}.
+\end{equation}
+
+The resulting residual $\boldsymbol{\Delta}$ is used as the training target for a model that maps the measured state and input pair $(\boldsymbol{x}, \mathbf{u})$ to the residual $\hat{\boldsymbol{\Delta}}$, thereby capturing unmodeled dynamics such as unsteady hydrodynamic effects, actuator nonlinearities, or external disturbances.
+
+
+
+The choice between full model learning and residual learning depends on the fidelity of the existing model, availability of domain knowledge, and the nature and volume of data. Full model learning provides maximum flexibility and is well-suited to data-rich scenarios with poorly understood dynamics. Residual learning, in contrast, leverages existing knowledge to guide the learning process and generally requires less data to achieve comparable accuracy. Both approaches can be integrated with MPC, enabling robust and high-performance operation in uncertain and dynamic underwater environments.
+
+
 
 

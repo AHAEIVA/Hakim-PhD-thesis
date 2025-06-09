@@ -48,20 +48,20 @@ The quantitative performance metrics for both planners are summarized in Table~\
 
 \begin{table}[ht]
     \centering
+   % \footnotesize
     \caption{Performance Metrics Comparison}
     \label{tab:performance_metrics}
-    \resizebox{\columnwidth}{!}{%
     \begin{tabular}{|l|c|c|c|}
         \hline
-        \textbf{Planner} & \textbf{Total Time (s)} & \textbf{Tether Exceeded (s)} & \textbf{Final Coverage (\%)} \\
+        \textbf{Planner} & \textbf{Total Time (s)}  & \textbf{Final Coverage (\%)} \\
         \hline
-        \ac{REACT} & 546.00 & 93.12 & 99.91 \\
-        CPP  & 429.00 & 96.58 & 99.82 \\
+        \ac{REACT} & 546.00  & 99.91 \\
+        CPP  & 429.00  & 99.82 \\
         \hline
-    \end{tabular}%
-    }
+    \end{tabular}
     \vspace{0.5em}
 \end{table}
+
 
 
 Figures~\ref{fig:coverage_vs_time} and~\ref{fig:tether_vs_time} visualize the performance of the planners in terms of environmental coverage and tether length, respectively.

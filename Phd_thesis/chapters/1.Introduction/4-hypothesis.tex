@@ -23,7 +23,7 @@ Building on the challenges identified in applying \ac{MPC} to marine robotic ins
         }
     ]
 \node[hypothesisbox] {
-Enhanced with \textbf{data-driven modeling}, \textbf{perception-aware trajectory optimization}, and \textbf{tether-aware planning frameworks}, \ac{MPC} enables autonomous marine robots to achieve improved trajectory tracking and inspection coverage while mitigating entanglement risks—outperforming conventional geometric planning and standard \ac{MPC} approaches.
+Enhanced with \textbf{entaglement-aware planning}, \textbf{perception-aware control} and \textbf{data-driven modeling} \ac{MPC} enables autonomous marine robots to achieve improved trajectory tracking and inspection coverage while mitigating entanglement risks, outperforming conventional geometric planning and \ac{MPC} approaches.
 };
     \end{tikzpicture}
     
@@ -34,11 +34,11 @@ Enhanced with \textbf{data-driven modeling}, \textbf{perception-aware trajectory
 This hypothesis proposes that three synergistic advancements to \ac{MPC} will fundamentally improve underwater inspection systems. The proposed enhancements specifically target persistent challenges in marine robotics through:
 
 \begin{itemize}
-    \item \textbf{Entanglement-Aware Planning:} Incorporating entanglement-aware constraints into the planning process to enhance mission safety and operational reliability.
+    \item \textbf{Entanglement-aware planning:} Incorporating entanglement-aware constraints into the planning process to enhance mission safety and operational reliability.
     
-      \item \textbf{Perception-Aware Control:} Embedding visual inspection objectives directly into the trajectory optimization process to maximize coverage quality and ensure robustness to environmental disturbances.
+      \item \textbf{Perception-aware control:} Embedding visual inspection objectives directly into the trajectory optimization process to maximize coverage quality and ensure robustness to environmental disturbances.
     
-    \item \textbf{Data-Driven Modeling:} Leveraging learning-based approaches to capture complex and uncertain hydrodynamic effects that degrade the performance of conventional \ac{MPC} in real-world conditions.
+    \item \textbf{Data-driven modeling:} Leveraging learning-based approaches to capture complex and uncertain hydrodynamic effects that degrade the performance of conventional \ac{MPC} in real-world conditions.
     
 
 \end{itemize}
@@ -55,7 +55,7 @@ Establish a synthetic testing environment bridging simulation-to-reality gaps
 
 
 \item \textbf{Design Entanglement-Aware Coverage Framework:}  
-Develop real-time path planning with explicit entanglement prevention constraints
+Develop real-time path planning for tethered robots that accounts for entanglement risks imposed by the tether. 
 
 \item \textbf{Formulate a Perception-Aware \ac{MPC} Framework:}  
 Integrate visual inspection quality metrics directly into MPC cost functions

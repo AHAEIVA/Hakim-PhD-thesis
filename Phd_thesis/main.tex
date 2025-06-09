@@ -49,7 +49,7 @@ openright  % to maintain the page order if the cover is a custom pdf page
 
 \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
-\usepackage{algorithmic}
+%\usepackage{algorithmic}
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{xcolor}
@@ -87,29 +87,91 @@ openright  % to maintain the page order if the cover is a custom pdf page
 
 
 
+\hyphenation{op-tical net-works semi-conduc-tor}
+\usepackage{blindtext}
+\usepackage{tikz}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{subcaption}  % Add this in the preamble if not already included
 
 \usepackage[ruled,vlined,linesnumbered]{algorithm2e}
-\usepackage{epigraph}
-\usepackage{tabularx}
-\usepackage{tikz}
-\usepackage{tikz-3dplot}
-\usepackage{amsmath}
-\usepackage{pdfpages}
-\usepackage{amsmath, amssymb}
-\usepackage{algorithm}
-\usepackage{algpseudocode}
-\usepackage{amsmath}  %
-\usepackage{algorithm}
-\usepackage{algorithmicx}
-\usepackage{amssymb}
-\usepackage{xcolor}
-\usepackage[most]{tcolorbox} % add this in your preamble if not already there
-\usepackage{arabtex}
-\usepackage{utf8}
-\usepackage{algorithm}
-\usepackage{algpseudocode}
-\usepackage{mathtools}
+\usetikzlibrary{positioning}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{arrows.meta}
+\usepackage{subfig}
+\usepackage[nolist]{acronym}
+\usepackage[table, dvipsnames]{xcolor}
+\usepackage[pdftex]{graphicx} % graphics package
+
+%ea
+%%%%%%
+% \usepackage{graphicx}
+% \usepackage[colorinlistoftodos]{todonotes}
+% %\usepackage[lofdepth,lotdepth,caption=false]{subfig} % subplot package
+% \usepackage{graphicx}
+% \usepackage{caption}
+% \usepackage{algorithm}
+% \usepackage{algpseudocode}
+% \captionsetup{compatibility=false}
+% \usepackage{subcaption}
+% \usepackage{tikz}
+% \usetikzlibrary{shapes.geometric, arrows}
+% \usepackage{array} % for defining custom column types
+% \usepackage{amssymb} %we added the package to the document
+% \usepackage{algorithm}
+% \usepackage{algpseudocode}
+% \usepackage{amsmath}  %
+
+% \usepackage{algorithm}
+% \usepackage{algorithmicx}
+% \usepackage{algpseudocode}
+% \usepackage{amsmath}
+
+
+% \usepackage{epigraph}
+% \usepackage{tabularx}
+% \usepackage{tikz}
+% \usepackage{tikz-3dplot}
+% \usepackage{amsmath}
+% \usepackage{pdfpages}
+% \usepackage{amsmath, amssymb}
+% %\usepackage{algorithm}
+% %\usepackage{algpseudocode}
+% \usepackage{amsmath}  %
+% %\usepackage{algorithm}
+% %\usepackage{algorithmicx}
+% \usepackage{amssymb}
+% \usepackage{xcolor}
+% \usepackage[most]{tcolorbox} % add this in your preamble if not already there
+% %\usepackage{arabtex}
+% %\usepackage{utf8}
+% %\usepackage{algorithm}
+% %\usepackage{algpseudocode}
+% \usepackage{mathtools}
+% \usepackage{optidef} % For optimization problems
+
+
+
+%%new 
+
+
+
+%new
 \usepackage{optidef} % For optimization problems
+
+\usepackage[ruled,vlined]{algorithm2e} % Use 'ruled' for lines around the algorithm, 'vlined' for vertical lines, 'noline' to remove all lines
+\usepackage{amsmath} % Recommended for mathematical notations like \mathbf, \mathcal
+
+%%%%%
+%ea
+
+
+
+
+
+
+
+
 \input{template/template} % Include the structure.tex file which specifies most of the document structure and layout
 \input{formal/acronyms}
 
@@ -507,6 +569,12 @@ Finlandsgade 22 \\
 %\addcontentsline{toc}{chapter}{Paper I: UNav-Sim – A High-Fidelity Underwater Robotics Simulator}
 \vspace{1cm}
 This paper was published at the \textbf{International Conference on Advanced Robotics (ICAR), 2023}.
+
+ \section{Abstract}
+Underwater robotic surveys can be costly due to the complex working environment and the need for various sensor modalities. While underwater simulators are essential, many existing simulators lack sufficient rendering quality, restricting their ability to transfer algorithms from simulation to real-world applications. To address this limitation, we introduce UNav-Sim, which, to the best of our knowledge, is the first simulator to incorporate the efficient, high-detail rendering of Unreal Engine 5 (UE5). UNav-Sim is open-source\footnote{\url{https://github.com/open-airlab/UNav-Sim}} and includes an autonomous vision-based navigation stack. By supporting standard robotics tools like ROS, UNav-Sim enables researchers to develop and test algorithms for underwater environments efficiently.
+
+\newpage 
+
  \input{Phd_thesis/chapters/3.Papers/1.paper1_unavsim/ICAR_2023_Hakim_1/paper1_unavsim}
 
 
@@ -515,7 +583,14 @@ This paper was published at the \textbf{International Conference on Advanced Rob
 Path Planning for Tethered Underwater Vehicles}
 %\addcontentsline{toc}{chapter}{Paper II: REACT: Real-time Entanglement-Aware Coverage Path Planning for Tethered Underwater Vehicles}
 \vspace{1cm}
+
 This paper was submitted to the \textbf{Transactions on Field Robotics}.
+
+ \section{Abstract}
+ Inspection of complex underwater structures with tethered underwater vehicles is often hindered by the risk of tether entanglement. We propose REACT (real-time entanglement-aware coverage path planning for tethered underwater vehicles), a framework designed to overcome this
+limitation. REACT comprises a fast geometry-based tether model using the signed distance field (SDF) map for accurate, real-time simulation of taut tether configurations around arbitrary structures. This model enables an efficient online replanning strategy, enforcing a maximum tether length constraint, thereby actively preventing entanglement. By integrating REACT into a coverage path planning framework, we achieve safe and optimal inspection paths, previously challenging due to tether constraints. What is more, the underlying model predictive controller (MPC) renders optimal trajectory following while accounting for system dynamics. The complete REACT framework’s efficacy is validated in a pipe inspection scenario, demonstrating safe, entanglement-free navigation and full-coverage inspection.
+
+ \newpage
  \input{Phd_thesis/chapters/3.Papers/5.paper5_eaplanner/EA-Planner/paper_eaplanner}
 
 
@@ -525,6 +600,9 @@ Autonomous Wind Turbine Inspection}
 %\addcontentsline{toc}{chapter}{Paper III: Visual Tracking Nonlinear Model Predictive Control Method for Autonomous Wind Turbine Inspection}
 \vspace{1cm}
 This paper was published at the \textbf{International Conference on Advanced Robotics (ICAR), 2023}.
+\section{Abstract}
+Automated visual inspection of on-and offshore wind turbines using aerial robots provides several benefits, namely, a safe working environment by circumventing the need for workers to be suspended high above the ground, reduced inspection time, preventive maintenance, and access to hard-to-reach areas. A novel nonlinear model predictive control (NMPC) framework alongside a global wind turbine path planner is proposed to achieve distance-optimal coverage for wind turbine inspection. Unlike traditional MPC formulations, visual tracking NMPC (VT-NMPC) is designed to track an inspection surface, instead of a position and heading trajectory, thereby circumventing the need to provide an accurate predefined trajectory for the drone. An additional capability of the proposed VT-NMPC method is that by incorporating inspection requirements as visual tracking costs to minimize, it naturally achieves the inspection task successfully while respecting the physical constraints of the drone. Multiple simulation runs and real-world tests demonstrate the efficiency and efficacy of the proposed automated inspection framework, which outperforms the traditional MPC designs, by providing full coverage of the target wind turbine blades as well as its robustness to changing wind conditions. The implementation codes\footnote{\url{https://www.github.com/open-airlab/VTNMPC-Autonomous-Wind-Turbine-Inspection}} are open-sourced.
+\newpage
 
 \input{Phd_thesis/chapters/3.Papers/2.paper2_vtnmpc/ICAR_2023_Hakim_2/Autonomous_Robots/IROS/paper2_vtnmpc}
 %\includepdf[pages=-,pagecommand={},width=\textwidth]{chapters/3.Papers/2.paper2_vtnmpc/ICAR_2023_Hakim_2/Autonomous_Robots/IROS/ICAR_2023_Hakim_2.pdf}
@@ -537,6 +615,10 @@ Physics-Informed Neural Networks with Control}
 \vspace{1cm}
 This paper was published at the \textbf{International Joint Conference on Neural Networks (IJCNN), 2025}.
 
+\section{Abstract}
+Physics-informed neural networks~(PINNs) integrate physical laws with data-driven models to improve generalization and sample efficiency. This work introduces an open-source implementation of the Physics-Informed Neural Network with Control (PINC) framework, designed to model the dynamics of an underwater vehicle. Using initial states, control actions, and time inputs, PINC extends PINNs to enable physically consistent transitions beyond the training domain. Various PINC configurations are tested, including differing loss functions, gradient-weighting schemes, and hyperparameters. Validation on a simulated underwater vehicle demonstrates more accurate long-horizon predictions compared to a non-physics-informed baseline. 
+\newpage
+
 \input{Phd_thesis/chapters/3.Papers/3.paper3_pinc/IJCNN_2025/paper_pinc}
 
 
@@ -545,6 +627,10 @@ This paper was published at the \textbf{International Joint Conference on Neural
 %\addcontentsline{toc}{chapter}{Paper V: Empowering Autonomous Underwater Vehicles Using Learning-Based Model Predictive Control With Dynamic Forgetting Gaussian Processes}
 \vspace{1cm}
 This paper was published at the \textbf{IEEE Transactions on Control Systems Technology (TCST)}.
+
+\section{Abstract}
+Autonomous underwater vehicles (AUVs) present several challenges due to the complex and simultaneous interplay of various factors, including but not limited to unmodeled dynamics, highly nonlinear behaviour, inter-couplings, communication delays, and environmental disturbances. In particular, environmental disturbances degrade trajectory tracking performance for model-based controllers, e.g., model predictive control (MPC) algorithms. Data-driven methods such as Gaussian process (GP) are effective at learning disturbances in real-time, however, the underlying offline hyperparameter tuning process limits their overall effectiveness. To overcome this limitation, we propose a novel dynamic forgetting Gaussian process (DF-GP) methodology that compensates for operational disturbances, thus circumventing the need for hyperparameter retuning. In essence, the proposed method optimally combines the predictions of individual GPs -- designed with handcrafted forgetting factors --, rendering precise disturbance estimation of varying timescales. What is more, the predicted disturbances update the model parameters in MPC, facilitating a learning-based control framework that ensures accurate tracking performance in different underwater scenarios. Rigorous simulation and real-world experiments demonstrate the efficiency and efficacy of the proposed framework. The results show a 25\% improvement in disturbance estimation and tracking performance, demonstrating that the proposed framework outperforms its direct competitors.
+\newpage
 
 \input{Phd_thesis/chapters/3.Papers/4.paper4_dfgp/Cont_Syst_Tech_Hakim/TCST/paper4_dfgp}
 

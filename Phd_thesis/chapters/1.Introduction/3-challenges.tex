@@ -3,15 +3,17 @@
 
 While \ac{MPC} improves autonomous capabilities, there are fundamental challenges that could hinder \ac{MPC}'s performance and deployment in marine environments, which include:
 
-\textbf{1. Simulation-Reality Discrepancy:} Existing underwater simulators lack both \textit{visual realism} (critical for perception algorithms) and \textit{physical fidelity} in modeling hydrodynamic interactions, making pre-deployment controller validation unreliable. This gap forces costly trial-and-error field testing.
+\textbf{1. Simulation-Reality Discrepancy:} Existing underwater simulators lack both visual realism (critical for perception algorithms) and accurate physics in modeling hydrodynamic forces, making pre-deployment controller validation unreliable. This gap forces trial-and-error field testing, which is costly.
 
-\textbf{2. Environmental Uncertainty:} Marine disturbances—waves, currents, —exhibit multi-scale spatiotemporal variations that defy analytical modeling. Traditional \ac{MPC} performance degrades rapidly when hydrodynamic predictions from reality.
+\textbf{2. Environmental Uncertainty:} disturbances—such as waves and wins—exhibit complex, multi-scale spatiotemporal variations that are difficult to model accurately. As a result, model discrepancies negatively impact the predictive performance of traditional MPC, often leading to rapid degradation in overall system performance.
 
 \textbf{3. Handling Tether Constraints:} Simultaneously optimizing inspection coverage while avoiding tether entanglement remains a significant challenge. The tether is inherently difficult to model accurately, and its nonlinear, dynamic behavior is hard to incorporate effectively within MPC frameworks. 
 
-\textbf{4. Perception-Control Decoupling:} Most current approaches treat visual inspection and trajectory tracking as separate objectives. This decoupling often leads to trade-offs—sacrificing coverage quality for path accuracy or vice versa—resulting in reduced robustness to environmental disturbances and system uncertainties.
+\textbf{4. Perception-Control Decoupling:} Most existing MPC approaches treat inspection as a trajectory tracking problem, relying on precomputed paths that assume static or predictable conditions. This decoupling between perception and control limits robustness, as the planned trajectory may become suboptimal or infeasible in dynamic or uncertain environments. 
+
+%By explicitly incorporating inspection quality into the MPC cost function, we can enable the controller to adapt in real-time, ensuring more robust and effective coverage despite changing environmental conditions.
 
 
-Despite the potential of \ac{MPC} to enhance autonomous inspection in marine robotics, key limitations persist due to modeling inaccuracies, environmental uncertainties, and system-level decoupling between perception and control. These challenges highlight the need for more robust, adaptive control strategies that can handle real-world disturbances, incorporate perception-driven feedback, and respect complex physical constraints such as tether dynamics. 
+%Despite the potential of \ac{MPC} to enhance autonomous inspection in marine robotics, key limitations persist due to modeling inaccuracies, environmental uncertainties, and system-level decoupling between perception and control. These challenges highlight the need for more robust, adaptive control strategies that can handle real-world disturbances, incorporate perception-driven feedback, and respect complex physical constraints such as tether dynamics. 
 
-In the following section, we propose a research hypothesis aimed at addressing these limitations by integrating entanglement-aware planners, a visual tracking-based cost function, and data-driven models into the \ac{MPC} framework. Additionally, we leverage advanced simulation environments to enable more reliable and effective autonomous inspection in complex and uncertain marine settings.
+In the following section, we propose a research hypothesis aimed at addressing these limitations by integrating entanglement-aware planners, a visual tracking-based cost function, and data-driven models into the \ac{MPC} framework. Additionally, we leverage advanced simulation environments to enable more reliable and effective autonomous inspection.

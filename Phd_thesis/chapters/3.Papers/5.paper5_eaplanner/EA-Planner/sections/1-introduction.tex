@@ -3,42 +3,49 @@
 
 % % Underwater Robot Applications:
 %
-In many applications, \Acfp{ROV} play a pivotal role, including surveying, inspection, and search-and-rescue operations, by improving efficiency and ensuring safety \cite{amer2023unav, amergp}.
+%Operating in complex, hazardous, and otherwise inaccessible environments, \Acfp{ROV} have become essential for a diverse range of demanding applications, including surveying, infrastructure inspection, and search-and-rescue, significantly expanding operational possibilities~\cite{amer2023unav, amer2025modelling}.
 %
 % Why We Need Tether:
 %
-Most \acp{ROV} are tethered to ensure a continuous power supply during long-duration missions and to maintain reliable communication.
+%Most \acp{ROV} are tethered to ensure a continuous power supply during long-duration missions and to maintain reliable communication.
+
+Remotely operated vehicles \Acfp{ROV} have become essential for operations in complex, hazardous, and otherwise inaccessible environments. They facilitate a diverse range of demanding applications, including surveying, infrastructure inspection, and search and rescue missions, thus significantly expanding operational possibilities \cite{amer2023unav, amer2025modelling}. Most \acp{ROV} are tethered to a host platform to maintain reliable communication and ensure a continuous power supply during long-duration missions. However, this tethering infrastructure introduces operational challenges related to planning and control while posing the risk of being entangled with underwater objects such as flora, fauna, or structures under inspection.
+
 %
 % Introducing Problem Definition:
 %
-However, the presence of a tether introduces complexities in path planning and control, as it poses a risk of entanglement with underwater objects such as flora, fauna, or structures being inspected.
+%However, the presence of a tether introduces complexities in path planning and control, as it poses a risk of entanglement with underwater objects such as flora, fauna, or the underwater structures being inspected.
 
-This challenge restricts the applicability of many path planning algorithms originally designed for untethered drones and surface vehicles. For instance, numerous \ac{CPP} algorithms exist to compute distance-optimal paths for covering 3D structures \cite{bircher2015structural,feng2024fc, amer2023visual}. Additionally, exploration path planners are employed to determine the next viewpoints for mapping and exploring unknown terrains \cite{dang2020graph}. However, these methods do not account for entanglement with the surroundings and thus cannot be directly applied to tethered underwater robots.
+%Tether-related challenges restrict the applicability of path-planning algorithms originally designed for untethered systems. For instance, numerous \ac{CPP} algorithms exist to compute distance-optimal paths for covering 3D structures \cite{bircher2015structural,feng2024fc, amer2023visual}. Additionally, exploration path planners are employed to determine the next viewpoints for mapping and exploring unknown terrains \cite{dang2020graph}. However, these methods do not account for entanglement with the surroundings and thus cannot be directly applied to tethered underwater robots.
+
+Numerous \ac{CPP} algorithms are proposed in the literature for inspection-related tasks with untethered systems. In essence, they compute distance-optimal paths for a thorough inspection of 3D structures \cite{bircher2015structural,feng2024fc, amer2023visual}.  Additionally, exploration path planners are employed to determine the next viewpoints for mapping unknown terrains \cite{dang2020graph}. However, these path-planning methods are restricted to untethered systems, as they do not account for possible entanglements with the surroundings. Hence, the literature still lacks path-planning algorithms that directly address tether-related challenges.
+
 %
 % Entanglement Problem and Definition:
 %
-Entanglement occurs when the movement of the underwater vehicle is restricted due to physical interactions between the tether and objects in the environment. Tether can bend or loop around obstacles, limiting vehicle mobility. This work bridges a critical gap in automatic asset inspection with \ac{ROV} by proposing \ac{REACT}.
-
-The contributions of this work can be summarized as follows:
+In case of underwater inspection, entanglement occurs when the vehicle's movement is restricted due to interaction between the tether and objects in the environment. The tether can loop around obstacles, thereby limiting the vehicle's mobility and substantially reducing operational range in a worst-case scenario. Consequently, operators need to carry longer tethers to account for possible entanglements without a proper planner at hand.
+In this work, we propose the \ac{REACT} algorithm that fills this critical gap in underwater asset inspection. In essence, when integrated into the coverage path planning framework, \ac{REACT} renders entanglement-free paths, thus ensuring task completion without the need to carry additional tether lengths. Besides, the proposed planning framework reduces overall operational time by circumventing the post-completion detangling process, often required with traditional path-planning methods. The contributions of this work can be summarized as follows:
 \begin{itemize}
-\item A fast online tether model that computes the tether configuration in real time using \ac{SDF} data of arbitrary underwater structures.
-\item An efficient online replanning method that prevents entanglement by incorporating a maximum tether length constraint.
-\item Integration of the proposed method into a coverage path planning framework with \ac{MPC} to enable optimal inspection of underwater structures while avoiding entanglement.
-
-\item Demonstration of the complete framework in simulation, showcasing its ability to ensure safe and efficient underwater structure inspection.
+\item A fast tether model that computes the tether configuration in real-time using \ac{SDF} data of arbitrary underwater structures.
+\item An efficient online replanning method \ac{REACT} that prevents entanglement by incorporating a tether-length constraint.
+%\item Integration of the proposed method into a \ac{CPP} framework with \ac{MPC} to enable optimal inspection while avoiding entanglement.
+\item \ac{REACT}'s integration with an off-the-shelf \ac{CPP} along with \ac{MPC}, rendering optimal trajectory following.
+\item Demonstration of the framework in simulation and real-world tests, showcasing its ability to ensure safe and time-efficient inspection.
 \end{itemize}
-
-
-
 
 
 %
 \begin{figure}[t!]
-	\centering	\includegraphics[width=0.7\linewidth]{figures/react_abstract.pdf}
-	  \caption{\textcolor{black}{Overview of the \ac{REACT} inspection framework. In the offline phase, a \ac{SDF} map is generated from a point cloud, and the FC-Planner \cite{feng2024fc} computes an optimal waypoint sequence. In the online phase, a tether model $\mathbf{P}^{tether}(t)$ ensures the maximum tether length is maintained, while an \ac{MPC} controller applies the optimal wrench $\mathbf{u}(t)$ to the \ac{ROV}}.}
+	\centering	\includegraphics[width=0.75\linewidth]{Phd_thesis/figures/REACT_abstract.pdf}
+	  \caption{Overview of the \ac{REACT} inspection framework. Offline, a \ac{SDF} map is generated from a point cloud, and the FC-Planner \cite{feng2024fc} computes an optimal waypoint sequence. During operation, a tether model $(\mathbf{P}^{tether}(t))$ is used  to ensure the maximum tether length is not exceeded, while an \ac{MPC} controller applies the optimal wrench $\mathbf{u}(t)$ to the \ac{ROV}.}
     \label{fig:abstract}
 \end{figure}
 %
+
+
+
+
+
 
 
 The remainder of this paper is organized as follows: Section \ref{sec:related_work} reviews the state of the art. Section \ref{sec:framework} presents the path planning framework for underwater structure inspection with tether constraints. Section \ref{sec:tether_model} introduces the taut-tether model, and Section \ref{sec:planner} details the online entanglement-aware path planner. Experimental results are shown in Section \ref{sec:experiments}, followed by conclusions and future work in Section \ref{sec:conclusion}.

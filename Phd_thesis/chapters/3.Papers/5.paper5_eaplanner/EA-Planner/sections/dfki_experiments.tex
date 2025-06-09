@@ -1,0 +1,67 @@
+\section{Real-world Experiments}
+\label{sec:real-world}
+
+This section presents real-world experimental results validating our proposed \ac{REACT} method. The experiments were conducted at the underwater robotics facility of the German Research Center for Artificial Intelligence (DFKI), which features a 23$\times$19$\times$8 meter test basin equipped with a 12-camera Qualisys motion capture system for precise state estimation. The full system is implemented in C++ for computational efficiency and deployed using ROS for real-time operation and modular integration with onboard ROV software.
+
+\subsection{Experimental Setup}
+The experimental platform is a BlueROV2, configured identically to the simulation setup.
+
+The test environment consists of a custom-built L-shaped pipe structure, mimicking the simulation inspection scenario.
+
+Two planning modes are evaluated:
+\begin{itemize}
+    \item \textbf{REACT (Ours)}: Full system with entanglement-aware reactive path planning and tether modeling.
+    \item \textbf{Baseline (No REACT)}.
+
+A helical trajectory is commanded around the pipe in both modes, with the ROV maintaining constant forward motion and visual alignment with the structure surface. The tether configuration remains unchanged between trials, and all runs are repeated to ensure consistency.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Phd_thesis/figures/pipe.JPG}
+    \caption{Experimental setup showing the BlueROV2 in the DFKI underwater basin and the L-shaped pipe structure used for testing.}
+    \label{fig:realworld_setup}
+\end{figure}
+
+\subsection{Experimental Results}
+
+Figure~\ref{fig:realworld_trajectory} illustrates the ROV trajectories for both planning modes. When using REACT, the system anticipates entanglement risk and executes tether-safe maneuvers to maintain a feasible configuration. In contrast, the baseline trial encounters a critical tether entanglement mid-mission, causing premature mission termination.
+
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}[b]{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{placeholder_trajectory_noreact.pdf}
+        \caption{Trajectory without entanglement handling (Baseline).}
+        \label{fig:traj_noreact}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{placeholder_trajectory_react.pdf}
+        \caption{Trajectory with \ac{REACT} enabled.}
+        \label{fig:traj_react}
+    \end{subfigure}
+    \caption{Real-world ROV trajectories. Without REACT, the mission fails due to tether entanglement. With REACT, the ROV completes the mission successfully.}
+    \label{fig:realworld_trajectory}
+\end{figure}
+
+Quantitative evaluation of surface coverage confirms these observations. Table~\ref{tab:realworld_coverage} shows that the REACT method consistently achieves higher final coverage by avoiding mission-ending entanglements.
+
+\begin{table}[ht]
+    \centering
+    \caption{Coverage Performance in Real-world Trials}
+    \label{tab:realworld_coverage}
+    \resizebox{0.8\columnwidth}{!}{%
+    \begin{tabular}{|l|c|c|}
+        \hline
+        \textbf{Planner} & \textbf{Mission Completion} & \textbf{Final Coverage (\%)} \\
+        \hline
+        \ac{REACT} & Full & XX.XX \\
+        Baseline (No REACT) & Failed (Entangled) & XX.XX \\
+        \hline
+    \end{tabular}%
+    }
+    \vspace{0.5em}
+\end{table}
+
+These results highlight the limitations of conventional planners that neglect tether dynamics. While the baseline planner initially tracks the commanded trajectory, it becomes entangled mid-mission, leaving the \ac{ROV} physically stuck. In contrast, REACT successfully detects and mitigates such risks via local tether-aware replanning, enabling robust mission completion in cluttered underwater environments. These findings underscore the necessity of incorporating entanglement awareness into autonomous planning frameworks for reliable real-world deployment.

@@ -11,7 +11,7 @@ The main scientific and technological contributions presented in this thesis are
 
 \begin{description}[leftmargin=1cm, style=unboxed, font=\normalfont] % Using description list for clarity
 
-    \item[\textcolor{blue}{\textbf{[C1] Simulation Infrastructure}}] \hfill \\
+    \item[\textcolor{blue}{\textbf{[C1] Simulation }}] \hfill \\
         Provides the foundational platform for development and validation.
         \begin{itemize}[leftmargin=0.5cm, itemsep=0pt]
             \item \textbf{C1.1: Visually Realistic Underwater Robot Simulator:} Development of a simulation environment combining realistic visual rendering with accurate hydrodynamic modeling to reduce the sim-to-real gap.
@@ -20,15 +20,15 @@ The main scientific and technological contributions presented in this thesis are
     \item[\textcolor{blue}{\textbf{[C2] Control and Planning}}] \hfill \\
         Develops novel algorithms for safe and effective autonomous navigation and task execution.
         \begin{itemize}[leftmargin=0.5cm, itemsep=0pt]
-            \item \textbf{C2.1: Entaglement-Aware Path Planning:} Algorithms for generating collision-free and entanglement-aware trajectories for tethered underwater robots during complex inspection tasks.
-            \item \textbf{C2.2: Perception-Aware \ac{NMPC} Formulation:} An \ac{NMPC} strategy that explicitly incorporates visual tracking objectives and constraints, optimizing for both path following and inspection quality.
+            \item \textbf{C2.1: A real-time entaglement-Aware Path Planning:}  An entanglement-aware path planner for tethered underwater inspection tasks.
+            \item \textbf{C2.2: Visual Tracking  \ac{NMPC} Formulation:} An \ac{NMPC} strategy that explicitly incorporates visual tracking objectives optimizing  inspection quality and coverage.
         \end{itemize}
 
     \item[\textcolor{blue}{\textbf{[C3] Model Learning}}] \hfill \\
         Enhances controller performance by improving the fidelity of the underlying dynamic models.
          \begin{itemize}[leftmargin=0.5cm, itemsep=0pt]
-            \item \textbf{C3.1: Learning Full Model Dynamics using PINNs:} Exploration of Physics-Informed Neural Networks for learning full dynamic models from data while respecting physical laws.
-            \item \textbf{C3.2: Learning Model Residuals using GP:} Online estimation of model uncertainties and external disturbances using \acp{GP} to adaptively augment the nominal model used within the \ac{MPC}.
+            \item \textbf{C3.1: Learning Full Model Dynamics using PINNs:} Exploration of Physics-Informed Neural Networks (PINNS) for learning full dynamic models from data while respecting physical laws.
+            \item \textbf{C3.2: Learning Model Residuals} Online estimation of model uncertainties and external disturbances using Gaussian Processes (GPs) to adaptively augment the nominal model used within the \ac{MPC}.
         \end{itemize}
 \end{description}
 

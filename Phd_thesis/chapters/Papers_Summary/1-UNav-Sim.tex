@@ -1,11 +1,14 @@
 \chapter{Advanced Marine Robotics Simulation}
-
+\label{ch:simulator}
 The development of reliable autonomous systems begins with the creation of a realistic simulation environment that supports rapid prototyping, synthetic data generation, and thorough testing of proposed algorithms. This is especially crucial in the context of underwater robotics, where field experiments are often expensive, logistically challenging, and time-consuming. Additionally, the absence of the Global Positioning System (GPS) underwater makes it difficult to obtain accurate ground-truth positioning, further underscoring the importance of simulation in the development cycle.
 
 
 In this chapter, we address the critical need of visually realistic and customizable simulation tools in marine robotics. Compared to other robotics simulators, underwater simulators often suffer from limited rendering fidelity, poor underwater physics modeling, and weak integration with standard robotics tools such as ROS. To bridge this gap, we conducted a comprehensive survey of existing underwater simulators to identify their limitations and inform the design of a new tool.
 
-To overcome these challenges, we introduce UNav-Sim, a novel, open-source underwater robotics simulator designed to support advanced autonomy and vision-based algorithms. UNav-Sim is the first underwater simulator to leverage Unreal Engine 5 (UE5) \cite{unreal} for high-fidelity visual environments while supporting essential robotics frameworks like ROS 2 and autopilot software. Built on top of AirSim \cite{airsim}, UNav-Sim enables rapid development and testing of underwater perception, navigation, and control algorithms. The framework includes a vision-based navigation stack and supports various sensor modalities, making it well-suited for both academic and industrial research.
+To overcome these challenges, we introduce UNav-Sim, a novel, open-source underwater robotics simulator designed to support advanced autonomy and vision-based algorithms. UNav-Sim is the first underwater simulator to leverage Unreal Engine 5 (UE5) \cite{unreal} for high-fidelity visual environments while supporting essential robotics frameworks like ROS 2 and autopilot software. Built on top of AirSim \cite{airsim}, UNav-Sim enables rapid development and testing of underwater perception, navigation, and control algorithms. The framework includes a vision-based navigation stack and supports various sensor modalities, making it well-suited for both academic and industrial research. %Furthermore, we demonstrate UNav-Sim's applicability through a vision-based pipe-following task, integrating deep reinforcement learning, MPC, and ORB-SLAM for localization.
+
+
+
 
 UNav-Sim has been widely adopted by the underwater robotics community, for realistic simulation and synthetic data generation. Future development will focus on expanding the suite of supported sensors, vehicle models, and customization underwater environments. 
 
