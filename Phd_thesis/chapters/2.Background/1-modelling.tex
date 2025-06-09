@@ -18,13 +18,11 @@
 \chapter{Background on Data-Driven Model Predictive Control for Marine Robots}
 \label{ch:background}
 
-This chapter establishes the foundation for MPC design and implementation. We begin with first-principles modeling of marine robots using the 6-DOF framework, examine data-driven approaches to address modeling limitations, and conclude with MPC fundamentals including trajectory optimization and Sequential Quadratic Programming solution methods.
+This chapter introduces the foundation for the design and implementation of data-driven MPC. We begin with first-principles modeling of marine robots using a Fossen's framework \cite{fossen}, explore data-driven approaches to address modeling limitations, and conclude with MPC fundamentals, including solution methods and practical implementation details.
 
 \section{Modelling Marine Robots}
 \label{sec:modelling}
 Accurate dynamic models are fundamental to MPC performance. This section develops the 6-DOF mathematical framework for underwater vehicles using first principles, then examines data-driven approaches to address modeling limitations.
-This section introduces the common principles of modelling marine robotics, particularly underwater vehicles, using first principles. A motion model is crucial for developing simulators, designing model-based controllers such as MPC.
-
 \subsection{Frames of Reference}
 Underwater vehicle motion is typically described using two coordinate systems: an earth-fixed (inertial) reference frame and a body-fixed reference frame attached to the vehicle.
 

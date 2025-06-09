@@ -6,9 +6,7 @@ MPC is an optimization-based control strategy that leverages a dynamic model of 
 \subsection{Receding Horizon Optimization}
 A key characteristic of MPC is its receding horizon approach. Although an entire sequence of future control inputs is computed, only the first input in the sequence is applied to the system over the next sampling interval ($\delta$), where $\delta$ is the controller update period. At the subsequent time step, the system's state is measured or estimated, and the prediction horizon shifts forward. The optimization problem is then solved again with this updated information, providing feedback and adapting to changing conditions.
 
-The core MPC algorithm involves repeatedly solving an optimal control problem. Let the system state be $\boldsymbol{x} = [\boldsymbol{\eta}^T, \boldsymbol{\nu}^T]^T \in \mathbb{R}^{12}$ (combining position/orientation and velocities), and the control input be the generalized force/moment vector $\mathbf{u} \in \mathbb{R}^6$. The continuous-time dynamics are $\dot{\boldsymbol{x}} = f(\boldsymbol{x}, \mathbf{u})$, representing the vehicle's equations of motion.
-
-The optimization problem solved at time $t$ is typically formulated as:
+The core MPC algorithm involves repeatedly solving an optimal control problem. The optimization problem solved at time $t$ is typically formulated as:
 
 \begin{mini!}|s|
 {\mathbf{\bar{u}}(\cdot)}
