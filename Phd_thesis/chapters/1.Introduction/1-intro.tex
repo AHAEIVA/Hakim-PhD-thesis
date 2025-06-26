@@ -27,7 +27,7 @@
 Marine robotics encompasses a diverse array of platforms, such as remotely operated vehicles (ROVs), autonomous underwater vehicles (AUVs), as well as unmanned aerial vehicles (UAVs) (see Fig. \ref{fig:underwater_robotics_applications}). These systems are increasingly vital across multiple domains. In the energy sector, they can perform essential inspections of offshore wind turbines and subsea pipelines, detecting critical structural defects or leaks. Beyond industry, applications span environmental monitoring, archaeological surveying, scientific research, and defense operations like mine countermeasures and surveillance.
 
 
-\begin{figure*}[!h]
+\begin{figure*}[t]
     \centering
     % First Row
     \begin{subfigure}[b]{0.44\textwidth}
@@ -61,7 +61,7 @@ Marine robotics encompasses a diverse array of platforms, such as remotely opera
         \label{fig:subfig4}
     \end{subfigure}
     
-    \caption{Showcase of the variety Marine Robotics Platforms.}
+    \caption{Showcase of the variety marine robotics platforms.}
     \label{fig:underwater_robotics_applications}
 \end{figure*}
 
@@ -72,16 +72,8 @@ The drive towards fully autonomous marine systems stems from the need to enhance
 
 
 % --- Challenges to Autonomy ---
-Achieving reliable underwater autonomy, however, requires overcoming fundamental challenges inherent to the complex and dynamic marine environment. Key among these are:
-
-\begin{itemize}
-    \item \textbf{Safe Navigation:} Ensuring safe navigation is essential, including robust obstacle avoidance and adherence to physical constraints. Many marine robots are tethered, so preventing tether entanglement during operation is a critical safety consideration.
-
-    \item \textbf{Precise and Robust Trajectory Following:} The ability to accurately follow desired trajectories under disturbances such as ocean currents is fundamental for mission success in challenging marine environments.
-
-    \item \textbf{Generalizability Across Different Platforms:} Control and planning methods should transfer across a wide range of robotic platforms—such as UAVs, AUVs, and systems with varying sizes and degrees of freedom—without the need for substantial redesign or tuning.
-\end{itemize}
-
+\subsection{Challenges to Autonomy}
+Achieving reliable underwater autonomy requires overcoming fundamental challenges inherent to the complex and dynamic marine environment. Safe navigation is essential, which includes robust obstacle avoidance and adherence to physical constraints. For many marine robots that are tethered, preventing tether entanglement during operation is a critical safety consideration. Additionally, precise and robust trajectory following is necessary to accurately maintain desired paths despite disturbances such as ocean currents, which is fundamental for mission success in challenging underwater conditions. Finally, generalizability across different platforms is important, as control and planning methods should transfer seamlessly across a wide variety of robotic systems, including UAVs, AUVs, and vehicles with differing sizes and degrees of freedom, without requiring substantial redesign or retuning.
 
 
 

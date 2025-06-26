@@ -18,26 +18,26 @@
 \chapter{Background on Data-Driven Model Predictive Control for Marine Robots}
 \label{ch:background}
 
-This chapter introduces the foundation for the design and implementation of data-driven MPC. We begin with first-principles modeling of marine robots using a Fossen's framework \cite{fossen}, explore data-driven approaches to address modeling limitations, and conclude with MPC fundamentals, including solution methods and practical implementation details.
+This chapter provides a brief overview on the foundation for the design and implementation of data-driven MPC for marine robots. We begin with first-principles modeling of marine robots using a Fossen's framework \cite{fossen}, explore data-driven approaches to address modeling limitations, and conclude with MPC fundamentals, including solution methods and practical implementation details.
 
 \section{Modelling Marine Robots}
 \label{sec:modelling}
-Accurate dynamic models are fundamental to MPC performance. This section develops the 6-DOF mathematical framework for underwater vehicles using first principles, then examines data-driven approaches to address modeling limitations.
+Accurate dynamic models are fundamental to MPC performance. This section develops the 6-DOF mathematical model for underwater vehicles using first principles, then examines data-driven approaches to address modeling limitations.
 \subsection{Frames of Reference}
-Underwater vehicle motion is typically described using two coordinate systems: an earth-fixed (inertial) reference frame and a body-fixed reference frame attached to the vehicle.
+Underwater vehicle motion is typically described using two coordinate systems: an earth-fixed (global) reference frame and a body-fixed reference frame attached to the vehicle.
 
-The global reference frame, denoted $\mathcal{F}_E$, is fixed relative to the Earth. For marine applications, the North-East-Down (NED) coordinate system is commonly used. Its origin is often set at a convenient location (e.g., deployment point), with axes defined as follows: the $x$-axis points toward true North, the $y$-axis points toward East, and the $z$-axis points downward, perpendicular to the Earth's surface.
+The global reference frame, denoted $\mathcal{F}_E$, is fixed relative to the Earth. For marine applications, the north-east-down (NED) coordinate system is commonly used. Its origin is often set at a convenient location (e.g., deployment point), with axes defined as follows: the $x$-axis points toward true North, the $y$-axis points toward East, and the $z$-axis points downward, perpendicular to the Earth's surface.
 
-The body-fixed reference frame, denoted $\mathcal{F}_B$, moves with the vehicle. Its origin is usually placed at the vehicle's center of gravity (see Fig.~\ref{fig:coordinate_frame_brov}). Following the Society of Naval Architects and Marine Engineers (SNAME) convention, the axes are defined such that the $x$-axis points forward along the longitudinal axis, the $y$-axis points starboard (right), and the $z$-axis points downward.
+The body-fixed reference frame, denoted $\mathcal{F}_B$, moves with the vehicle. Its origin is usually placed at the vehicle's center of gravity. Following the society of naval architects and marine engineers (SNAME) convention, the axes are defined such that the $x$-axis points forward along the longitudinal axis, the $y$-axis points starboard (right), and the $z$-axis points downward.
 
 \begin{figure}[h!] % Changed [b!] to [h!] for better placement flexibility, adjust as needed
     \centering
     \includegraphics[width=0.5\textwidth]{Phd_thesis/chapters/1.Introduction/figures/brov4.pdf} % Ensure path is correct
-    \caption{Coordinate frames of the BlueROV underwater vehicle: the body-fixed frame, $\mathcal{F}_B$, is attached to the vehicle’s center of gravity, and the earth-fixed frame, $\mathcal{F}_E$, is inertial. The thruster configuration is also shown: vertical thrusters in green, horizontal thrusters in blue.}
+    \caption{Coordinate frames of the BlueROV underwater vehicle: the body-fixed frame, $\mathcal{F}_B$, is attached to the vehicle’s center of gravity, and the global frame, $\mathcal{F}_E$, is inertial. The thruster configuration is also shown: vertical thrusters in green, horizontal thrusters in blue.}
     \label{fig:coordinate_frame_brov}
 \end{figure}
 
-The vehicle's state involves position, orientation, linear velocities, and angular velocities. The position and orientation in the earth frame $\mathcal{F}_E$ are represented by the vector $\boldsymbol{\eta} = [x, y, z, \phi, \theta, \psi]^T$, where $\phi$, $\theta$, and $\psi$ are the Euler angles (roll, pitch, yaw). The linear and angular velocities in the body frame $\mathcal{F}_B$ are represented by the vector $\boldsymbol{\nu} = [u, v, w, p, q, r]^T$.
+The vehicle's state involves position, orientation, linear velocities, and angular velocities. The position and orientation in the global frame $\mathcal{F}_E$ are represented by the vector $\boldsymbol{\eta} = [x, y, z, \phi, \theta, \psi]^T$, where $\phi$, $\theta$, and $\psi$ are the Euler angles (roll, pitch, yaw). The linear and angular velocities in the body frame $\mathcal{F}_B$ (see Fig.~\ref{fig:coordinate_frame_brov}) are represented by the vector $\boldsymbol{\nu} = [u, v, w, p, q, r]^T$. 
 
 \subsection{Newton-Euler Equations of Motion}
 The dynamics of an underwater vehicle, treated as a rigid body moving in a fluid, can be derived using the Newton-Euler equations. These must account for hydrodynamic effects like added mass and damping, as well as gravitational and buoyancy forces.
@@ -58,7 +58,7 @@ The transformation matrix $\mathbf{J}(\boldsymbol{\eta})$ is defined as
         \mathbf{0}_{3\times3} & \mathbf{T}(\phi,\theta)
     \end{bmatrix}
 \end{equation}
-where $\mathbf{R}(\phi,\theta,\psi)$ is the rotation matrix from the body-fixed frame $\mathcal{F}_B$ to the global frame $\mathcal{F}_G$ using the ZYX Euler angle convention:
+where $\mathbf{R}(\phi,\theta,\psi)$ is the rotation matrix from the body-fixed frame $\mathcal{F}_B$ to the global frame $\mathcal{F}_E$ using the ZYX Euler angle convention:
 \begin{equation}
     \mathbf{R}(\phi,\theta,\psi) = \mathbf{R}_z(\psi)\mathbf{R}_y(\theta)\mathbf{R}_x(\phi)
 \end{equation}
@@ -85,7 +85,7 @@ The rigid-body inertia matrix $\mathbf{M}_{RB}$ is expressed as
         m \mathbf{S}(\boldsymbol{r}_G) & \mathbf{I}_G
     \end{bmatrix}
 \end{equation}
-where $m$ is the vehicle mass, $\mathbf{I}_{3\times3}$ is the $3 \times 3$ identity matrix, $\boldsymbol{r}_G = [x_G, y_G, z_G]^T$ is the position vector of the center of gravity (CG) relative to the body-fixed frame, and $\mathbf{I}_G$ is the inertia tensor about the CG. The matrix $\mathbf{S}(\boldsymbol{r}_G)$ is the skew-symmetric matrix associated with $\boldsymbol{r}_G$, given by
+where $m$ is the vehicle mass, $\mathbf{I}_{3\times3}$ is a $3 \times 3$ identity matrix, $\boldsymbol{r}_G = [x_G, y_G, z_G]^T$ is the position vector of the center of gravity (CG) relative to the body-fixed frame, and $\mathbf{I}_G$ is the inertia tensor about the CG. The matrix $\mathbf{S}(\boldsymbol{r}_G)$ is the skew-symmetric matrix associated with $\boldsymbol{r}_G$, given by
 \begin{equation}
     \mathbf{S}(\boldsymbol{r}_G) =
     \begin{bmatrix}
@@ -116,9 +116,7 @@ The matrix $\mathbf{C}(\boldsymbol{\nu})$ represents Coriolis and centripetal fo
 \begin{equation}
     \mathbf{C}(\boldsymbol{\nu}) = \mathbf{C}_{RB}(\boldsymbol{\nu}) + \mathbf{C}_A(\boldsymbol{\nu})
 \end{equation}
-These terms arise from the rotation of the body frame and the interaction of the vehicle with the fluid.
-
-The damping matrix $\mathbf{D}(\boldsymbol{\nu})$ represents hydrodynamic drag forces and moments opposing motion. It is often decomposed into linear $\mathbf{D}_{lin}$ and nonlinear (quadratic) $\mathbf{D}_{nonlin}(\boldsymbol{\nu})$ components:
+These terms arise from the rotation of the body frame and the interaction of the vehicle with the fluid. Additionally, the damping matrix $\mathbf{D}(\boldsymbol{\nu})$ represents hydrodynamic drag forces and moments opposing motion. It is often decomposed into linear $\mathbf{D}_{lin}$ and nonlinear (quadratic) $\mathbf{D}_{nonlin}(\boldsymbol{\nu})$ components:
 \begin{equation}
     \mathbf{D}(\boldsymbol{\nu}) = \mathbf{D}_{lin} + \mathbf{D}_{nonlin}(\boldsymbol{\nu})
 \end{equation}
@@ -164,8 +162,6 @@ Combining the kinematic and dynamic equations \eqref{eq:kinematics} and \eqref{e
 \end{equation}
 Here, the state vector is defined as \(\boldsymbol{x} = [\boldsymbol{\eta}^T, \boldsymbol{\nu}^T]^T\).
 
-
-
 The control wrench \(\mathbf{u}\) is generated by the individual thruster outputs. For a vehicle equipped with \(n\) thrusters, where the \(i\)-th thruster produces thrust \(T_i\), the total wrench is modeled as
 \begin{equation}
     \mathbf{u} = \mathbf{B} \boldsymbol{T},
@@ -208,10 +204,10 @@ The goal is to find the optimal parameters $\boldsymbol{\theta}^*$ that minimize
     \boldsymbol{\theta}^* = \arg \min_{\boldsymbol{\theta}} \sum_{i=1}^N \left\| \dot{\boldsymbol{x}}_i - \hat{f}(\boldsymbol{x}_i, \mathbf{u}_i; \boldsymbol{\theta}) \right\|^2
 \end{equation}
 
-Various function approximators can be used for $\hat{f}$~\cite{brunton2025machine}. Neural networks offer great flexibility in capturing complex nonlinearities but often require large datasets and lack interpretability. For more interpretable models, the Sparse Identification of Nonlinear Dynamics (SINDy) method identifies a sparse set of governing equations from a library of candidate functions. Another approach is Gaussian process regression, a non-parametric method that provides uncertainty quantification. Its hyperparameters are typically optimized by maximizing the marginal log-likelihood~\cite{rasmussen_gaussian_2008}.
+Various function approximators can be used for $\hat{f}$~\cite{brunton2025machine}. Neural networks offer great flexibility in capturing complex nonlinearities but often require large datasets and lack interpretability. For more interpretable models, sparse identification of nonlinear dynamics (SINDy) identifies a sparse set of governing equations from a library of candidate functions. Another approach is Gaussian process regression, a non-parametric method that provides uncertainty quantification. Its hyperparameters are typically optimized by maximizing the marginal log-likelihood~\cite{rasmussen_gaussian_2008}.
 
 \subsubsection{Residual Dynamics Learning}
-While full model learning captures the entire system behavior from data, an alternative is to retain the nominal physics-based model and learn only the discrepancy. This leads to the residual dynamics learning approach. To train the correction model, the same time-series dataset used for full model learning—comprising state, velocity, acceleration, and control inputs—is utilized. Rather than learning the complete dynamics, the residual approach leverages the nominal model to estimate the predicted acceleration and isolates the discrepancy as a residual term. This residual force and moment vector is computed by rearranging the nominal dynamics equation~\eqref{eq:dynamics}:
+While full model learning captures the entire system behavior from data, an alternative is to retain the nominal physics-based model and learn only the discrepancy. This leads to the residual dynamics learning approach. To train the correction model, the same time-series dataset used for full model learning, comprising state, velocity, acceleration, and control inputs, is utilized. Rather than learning the complete dynamics, the residual approach leverages the nominal model to estimate the predicted acceleration and isolates the discrepancy as a residual term. This residual force and moment vector is computed by rearranging the nominal dynamics equation~\eqref{eq:dynamics}:
 
 \begin{equation}
     \boldsymbol{\Delta }= \mathbf{M} \dot{\boldsymbol{\nu}} + \mathbf{C}(\boldsymbol{\nu}) \boldsymbol{\nu} + \mathbf{D}(\boldsymbol{\nu}) \boldsymbol{\nu} + \mathbf{g}(\boldsymbol{\eta}) - \mathbf{u}.

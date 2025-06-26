@@ -6,7 +6,7 @@ MPC is an optimization-based control strategy that leverages a dynamic model of 
 \subsection{Receding Horizon Optimization}
 A key characteristic of MPC is its receding horizon approach. Although an entire sequence of future control inputs is computed, only the first input in the sequence is applied to the system over the next sampling interval ($\delta$), where $\delta$ is the controller update period. At the subsequent time step, the system's state is measured or estimated, and the prediction horizon shifts forward. The optimization problem is then solved again with this updated information, providing feedback and adapting to changing conditions.
 
-The core MPC algorithm involves repeatedly solving an optimal control problem. The optimization problem solved at time $t$ is typically formulated as:
+The core MPC algorithm involves repeatedly solving an optimal control problem (OCP). The OCP solved at time $t$ can be formulated as follows:
 
 \begin{mini!}|s|
 {\mathbf{\bar{u}}(\cdot)}
@@ -19,7 +19,7 @@ The core MPC algorithm involves repeatedly solving an optimal control problem. T
 \addConstraint{\boldsymbol{\bar{x}}(\tau)}{\in \mathcal{X}}{\quad \forall \tau \in [t, t+T_p]}
 \end{mini!}
 
-In this formulation, $\boldsymbol{\bar{x}}(\tau)$ and $\mathbf{\bar{u}}(\tau)$ represent the predicted state and control trajectories over the prediction horizon $[t, t+T_p]$, where $\tau$ is the integration time variable over the interval $[t, t+T_p]$, while $\boldsymbol{x}(t)$ denotes the current measured or estimated state. The stage cost $L(\cdot, \cdot)$ is typically defined as a quadratic function $L(\boldsymbol{x}, \mathbf{u}) = \|\boldsymbol{x} - \boldsymbol{x}_{ref}\|_{\boldsymbol{Q}}^2 + \|\mathbf{u}\|_{\boldsymbol{R}}^2$, penalizing deviations from a reference state $\boldsymbol{x}_{ref}$ and control effort, weighted by matrices $\boldsymbol{Q} \succeq 0$ and $\boldsymbol{R} \succ 0$. The terminal cost $E(\cdot)$ is often expressed as $E(\boldsymbol{x}) = \|\boldsymbol{x} - \boldsymbol{x}_{ref}(t+T_p)\|_{\boldsymbol{P}}^2$, with $\boldsymbol{P} \succeq 0$ selected based on stability considerations. The sets $\mathcal{U}$ and $\mathcal{X}$ define the admissible control inputs and states, respectively.
+In this formulation, $\boldsymbol{\bar{x}}(\tau)$ and $\mathbf{\bar{u}}(\tau)$ represent the predicted state and control trajectories over the prediction horizon $[t, t+T_p]$, where $\tau$ is the integration time variable over the interval $[t, t+T_p]$, while $\boldsymbol{x}(t)$ denotes the current measured or estimated state. The stage cost $L(\cdot, \cdot)$ is typically defined as a quadratic function $L(\boldsymbol{x}, \mathbf{u}) = \|\boldsymbol{x} - \boldsymbol{x}_{ref}\|_{\boldsymbol{Q}}^2 + \|\mathbf{u}\|_{\boldsymbol{R}}^2$, penalizing deviations from a reference state $\boldsymbol{x}_{ref}$ and control effort, weighted by matrices $\boldsymbol{Q} \succeq 0$ and $\boldsymbol{R} \succ 0$. The terminal cost $E(\cdot)$ is often expressed as $E(\boldsymbol{x}) = \|\boldsymbol{x} - \boldsymbol{x}_{ref}(t+T_p)\|_{\boldsymbol{P}}^2$, with $\boldsymbol{P} \succeq 0$ selected based on stability considerations. The sets $\mathcal{U}$ and $\mathcal{X}$ define the admissible control inputs and states, respectively. For instance, the control inputs are often limited by the thruster limits, while the state constraints can include factors such as obstacles in the environment.
 
 The MPC control loop is summarized in Algorithm \ref{alg:mpc_loop}.
 
@@ -27,13 +27,10 @@ The MPC control loop is summarized in Algorithm \ref{alg:mpc_loop}.
 \caption{MPC Control Loop}
 \label{alg:mpc_loop}
 \SetAlgoLined
-\KwIn{Current time $t$}
-\KwOut{Control input $\mathbf{u}^*(t)$}
-
 \While{MPC is running}{
     Measure or estimate the current state $\boldsymbol{x}(t)$\;
-    Solve the optimal control problem~\eqref{eq:mpc_opt} to get optimal control sequence $\mathbf{\bar{u}}^*(\tau)$ for $\tau \in [t, t+T_p]$\;
-    Apply the first control input $\mathbf{u}^*(t) = \mathbf{\bar{u}}^*(t)$ over $[t, t+\delta)$\;
+    Solve the OCP~\eqref{eq:mpc_opt} to get optimal control sequence $\mathbf{\bar{u}}^*(\tau)$ for $\tau \in [t, t+T_p]$\;
+    Apply the first control input $\mathbf{u}^*(t) = \mathbf{\bar{u}}^*(t)$ over $[t, t+\delta]$\;
     %Wait until the next sampling time $t+\delta$\;
     %Update $t \leftarrow t+\delta$\;
 }
@@ -61,22 +58,22 @@ For instance, using the 4th-order Runge-Kutta (RK4) method:
 
 where $\mathbf{k}_1 = f(\boldsymbol{x}_k, \mathbf{u}_k)$, $\mathbf{k}_2 = f(\boldsymbol{x}_k + \frac{\Delta t}{2}\mathbf{k}_1, \mathbf{u}_k)$, $\mathbf{k}_3 = f(\boldsymbol{x}_k + \frac{\Delta t}{2}\mathbf{k}_2, \mathbf{u}_k)$, and $\mathbf{k}_4 = f(\boldsymbol{x}_k + \Delta t \mathbf{k}_3, \mathbf{u}_k)$.
 
-The cost function integral is approximated by a sum:
+The cost function integral is simply approximated by a sum:
 
 \begin{equation}
     J_d = \sum_{k=0}^{N-1} L_d(\boldsymbol{x}_k, \mathbf{u}_k) + E(\boldsymbol{x}_N)
 \end{equation}
 
-where $L_d(\boldsymbol{x}_k, \mathbf{u}_k) \approx \int_{t_k}^{t_{k+1}} L(\boldsymbol{\bar{x}}(\tau), \mathbf{\bar{u}}(\tau)) \, d\tau \approx \Delta t \cdot L(\boldsymbol{x}_k, \mathbf{u}_k)$, often simplified to $L_d(\boldsymbol{x}_k, \mathbf{u}_k) = \Delta t \left( \|\boldsymbol{x}_k - \boldsymbol{x}_{ref,k}\|_{\boldsymbol{Q}}^2 + \|\mathbf{u}_k\|_{\boldsymbol{R}}^2 \right)$.
+%where $L_d(\boldsymbol{x}_k, \mathbf{u}_k) \approx \int_{t_k}^{t_{k+1}} L(\boldsymbol{\bar{x}}(\tau), \mathbf{\bar{u}}(\tau)) \, d\tau \approx \Delta t \cdot L(\boldsymbol{x}_k, \mathbf{u}_k)$, often simplified to $L_d(\boldsymbol{x}_k, \mathbf{u}_k) = \Delta t \left( \|\boldsymbol{x}_k - \boldsymbol{x}_{ref,k}\|_{\boldsymbol{Q}}^2 + \|\mathbf{u}_k\|_{\boldsymbol{R}}^2 \right)$.
 
 \subsection{Solving the Optimization Problem}
 
-The discretized problem is now a finite-dimensional optimization problem with $6N$ control variables $(\mathbf{u}_0, \ldots, \mathbf{u}_{N-1})$ and potentially $12N$ state variables $(\boldsymbol{x}_1, \ldots, \boldsymbol{x}_N)$, subject to $12N$ nonlinear equality constraints from the dynamics and additional inequality constraints from $\mathcal{U}$ and $\mathcal{X}$. This forms a Nonlinear Program (NLP).
+The discretized problem is now a finite-dimensional optimization problem with $6N$ control variables $(\mathbf{u}_0, \ldots, \mathbf{u}_{N-1})$ and potentially $12N$ state variables $(\boldsymbol{x}_1, \ldots, \boldsymbol{x}_N)$, subject to $12N$ nonlinear equality constraints from the dynamics and additional inequality constraints from $\mathcal{U}$ and $\mathcal{X}$. This forms a nonlinear program (NLP).
 
 
 \subsubsection{Direct Methods}
 
-Direct methods treat both the sequence of control inputs $\mathbf{U} = (\mathbf{u}_0, \dots, \mathbf{u}_{N-1})$ and the resulting state sequence $\mathbf{X} = (\boldsymbol{x}_1, \dots, \boldsymbol{x}_N)$ as optimization variables (with $\boldsymbol{x}_0 = \boldsymbol{x}(t)$ fixed). The discretized dynamics $\boldsymbol{x}_{k+1} = f_d(\boldsymbol{x}_k, \mathbf{u}_k)$ are enforced as equality constraints. The NLP takes the form:
+Direct methods treat both the sequence of control inputs $\mathbf{U} = (\mathbf{u}_0, \dots, \mathbf{u}_{N-1})$ and the resulting state sequence $\mathbf{X} = (\boldsymbol{x}_1, \dots, \boldsymbol{x}_N)$ as optimization variables (with $\boldsymbol{x}_0 = \boldsymbol{x}(t)$). The discretized dynamics $\boldsymbol{x}_{k+1} = f_d(\boldsymbol{x}_k, \mathbf{u}_k)$ are enforced as equality constraints. The NLP takes the form:
 
 \begin{equation}
 \begin{aligned}
@@ -92,7 +89,7 @@ Direct methods treat both the sequence of control inputs $\mathbf{U} = (\mathbf{
 
 \subsubsection{Sequential Quadratic Programming}
 
-Due to the nonlinear dynamics $f_d(\cdot,\cdot)$ and potentially nonlinear constraints, this NLP is typically solved using iterative methods. Sequential Quadratic Programming (SQP) is particularly well-suited for MPC because it can exploit the problem's structure and provide good convergence properties.
+Due to the nonlinear dynamics $f_d(\cdot,\cdot)$ and potentially nonlinear constraints, this NLP is typically solved using iterative methods. 
 
 Sequential Quadratic Programming (SQP) is a common iterative method for solving NLPs. At each iteration $j$, it approximates the NLP by a Quadratic Program (QP). To define this QP, let's first define a single concatenated vector, $\boldsymbol{z}$, that contains all of the decision variables. This includes the sequence of control inputs and the sequence of predicted states:
 $$
@@ -108,7 +105,7 @@ The QP subproblem solved at iteration $j$ is then formulated to find the optimal
 \end{aligned}
 \end{equation}
 
-where $\Delta\boldsymbol{z}$ represents the step change in the optimization variables, $\boldsymbol{H}_j$ is a positive-definite approximation of the Hessian of the Lagrangian, $\boldsymbol{g}_j$ is the gradient of the objective function, $\boldsymbol{A}_{eq,j}$ and $\boldsymbol{A}_{ineq,j}$ are the Jacobians of the equality and inequality constraints, respectively, and $\boldsymbol{b}_{eq,j}$ and $\boldsymbol{b}_{ineq,j}$ are the linearized constraint violation vectors, all evaluated at the current iterate $\boldsymbol{z}_j$. Solving this QP yields a search direction $\Delta\boldsymbol{z}$, and the next iterate is found using a line search, that is,is, $\boldsymbol{z}_{j+1} = \boldsymbol{z}_j + \alpha \Delta\boldsymbol{z}$, where $\alpha$ is a step length guaranteeing descent \cite{nocedal1999numerical}.
+where $\Delta\boldsymbol{z}$ represents the step change in the optimization variables, $\boldsymbol{H}_j$ is a positive-definite approximation of the Hessian of the Lagrangian, $\boldsymbol{g}_j$ is the gradient of the objective function, $\boldsymbol{A}_{eq,j}$ and $\boldsymbol{A}_{ineq,j}$ are the Jacobians of the equality and inequality constraints, respectively, and $\boldsymbol{b}_{eq,j}$ and $\boldsymbol{b}_{ineq,j}$ are the linearized constraint violation vectors, all evaluated at the current iterate $\boldsymbol{z}_j$. Solving this QP yields a search direction $\Delta\boldsymbol{z}$, and the next iterate is found using a line search,  $\boldsymbol{z}_{j+1} = \boldsymbol{z}_j + \alpha \Delta\boldsymbol{z}$, where $\alpha$ is a step length guaranteeing descent \cite{nocedal1999numerical}.
 
 
 \subsection{Implementation Considerations}
