@@ -1,43 +1,16 @@
 \subsection{Evaluation Criteria}
-The evaluation framework directly aligns with the research goals through quantitative metrics assessing each component's contribution to the core hypothesis.}
 
-\begin{table}[h!]
-\centering
-\caption{Performance Metrics for Hypothesis Validation}
-\label{tab:eval_metrics}
-\footnotesize
-\begin{tabular}{p{0.22\textwidth}p{0.73\textwidth}}
-\toprule
-\textbf{Research goal} & \textbf{Evaluation metrics} \\
-\midrule
+To rigorously assess the success of the research goals and thereby validate the core hypothesis, a comprehensive evaluation framework is necessary. This framework employs quantitative and qualitative metrics specifically designed to measure the performance and impact of each goal’s contributions within the context of autonomous marine robotic inspection.
 
-\textbf{Simulation Platform} &
-\begin{itemize}[leftmargin=*,noitemsep]
- \textit{Usability}:  Integration with ROS and compatibility with common robotics middleware \newline
- \textit{Fidelity}: Visual and physical realism of the simulated environment
-\end{itemize} \\
+\noindent\textbf{Visually-Realistic Simulation Platform}  
+Evaluation emphasizes the platform's usability—its integration with robotics middleware and tools—and the fidelity of its visual and physical environment. Together, these aspects enable effective testing and reduce the simulation-to-reality gap.
 
-\textbf{Tether-Aware Planning} &
-\begin{itemize}[leftmargin=*,noitemsep]
- \textit{Safety}: Max allowable tether length exceedance time \newline
- \textit{Coverage}: Completeness (\% inspected area) on complex structures \newline
- \textit{Computation: Real-time feasibility and comparative computational efficiency against baseline approaches}
-\end{itemize} \\
+\noindent\textbf{Entanglement-Aware Coverage Planning}  
+This framework is assessed by its ability to enhance safety through minimizing tether entanglement risks, demonstrated by metrics such as \textit{tether length exceedance duration} and \textit{entanglement incidence}. Coverage completeness is measured by the \textit{percentage of inspected areas} on complex structures, while \textit{computational performance} ensures the approach can operate in real time.
 
-\textbf{Perception-Aware Control} &
-\begin{itemize}[leftmargin=*,noitemsep]
- \textit{Safety}: Distance from inspection surface \newline
- \textit{Inspection Quality}: How centered the surfaces being inspected \newline
- \textit{Robustness}: Performance under operational disturbances
-\end{itemize} \\
+\noindent\textbf{Perception-Aware MPC Framework}  Evaluation focuses on inspection quality, quantified by how well the robot maintains \textit{optimal viewpoints} on inspection surfaces, as well as operational safety by monitoring \textit{proximity to these surfaces}. Robustness is tested through \textit{performance consistency} under environmental disturbances.
 
-\textbf{Data-Driven Modelling} &
-\begin{itemize}[leftmargin=*,noitemsep]
- \textit{Modelling Error}: Mean squared error in predicting environmental disturbances \newline
- \textit{Trajectory Tracking Error}: Mean squared error in trajectory tracking
-\end{itemize} \\
+\noindent \textbf{Adaptive Disturbance Learning Frameworks}  
+These frameworks are evaluated on their accuracy in estimating external disturbances and their impact on improving trajectory tracking precision. Key metrics include \textit{prediction error} and reductions in \textit{tracking deviations}, reflecting enhanced control robustness and adaptability.
 
-\bottomrule
-\end{tabular}
-\end{table}
-
+Together, these criteria validate that the improvements target safety, inspection quality, operational reliability, and adaptability—key factors for advancing autonomous marine robotic inspection.

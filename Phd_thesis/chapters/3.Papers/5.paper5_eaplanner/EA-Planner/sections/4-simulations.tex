@@ -6,16 +6,14 @@ This section presents the experimental results of the simulations of our propose
 
 
 \subsection{Simulation experimental setup }
-The path planner is implemented for a BlueROV2. A \ac{MPC} approach is used to account for model constraints and provide the optimal control input $\mathbf{u}^{ref} \in \mathbb{R}^4$, where $\mathbf{u}^{ref} = [F_x, F_y, F_z, M_z]^T$ represents the forces in the $X$, $Y$, and $Z$ directions, and the moment about the $Z$-axis. The goal is to follow the desired reference trajectory $\mathbf{x}^{ref} \in \mathbb{R}^6$, where $\mathbf{x}^{ref} = [x_{ref}, y_{ref}, z_{ref}, \psi_{ref}]^T$ contains the reference position ($x_{ref}$, $y_{ref}$, $z_{ref}$) and the reference yaw angle $\psi_{ref}$.
-
-The entanglement-aware path planner provides $\mathbf{x}^{ref}$ in real time, ensuring the BlueROV2 avoids obstacles while following the desired trajectory. For further details about the controller and model, the reader is referred to \cite{amergp}.
+The path planner is implemented for a BlueROV2. A \ac{MPC} approach is used to account for model constraints and provide the optimal control input $\mathbf{u}^{ref} \in \mathbb{R}^4$, where $\mathbf{u}^{ref} = [F_x, F_y, F_z, M_z]^T$ represents the forces in the $X$, $Y$, and $Z$ directions, and the moment about the $Z$-axis. The goal is to follow the desired reference trajectory $\mathbf{x}^{ref} \in \mathbb{R}^6$, where $\mathbf{x}^{ref} = [x_{ref}, y_{ref}, z_{ref}, \psi_{ref}]^T$ contains the reference position ($x_{ref}$, $y_{ref}$, $z_{ref}$) and the reference yaw angle $\psi_{ref}$. For further details about the controller and model, the reader is referred to \cite{amergp}. The entanglement-aware path planner provides $\mathbf{x}^{ref}$ in real time, ensuring the BlueROV2 avoids obstacles while following the desired trajectory. 
 
 %\subsection{Results}
 We perform a comparative analysis of the proposed \ac{REACT} method and a baseline conventional \ac{CPP} (FC-Planner \cite{feng2024fc}), which does not contain explicit handling of entanglement. 
 
-The simulation setup consists of a pipe structure represented by an underwater pipe model from \cite{feng2024fc}. The simulated onboard camera featured a field of view of 70 degrees. The tether constraint was defined by a maximum allowed tether length of $L_{max}$ = 10.0 meters.
+The simulation setup consists of a pipe structure from \cite{feng2024fc}. The simulated onboard camera featured a field of view of 70 degrees. The tether constraint was defined by a maximum allowed tether length of $L_{max}$ = 10 meters.
 
-Environmental coverage was evaluated geometrically similar to \cite{amer2023visual}. At each subsampled time step, the position and orientation of the camera were used to determine which triangles in the environment mesh were visible. A triangle was marked as visible if its centroid was within the inspection range, its surface normal faced the camera, and its projection lay within the camera's field of view. Over time, the set of all uniquely observed triangles was accumulated. The coverage at time $t$ was defined as the ratio of the number of unique visible triangles up to time $t$ to the total number of triangles in the environment.
+Coverage was computed in a manner similar to \cite{amer2023visual}. At each time step, the position and orientation of the camera were used to determine which triangles in the environment mesh were visible. A triangle was marked as visible if its centroid was within the inspection range, its surface normal faced the camera, and its projection lay within the camera's field of view. Over time, the set of all uniquely observed triangles was accumulated. The coverage at time $t$ was defined as the ratio of the number of unique visible triangles up to time $t$ to the total number of triangles in the environment.
 
 
 \subsection{Simulations results}
@@ -49,7 +47,7 @@ Environmental coverage was evaluated geometrically similar to \cite{amer2023visu
 \end{table}
 
 
-\begin{table}[b]
+\begin{table}[t]
     \centering
     \caption{Comparison of tether constraint compliance showing the maximum tether length reached and the total duration of tether length exceedance.}
     \label{tab:tether_metrics}
@@ -80,8 +78,7 @@ Environmental coverage was evaluated geometrically similar to \cite{amer2023visu
     \centering
     \begin{subfigure}[b]{0.48\linewidth}
         \centering
-        \includegraphics[width=\linewidth]
-        {figures/coverage_vs_time_recovery.pdf}
+        \includegraphics[width=\linewidth]{Phd_thesis/figures/coverage_vs_time_recovery.pdf}
         %{coverage_vs_time.pdf}
         \caption{ Coverage vs. time.}
         \label{fig:coverage_vs_time}
@@ -137,7 +134,7 @@ The results are presented in two phases: the inspection phase and the recovery p
 
 The results highlight distinct trade-offs between the two planning strategies. As shown in Table~\ref{tab:performance_metrics}, the \ac{CPP} method achieves a shorter inspection time (429s vs. 546s) due to its straightforward path execution without rerouting for disentanglement. However, focusing solely on inspection speed overlooks the critical aspect of tether management in constrained environments. The \ac{CPP} exhibits a significantly longer total mission time (855s vs. 680s) because extensive disentanglement is required after inspection completion.
 
-The \ac{REACT} method demonstrates multiple instances of detection and resolution of entanglement, evidenced by the peaks in the tether length curve in Figure~\ref{fig:tether_vs_time} and the corresponding flat regions in the coverage curve in Figure~\ref{fig:coverage_vs_time}, where the \ac{ROV} inspection progress is stopped to reroute and find entanglement-free paths. This reactive replanning behavior directly results in the longer inspection time, as the system prioritizes tether safety over raw speed.
+\ac{REACT} demonstrates multiple instances of entanglement detection and resolution, as evidenced by the peaks in the tether length curve in Figure~\ref{fig:tether_vs_time} and the corresponding flat regions in the coverage curve in Figure~\ref{fig:coverage_vs_time}, where the \ac{ROV} inspection progress is stopped to reroute and find paths without entanglement. This reactive replanning behavior directly results in a longer inspection time, as the system prioritizes tether safety over raw speed.
 
-Notably, the tether length constraint is rarely exceeded by \ac{REACT} (maximum 10.52m vs. constraint of 10.0m), as shown in Table~\ref{tab:tether_metrics}. Conversely, the \ac{CPP} method severely violates this constraint, reaching 31.16m for extended periods (327.37s), risking unrecoverable tether states without the ability to proactively mitigate them. The 3D trajectory visualizations in Figure~\ref{fig:3Dplots} further illustrate this difference, showing the entangled tether geometry resulting from \ac{CPP} versus the non-entangled configuration achieved by \ac{REACT}. Therefore, \ac{REACT} demonstrates superior performance for safe tethered \ac{ROV} inspection.
+In particular, the limit on the length of the tether is rarely exceeded by \ac{REACT}, as shown in Table~\ref{tab:tether_metrics} and Fig.~\ref{fig:tether_vs_time}. Conversely, the \ac{CPP} method severely violates this constraint, reaching 31.16m for extended periods (327.37s), risking unrecoverable tether entanglement. The 3D trajectory visualizations in Figure~\ref{fig:3Dplots} further illustrate this difference, showing the entangled tether geometry resulting from \ac{CPP} versus the non-entangled configuration achieved by \ac{REACT}. Therefore, \ac{REACT} demonstrates superior performance for safe tethered \ac{ROV} inspection.
 

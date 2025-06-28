@@ -24,7 +24,7 @@
 
 \section{Marine Robotics: Advancing Autonomy for Underwater and Aerial Applications with Optimal Control}
 
-Marine robotics encompasses a diverse array of platforms, such as remotely operated vehicles (ROVs), autonomous underwater vehicles (AUVs), as well as unmanned aerial vehicles (UAVs). These systems are increasingly vital across multiple domains. In the energy sector, they can perform essential inspections of offshore wind turbines and subsea pipelines, detecting critical structural defects or leaks (see Fig.\ref{fig:underwater_robotics_applications}). Beyond industry, applications span environmental monitoring, archaeological surveying, scientific research, observation and study of marine wildlife, aquaculture monitoring and management, and defense operations like mine countermeasures and surveillance. For example, underwater vehicles are increasingly deployed in fish farms to inspect nets, assess fish health~\cite{evjemo2024biology}. Similarly, marine robots are used for monitoring biodiversity and studying wildlife in their natural habitats \cite{amundsen2024aquaculture}, supporting ecological research and conservation efforts.
+Marine robotics encompasses a diverse array of platforms, such as remotely operated vehicles (ROVs), autonomous underwater vehicles (AUVs), as well as unmanned aerial vehicles (UAVs). These systems are increasingly vital across multiple domains. In the energy sector, they can perform essential inspections of offshore wind turbines and subsea pipelines, detecting critical structural defects or leaks ( Fig.\ref{fig:underwater_robotics_applications}). Beyond industry, applications span environmental monitoring, archaeological surveying, scientific research, observation and study of marine wildlife, aquaculture monitoring and management, and defense operations like mine countermeasures and surveillance. For example, underwater vehicles are increasingly deployed in fish farms to inspect nets, assess fish health~\cite{evjemo2024biology}. Similarly, marine robots are used for monitoring biodiversity and studying wildlife in their natural habitats \cite{amundsen2024aquaculture}, supporting ecological research and conservation efforts.
 
 
 
@@ -73,7 +73,7 @@ The drive towards fully autonomous marine systems stems from the need to enhance
 \subsection{Challenges to Autonomy}
 Achieving reliable underwater autonomy requires overcoming fundamental challenges inherent to the complex and dynamic marine environment. Safe navigation is essential, which includes robust obstacle avoidance and adherence to physical constraints. For many marine robots that are tethered, preventing tether entanglement during operation is a critical safety consideration, as entanglement can incur significant operational costs due to the risk of mission delays, damage to the tether or vehicle, and the need for complex and often expensive retrieval operations. Additionally, precise and robust trajectory following is necessary to accurately maintain desired paths despite disturbances such as ocean currents, which is fundamental for mission success in challenging underwater conditions. Finally, generalizability across different platforms is important, as control and planning methods should transfer seamlessly across a wide variety of robotic systems, including UAVs, AUVs, and vehicles with differing sizes and degrees of freedom, without requiring substantial redesign or retuning.
 
-Achieving autonomy fundamentally requires the integration of effective planning and control systems. Planning determines where the vehicle should go and how to reach the target safely, generating feasible trajectories while considering obstacles, mission goals, and dynamic constraints. Control ensures the vehicle can follow these planned paths precisely, by adjusting its actuators to maintain the desired position and orientation despite disturbances, uncertainties, or modeling errors. Together, planning and control enable marine robots to navigate complex, unpredictable environments and accomplish tasks without constant human oversight.
+Achieving autonomy fundamentally requires the integration of effective planning and control systems. Planning determines where the vehicle should go and how to reach the target safely, generating feasible trajectories while considering obstacles, mission goals, and dynamic constraints. Control ensures the vehicle can follow these planned paths precisely, by adjusting its actuators to maintain the desired position and orientation despite disturbances, uncertainties, or modeling errors. Together, planning and control enable marine robots to navigate complex, unpredictable environments and accomplish tasks in a repeatable and automatic manner.
 
 
 
@@ -125,18 +125,18 @@ Edit
     ([xshift=0.3cm,yshift=-0.5cm]navigation.south east);
 
 % Label above the dashed box
-\node[above, yshift=0.5cm, xshift=1cm] at (guidance.north west |- guidance.north) {Autonomous Navigation};
+\node[above, yshift=0.5cm, xshift=1cm] at (guidance.north west |- guidance.north) {Navigation};
 
 % Arrows
 \draw[arrow] (mission) -- (guidance);
 \draw[arrow] (guidance) -- node[above, align=center, font=\small]{reference} (control);
 \draw[arrow] (control) -- node[above]{forces} (vehicle);
-\draw[arrow] (vehicle) |- node[right, align=center, font=\small]{sensor Data} (navigation);
+\draw[arrow] (vehicle) |- node[right, align=center, font=\small]{sensor data} (navigation);
 \draw[arrow] (navigation) -| node[below, align=center, font=\small]{position/velocity} (guidance);
 \draw[arrow] (navigation) -- (control);
 
 \end{tikzpicture}
-\caption{Block diagram illustrating the core autonomous navigation architecture. Mission objectives are processed by path planning, which generates reference trajectories. Control executes the references by applying forces to the vehicle, while state estimation processes sensor data to estimate position and velocity, closing the feedback loop \cite{petillot2019underwater}. }
+\caption{Illustration of the core autonomous navigation architecture. Mission objectives are processed by path planning, which generates reference trajectories. The control module executes the references by applying forces to the vehicle, while state estimation processes sensor data to estimate position and velocity, closing the feedback loop \cite{petillot2019underwater}. }
 \label{fig:autonomous_navigation_diagram}
 \end{figure*}
 

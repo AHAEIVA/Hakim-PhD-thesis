@@ -54,7 +54,7 @@ The final part concludes with an overall summary and future research directions.
 \node[block, below=of C21a, xshift=-0.3cm] (PathPlanner) {Path Planner};
 \node[block, below=of C21b, yshift=-2pt] (Cost) {Cost};
 
-\node[font=\bfseries\itshape\large] at ($(Cost.north)+(0.7cm,0.75cm)$) {MPC};
+\node[font=\bfseries\large] at ($(Cost.north)+(0.7cm,0.75cm)$) {MPC};
 
 % Image node larger
 \node[below=of C1] (Sim) {\includegraphics[width=4.0cm]{Phd_thesis/figures/UWRS_pipe.pdf}};
@@ -157,7 +157,7 @@ The REACT framework operates by coupling this tether model with a MPC and an off
 
 We also provide a comprehensive review of prior work in tether-aware planning, highlighting key limitations such as assumptions of 2D environments, reliance on offline computation, and lack of generalization to 3D scenarios. In contrast, REACT addresses these challenges by offering a scalable and adaptable solution suitable for complex and cluttered 3D underwater environments.
 
-The chapter concludes with simulation results showing that, although REACT may incur a slight increase in path execution time, it ensures mission robustness by eliminating the risk of tether entanglement—making it a superior choice for real-world underwater inspection tasks where safety and reliability are paramount. 
+The chapter concludes with simulation results showing that, although REACT may incur a slight increase in inspection time, it ensures mission success by eliminating the risk of tether entanglement—making it essential for real-world underwater inspection tasks where safety and reliability are of utmost importance. 
 
 
 

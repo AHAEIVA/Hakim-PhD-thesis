@@ -38,7 +38,7 @@ openright  % to maintain the page order if the cover is a custom pdf page
 
 
 
-\newtheorem{remark}{Remark}
+
 
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
@@ -93,6 +93,7 @@ openright  % to maintain the page order if the cover is a custom pdf page
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage{subcaption}  % Add this in the preamble if not already included
+\usepackage{amsthm}
 
 \usepackage[ruled,vlined,linesnumbered]{algorithm2e}
 \usetikzlibrary{positioning}
@@ -164,10 +165,6 @@ openright  % to maintain the page order if the cover is a custom pdf page
 
 %%%%%
 %ea
-
-
-
-
 
 
 
@@ -298,7 +295,7 @@ Path Planning for Tethered Underwater Vehicles}
 \end{acronym}
 
 
-
+\newtheorem{remark}{Remark}
 \begin{document}
 
 %%
@@ -524,7 +521,7 @@ Finlandsgade 22 \\
 \mainmatter
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\part*{Part I: Thesis Overview}
+\part*{Part I: Introduction}
 \label{partI:intro}
  \input{Phd_thesis/chapters/1.Introduction/1-intro}
  \input{Phd_thesis/chapters/1.Introduction/2-mpc}

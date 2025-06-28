@@ -373,7 +373,7 @@ All experiments are conducted using a single seed for randomness in data generat
 
 The development and test sets are generated with $x_{\max} = y_{\max} = z_{\max} = u_{\max} = v_{\max} = w_{\max} = r_{\max} = 0.0$ and $\psi_{\max} = \pi$, so that the models are evaluated only on their ability to handle different inputs rather than different initial conditions. The inputs are sinusoids with an amplitude of $A=3$, a random frequency sampled uniformly in the interval $[0.01, 0.2]$, and a random phase uniformly sampled in the interval $[0, 2\pi]$.
 
-\begin{remark} \textcolor{blue}{The development set used in all experiments is generated independently and distinct from the training data.} \end{remark}
+\begin{remark} The development set used in all experiments is generated independently and distinct from the training data. \end{remark}
 
 
 \begin{remark}
@@ -387,13 +387,7 @@ The development and test sets are generated with $x_{\max} = y_{\max} = z_{\max}
 
 \newcommand{\PlotHeight}{6cm}
 
-%%%%%%%%%%%%%%%%
-\begin{figure}[!t]
-    %\input{Phd_thesis/chapters/3.Papers/3.paper3_pinc/IJCNN_2025/figs/pgfplots/architecture_subtables}%
-    \caption{Overview of architecture experimental results: (a) Neural Network Size: $N_L = 4$ and $N_H = 32$ yield the lowest losses and highest VPTs. (b)~Residual Connection: Ablating the residual connection causes a significant performance drop, with $\mathcal{L}_{data,dev}$ over four orders of magnitude higher. (c)~Activation Function: \lstinline|softplus| achieves better VPTs than \lstinline|tanh|.}
-    \label{fig:architecture}
-\end{figure}
-%%%%%%%%%%%%%%%%
+
 
 \subsubsection{Neural Network Size}
 The number of hidden layers $N_L$ and the number of neurons $N_H$ in each layer is varied in this experiment, which performance metrics are shown in Fig.~\ref{fig:neural_s}. It is found that all losses are the lowest and VPTs the highest for the configuration with $N_L = 4$ and $N_H = 32$. This configuration will, therefore, be used in all subsequent experiments.
@@ -401,6 +395,18 @@ The number of hidden layers $N_L$ and the number of neurons $N_H$ in each layer 
 \subsubsection{Residual Connection}
 The residual connection is ablated in the experiment shown in Fig. \ref{fig:residual}, comparing the model with and without the input state residual connection. Without the residual connection that makes the model follow the integration form of an ODE solution, its performance is degraded, having a $\mathcal{L}_{data,dev}$ that is more than $4$ orders of magnitude higher. 
 %\input{tables/residual_connection_table}
+
+\subcaption{\footnotesize{Neural network size.}}
+
+
+
+%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+    \input{Phd_thesis/chapters/3.Papers/3.paper3_pinc/IJCNN_2025/figs/pgfplots/architecture_subtables}%
+    \caption{Overview of architecture experimental results: (a) Neural Network Size: $N_L = 4$ and $N_H = 32$ yield the lowest losses and highest VPTs. (b)~Residual Connection: Ablating the residual connection causes a significant performance drop, with $\mathcal{L}_{data,dev}$ over four orders of magnitude higher. (c)~Activation Function: \lstinline|softplus| achieves better VPTs than \lstinline|tanh|.}
+    \label{fig:architecture}
+\end{figure}
+%%%%%%%%%%%%%%%%
 
 
 %\input{tables/architecture_subtables}
