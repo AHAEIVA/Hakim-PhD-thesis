@@ -8,30 +8,36 @@
 Building on the challenges identified in applying \ac{MPC} to marine robotic inspection tasks, the core hypothesis of this thesis is formulated as follows:
 
 
-%\subsection{Core Hypothesis}
-\begin{figure}[h!]
-    \centering
-    \begin{tikzpicture}[
-        hypothesisbox/.style = {
-            draw=navyblue,
-            line width=1.5pt,
-            rounded corners=8pt,
-            fill=cyan!3,      % Light cyan fill
-            inner sep=12pt,
-            text width=0.9\textwidth,
-            align=justify
-        }
-    ]
-\node[hypothesisbox] {
-Enhanced with \textbf{entaglement-aware planning}, \textbf{perception-aware control} and \textbf{data-driven modeling} \ac{MPC} enables autonomous marine robots to achieve improved trajectory tracking and inspection coverage while mitigating entanglement risks, outperforming conventional geometric planning and \ac{MPC} approaches.
-};
-    \end{tikzpicture}
+% %\subsection{Core Hypothesis}
+% \begin{figure}[h!]
+%     \centering
+%     \begin{tikzpicture}[
+%         hypothesisbox/.style = {
+%             draw=navyblue,
+%             line width=1.5pt,
+%             rounded corners=8pt,
+%             fill=cyan!3,      % Light cyan fill
+%             inner sep=12pt,
+%             text width=0.9\textwidth,
+%             align=justify
+%         }
+%     ]
+% \node[hypothesisbox] {
+% Enhanced with \textbf{entaglement-aware planning}, \textbf{perception-aware control} and \textbf{data-driven modeling} \ac{MPC} enables autonomous marine robots to achieve improved trajectory tracking and inspection coverage while mitigating entanglement risks, outperforming conventional geometric planning and \ac{MPC} approaches.
+% };
+%     \end{tikzpicture}
     
-    \label{fig:revised_hypothesis_separate}
-\end{figure}
+%     \label{fig:revised_hypothesis_separate}
+% \end{figure}
+\begin{center}
+\begin{minipage}{1.0\textwidth}
+\itshape
+Enhanced with \textbf{entanglement-aware planning}, \textbf{perception-aware control}, and \textbf{data-driven modeling}, \ac{MPC} enables autonomous marine robots to achieve improved trajectory tracking and inspection coverage while mitigating entanglement risks, outperforming conventional path planning and \ac{MPC} approaches.
+\end{minipage}
+\end{center}
 
 %what is this hypotehsis about and why did you make it?
-This hypothesis proposes that three synergistic advancements to \ac{MPC} will fundamentally improve underwater inspection systems. The proposed enhancements specifically target persistent challenges in marine robotics through entanglement-aware planning, which incorporates entanglement-aware constraints into the planning process to enhance mission safety and operational reliability; perception-aware control, which embeds visual inspection objectives directly into the trajectory optimization process to maximize coverage quality and ensure robustness to environmental disturbances; and data-driven modeling, which leverages learning-based approaches to capture complex and uncertain hydrodynamic effects that degrade the performance of conventional \ac{MPC} in real-world conditions.
+This hypothesis proposes that three synergistic advancements to \ac{MPC} will fundamentally improve underwater inspection systems. The proposed enhancements specifically target persistent challenges in marine robotics through entanglement-aware planning, which incorporates entanglement-aware constraints into the planning process to enhance mission safety and operational reliability; perception-aware control, which embeds visual inspection objectives directly into the trajectory optimization process to maximize coverage quality and ensure robustness to environmental disturbances; and data-driven modeling, which leverages data-driven approaches to capture complex and uncertain hydrodynamic effects that degrade the performance of conventional \ac{MPC} in real-world conditions.
 
 \subsection{Research Goals}
 The hypothesis is  be validated through development and testing of its constituent components:

@@ -24,56 +24,56 @@
 
 \section{Marine Robotics: Advancing Autonomy for Underwater and Aerial Applications with Optimal Control}
 
-Marine robotics encompasses a diverse array of platforms, such as remotely operated vehicles (ROVs), autonomous underwater vehicles (AUVs), as well as unmanned aerial vehicles (UAVs) (see Fig. \ref{fig:underwater_robotics_applications}). These systems are increasingly vital across multiple domains. In the energy sector, they can perform essential inspections of offshore wind turbines and subsea pipelines, detecting critical structural defects or leaks. Beyond industry, applications span environmental monitoring, archaeological surveying, scientific research, and defense operations like mine countermeasures and surveillance.
+Marine robotics encompasses a diverse array of platforms, such as remotely operated vehicles (ROVs), autonomous underwater vehicles (AUVs), as well as unmanned aerial vehicles (UAVs). These systems are increasingly vital across multiple domains. In the energy sector, they can perform essential inspections of offshore wind turbines and subsea pipelines, detecting critical structural defects or leaks (see Fig.\ref{fig:underwater_robotics_applications}). Beyond industry, applications span environmental monitoring, archaeological surveying, scientific research, observation and study of marine wildlife, aquaculture monitoring and management, and defense operations like mine countermeasures and surveillance. For example, underwater vehicles are increasingly deployed in fish farms to inspect nets, assess fish health~\cite{evjemo2024biology}. Similarly, marine robots are used for monitoring biodiversity and studying wildlife in their natural habitats \cite{amundsen2024aquaculture}, supporting ecological research and conservation efforts.
+
+
 
 
 \begin{figure*}[t]
     \centering
-    % First Row
-    \begin{subfigure}[b]{0.44\textwidth}
+
+    % Top image (single)
+    \begin{subfigure}[b]{0.62\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{Phd_thesis/figs/lark.png}
-        \caption{Upteko inspection drone.}
-        \label{fig:subfig1}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.49\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{Phd_thesis/chapters/1.Introduction/figures/BlueROV2.jpg}
-        \caption{BlueROV2 medium-sized tethered ROV \cite{bluerobotics_bluerov2_nodate}.}
-        \label{fig:subfig2}
+        \includegraphics[width=\textwidth]{Phd_thesis/chapters/1.Introduction/figures/wt_drone.png}
+        \caption{A drone performing aerial inspection of an offshore wind turbine \cite{deutsche2023drone}.}
+        \label{fig:wind_turbine_drone}
     \end{subfigure}
     
-    \vspace{0.5cm} % Adjust vertical space between rows
-    
-    % Second Row
+    \vspace{0.5cm} % Space between rows
+
+    % Bottom row (two images)
     \begin{subfigure}[b]{0.46\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{Phd_thesis/chapters/1.Introduction/figures/cuttlefish.jpg}
-        \caption{DFKI Cuttlefish autonomous underwater vehicle \cite{christensen_cuttlefish_nodate}.}
-        \label{fig:subfig3}
+        \includegraphics[width=\textwidth]{Phd_thesis/chapters/1.Introduction/figures/defender.jpg}
+        \caption{The Defender ROV performing underwater monitoring and data collection \cite{eiva_image_2025}.}
+        \label{fig:defender_rov}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{0.49\textwidth}
+    \begin{subfigure}[b]{0.46\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{Phd_thesis/chapters/1.Introduction/figures/scanfish_towed.jpg}
-        \caption{EIVA ScanFish Rocio remotely operated towed vehicle \cite{eiva_scanfish_nodate}.}
-        \label{fig:subfig4}
+        \includegraphics[width=\textwidth]{Phd_thesis/chapters/1.Introduction/figures/viper.png}
+        \caption{The EIVA ViperFish remotely operated towed vehicle conducting an underwater survey \cite{eiva2023viperfish}.}
+        \label{fig:viperfish_rov}
     \end{subfigure}
-    
-    \caption{Showcase of the variety marine robotics platforms.}
+
+    \caption{Examples of marine robots performing diverse applications, including aerial inspection and subsea monitoring.}
     \label{fig:underwater_robotics_applications}
 \end{figure*}
 
 
-Currently, many marine robotic tasks depend on remote control (teleoperation) or semi-autonomous functions, such as executing pre-programmed paths or simple line-following maneuvers. While effective for specific, well-defined tasks, these modes often necessitate skilled human pilots and constant supervision, limiting mission duration, complexity, and operational range.
 
-The drive towards fully autonomous marine systems stems from the need to enhance operational safety, increase mission efficiency and capability, and reduce operational costs. By minimizing direct human intervention, autonomy mitigates the risk of human error, enables longer and more complex missions in challenging environments, and ultimately lowers operational expenses.
 
+
+Over recent decades, advances in sensing, communication, and propulsion technologies have significantly expanded the operational capabilities of marine robots. However, realizing their full potential requires transitioning from traditional remote-controlled and semi-autonomous modes of operation towards higher levels of autonomy. This progression involves designing systems capable of perceiving their environment, making decisions in real time, and adapting their behavior without continuous human supervision. A high-level representation of this autonomous navigation architecture is illustrated in Fig.~\ref{fig:autonomous_navigation_diagram}, which shows the key components—planning, control, and state estimation—and their interactions. Currently, many marine robotic tasks depend on remote control (teleoperation) or semi-autonomous functions, such as executing pre-programmed paths or simple line-following maneuvers. While effective for specific, well-defined tasks, these modes often necessitate skilled human pilots and constant supervision, limiting mission duration, complexity, and operational range.
+
+The drive towards fully autonomous marine systems stems from the need to enhance operational safety, increase mission efficiency and capability, and reduce operational costs. By minimizing direct human intervention, autonomy mitigates the risk of human error, enables longer and more complex missions in challenging environments, and ultimately lowers operational expenses. Recent developments in transformative technologies, such as visual simultaneous localization and mapping (V-SLAM)\cite{olaya_survey} and deep learning methods\cite{singh2025deepvl}, have enabled accurate localization, state estimation, and mapping in challenging underwater environments. These capabilities form the foundation of autonomy, providing robots with reliable perception and situational awareness. However, while advances in perception significantly improve environmental understanding, achieving reliable autonomous operation also demands robust solutions for decision-making, planning, and control.
 
 % --- Challenges to Autonomy ---
 \subsection{Challenges to Autonomy}
-Achieving reliable underwater autonomy requires overcoming fundamental challenges inherent to the complex and dynamic marine environment. Safe navigation is essential, which includes robust obstacle avoidance and adherence to physical constraints. For many marine robots that are tethered, preventing tether entanglement during operation is a critical safety consideration. Additionally, precise and robust trajectory following is necessary to accurately maintain desired paths despite disturbances such as ocean currents, which is fundamental for mission success in challenging underwater conditions. Finally, generalizability across different platforms is important, as control and planning methods should transfer seamlessly across a wide variety of robotic systems, including UAVs, AUVs, and vehicles with differing sizes and degrees of freedom, without requiring substantial redesign or retuning.
+Achieving reliable underwater autonomy requires overcoming fundamental challenges inherent to the complex and dynamic marine environment. Safe navigation is essential, which includes robust obstacle avoidance and adherence to physical constraints. For many marine robots that are tethered, preventing tether entanglement during operation is a critical safety consideration, as entanglement can incur significant operational costs due to the risk of mission delays, damage to the tether or vehicle, and the need for complex and often expensive retrieval operations. Additionally, precise and robust trajectory following is necessary to accurately maintain desired paths despite disturbances such as ocean currents, which is fundamental for mission success in challenging underwater conditions. Finally, generalizability across different platforms is important, as control and planning methods should transfer seamlessly across a wide variety of robotic systems, including UAVs, AUVs, and vehicles with differing sizes and degrees of freedom, without requiring substantial redesign or retuning.
+
+Achieving autonomy fundamentally requires the integration of effective planning and control systems. Planning determines where the vehicle should go and how to reach the target safely, generating feasible trajectories while considering obstacles, mission goals, and dynamic constraints. Control ensures the vehicle can follow these planned paths precisely, by adjusting its actuators to maintain the desired position and orientation despite disturbances, uncertainties, or modeling errors. Together, planning and control enable marine robots to navigate complex, unpredictable environments and accomplish tasks without constant human oversight.
 
 
 
@@ -84,6 +84,61 @@ Achieving reliable underwater autonomy requires overcoming fundamental challenge
 
 
 
+
+
+
+
+
+
+
+
+
+\begin{figure*}[t]
+\centering
+\begin{tikzpicture}[
+block/.style={rectangle, draw, fill=blue!60, text=white, text width=2cm, align=center, minimum height=0.8cm},
+arrow/.style={-{Latex[width=2mm]}, thick},
+node distance=1.8cm and 1.8cm,
+imagenode/.style={inner sep=0pt},
+dashedbox/.style={rectangle, draw, dashed, thick, inner sep=0.5cm}
+]
+
+less
+Copy
+Edit
+% Nodes
+\node[block] (guidance) at (-5,0) {Path planning};
+\node[block, right=of guidance] (control) {Control};
+\node[block, below=of control] (navigation) {State estimation};
+
+% Inputs and outputs
+\node[left=1.2cm of guidance] (mission) {mission};
+
+\node[imagenode, right=1.8cm of control] (vehicle) {
+    \includegraphics[width=2.5cm]{Phd_thesis/chapters/1.Introduction/figures/defender.png}
+};
+
+% Dashed box
+\draw[dashed, thick] 
+    ([xshift=-0.7cm,yshift=0.5cm]guidance.north west) 
+    rectangle 
+    ([xshift=0.3cm,yshift=-0.5cm]navigation.south east);
+
+% Label above the dashed box
+\node[above, yshift=0.5cm, xshift=1cm] at (guidance.north west |- guidance.north) {Autonomous Navigation};
+
+% Arrows
+\draw[arrow] (mission) -- (guidance);
+\draw[arrow] (guidance) -- node[above, align=center, font=\small]{reference} (control);
+\draw[arrow] (control) -- node[above]{forces} (vehicle);
+\draw[arrow] (vehicle) |- node[right, align=center, font=\small]{sensor Data} (navigation);
+\draw[arrow] (navigation) -| node[below, align=center, font=\small]{position/velocity} (guidance);
+\draw[arrow] (navigation) -- (control);
+
+\end{tikzpicture}
+\caption{Block diagram illustrating the core autonomous navigation architecture. Mission objectives are processed by path planning, which generates reference trajectories. Control executes the references by applying forces to the vehicle, while state estimation processes sensor data to estimate position and velocity, closing the feedback loop \cite{petillot2019underwater}. }
+\label{fig:autonomous_navigation_diagram}
+\end{figure*}
 
 
 

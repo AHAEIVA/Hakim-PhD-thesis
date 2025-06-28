@@ -535,37 +535,31 @@ Finlandsgade 22 \\
  \input{Phd_thesis/chapters/2.Background/1-modelling}
  \input{Phd_thesis/chapters/2.Background/2-mpc}
  \input{Phd_thesis/chapters/2.Background/3-model_learning}
+ \input{Phd_thesis/chapters/1.Introduction/7-summary}
+
+% old part
+
+ % \input{Phd_thesis/chapters/Papers_Summary/1-UNav-Sim}
+ % \input{Phd_thesis/chapters/Papers_Summary/2-REACT}
+ % \input{Phd_thesis/chapters/Papers_Summary/3-VTNMPC}
+ % \input{Phd_thesis/chapters/Papers_Summary/4-PINC}
+ % \input{Phd_thesis/chapters/Papers_Summary/5-DF-GP}
 
 
- \input{Phd_thesis/chapters/Papers_Summary/1-UNav-Sim}
- \input{Phd_thesis/chapters/Papers_Summary/2-REACT}
- \input{Phd_thesis/chapters/Papers_Summary/3-VTNMPC}
- \input{Phd_thesis/chapters/Papers_Summary/4-PINC}
- \input{Phd_thesis/chapters/Papers_Summary/5-DF-GP}
 
 
- \input{Phd_thesis/chapters/4.Conclusion/1-results_summary}
- \input{Phd_thesis/chapters/4.Conclusion/2-analysis_conclusion}
-  \input{Phd_thesis/chapters/4.Conclusion/3-future_work}
-
-%\input{chapters/1.Introduction}
-%\input{chapters/2.Background}
-%\input{chapters/3.Papers}
-
-% \input{chapters/1.introduction/3-papers}
-% \input{chapters/1.introduction/paper1} \cleardoublepage  % Survey
 
 % % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
-\part*{Part II: Contributed Papers}
+\part*{Part II: Marine Robotics Simulator}
  %\addcontentsline{toc}{part}{Part II: Data Availability and Model Adaptability in Underwater Robotics}
  \label{partII:paper}
 
 
 
-\chapter{UNav-Sim – A High-Fidelity Underwater Robotics Simulator}
+\chapter{UNav-Sim: A Visually Realistic Underwater Robotics Simulator and Synthetic Data-Generation Framework}
 %\addcontentsline{toc}{chapter}{Paper I: UNav-Sim – A High-Fidelity Underwater Robotics Simulator}
 \vspace{1cm}
 This paper was published at the \textbf{International Conference on Advanced Robotics (ICAR), 2023}.
@@ -579,6 +573,9 @@ Underwater robotic surveys can be costly due to the complex working environment 
 
 
 
+\part*{Part III: Coverage Path Planning}
+
+
 \chapter{REACT: Real-time Entanglement-Aware Coverage
 Path Planning for Tethered Underwater Vehicles}
 %\addcontentsline{toc}{chapter}{Paper II: REACT: Real-time Entanglement-Aware Coverage Path Planning for Tethered Underwater Vehicles}
@@ -587,8 +584,8 @@ Path Planning for Tethered Underwater Vehicles}
 This paper was submitted to the \textbf{Transactions on Field Robotics}.
 
  \section{Abstract}
- Inspection of complex underwater structures with tethered underwater vehicles is often hindered by the risk of tether entanglement. We propose REACT (real-time entanglement-aware coverage path planning for tethered underwater vehicles), a framework designed to overcome this
-limitation. REACT comprises a fast geometry-based tether model using the signed distance field (SDF) map for accurate, real-time simulation of taut tether configurations around arbitrary structures. This model enables an efficient online replanning strategy, enforcing a maximum tether length constraint, thereby actively preventing entanglement. By integrating REACT into a coverage path planning framework, we achieve safe and optimal inspection paths, previously challenging due to tether constraints. What is more, the underlying model predictive controller (MPC) renders optimal trajectory following while accounting for system dynamics. The complete REACT framework’s efficacy is validated in a pipe inspection scenario, demonstrating safe, entanglement-free navigation and full-coverage inspection.
+ Inspection of complex underwater structures with tethered underwater vehicles is often hindered by the risk of tether entanglement. We propose REACT (real-time entanglement-aware coverage path planning for tethered underwater vehicles), a framework designed to overcome this limitation. REACT comprises a fast geometry-based tether model using the signed distance field (SDF) map for accurate, real-time simulation of taut tether configurations around arbitrary structures in 3D. This model enables an efficient online replanning strategy, by enforcing a maximum tether length constraint, thereby actively preventing entanglement. By integrating REACT into a coverage path planning framework, we achieve safe and optimal inspection paths, previously challenging due to tether constraints. What is more, the underlying model predictive controller (MPC) renders optimal trajectory following while accounting for system dynamics. The complete REACT framework's efficacy is validated in a pipe inspection scenario, demonstrating safe, entanglement-free navigation and full-coverage inspection. Simulation results show REACT achieves 99.91\% coverage while maintaining tether constraints and completing the total mission 20\% faster than conventional planners, despite longer inspection time due to proactive entanglement avoidance that eliminates extensive post-mission disentanglement. Real-world experiments confirm these benefits, where REACT completed the full mission with 95.6\% coverage while the baseline planner failed at 80.9\% coverage due to physical tether entanglement.
+
 
  \newpage
  \input{Phd_thesis/chapters/3.Papers/5.paper5_eaplanner/EA-Planner/paper_eaplanner}
@@ -608,8 +605,9 @@ Automated visual inspection of on-and offshore wind turbines using aerial robots
 %\includepdf[pages=-,pagecommand={},width=\textwidth]{chapters/3.Papers/2.paper2_vtnmpc/ICAR_2023_Hakim_2/Autonomous_Robots/IROS/ICAR_2023_Hakim_2.pdf}
 
 
+\part*{Part IV: Data-Driven Modeling}
 
-\chapter{Modelling of Underwater Vehicles using
+\chapter{Modeling of Underwater Vehicles using
 Physics-Informed Neural Networks with Control}
 %\addcontentsline{toc}{chapter}{Paper IV:  Modelling of Underwater Vehicles using Physics-Informed Neural Networks with Control}
 \vspace{1cm}
@@ -633,6 +631,15 @@ Autonomous underwater vehicles (AUVs) present several challenges due to the comp
 \newpage
 
 \input{Phd_thesis/chapters/3.Papers/4.paper4_dfgp/Cont_Syst_Tech_Hakim/TCST/paper4_dfgp}
+
+
+
+\part*{Part V: Concluding Remarks}
+%conclusion
+ \input{Phd_thesis/chapters/4.Conclusion/1-results_summary}
+ \input{Phd_thesis/chapters/4.Conclusion/2-analysis_conclusion}
+  \input{Phd_thesis/chapters/4.Conclusion/3-future_work}
+
 
 %----------------------------------------------------------------------------------------
 %	BIBLIOGRAPHY

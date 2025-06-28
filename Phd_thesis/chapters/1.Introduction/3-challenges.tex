@@ -1,15 +1,15 @@
-%\subsection{\ac{MPC} Challenges in Marine Robotics Autonomous Inspection Tasks}
+\subsection{\ac{MPC} Challenges in Marine Robotics Autonomous Inspection Tasks}
 %\label{subsec:mpc_barriers}
 
 While \ac{MPC} improves autonomous capabilities, there are fundamental challenges that could hinder \ac{MPC}'s performance and deployment in marine environments, which include:
 
-\textbf{1. Simulation-reality discrepancy:} existing underwater simulators lack both visual realism (critical for perception algorithms) and accurate physics in modeling hydrodynamic forces, making pre-deployment controller validation unreliable. This gap forces trial-and-error field testing, which is costly.
+\textit{Simulation-reality discrepancy:} existing underwater simulators lack both visual realism (critical for perception algorithms) and accurate physics in modeling hydrodynamic forces, making pre-deployment controller validation unreliable. This gap forces trial-and-error field testing, which is costly.
 
-\textbf{2. Environmental uncertainty:} disturbances such as waves and winds exhibit complex, multi-scale spatiotemporal variations that are difficult to model accurately. As a result, model discrepancies negatively impact the predictive performance of traditional MPC, often leading to rapid degradation in overall system performance.
+\textit{Environmental uncertainty:} disturbances such as waves and winds exhibit complex, multi-scale spatiotemporal variations that are difficult to model accurately. As a result, model discrepancies negatively impact the predictive performance of traditional MPC, often leading to rapid degradation in overall system performance.
 
-\textbf{3. Handling tether constraints:} simultaneously optimizing inspection coverage while avoiding tether entanglement remains a significant challenge. The tether is inherently difficult to model accurately, and its nonlinear, dynamic behavior is hard to incorporate effectively within MPC frameworks. 
+\textit{ Handling tether constraints:} many marine vehicles are tethered, which adds a requirement for the developed planners and controllers to explicitly account for the tether. Otherwise, there is a significant risk of entanglement and mission failure. Simultaneously optimizing inspection coverage while avoiding tether entanglement remains a major challenge. The tether is inherently difficult to model accurately and hard to incorporate effectively within MPC frameworks.
 
-\textbf{4. Perception-control decoupling:} most existing MPC approaches treat inspection as a trajectory tracking problem, relying on precomputed paths that assume static or predictable conditions. This decoupling between perception and control limits robustness, as the planned trajectory may become suboptimal or infeasible in dynamic or uncertain environments. 
+\textit{ Perception-control decoupling:} most existing MPC approaches treat inspection as a trajectory tracking problem, relying on precomputed paths that assume static or predictable conditions. This decoupling between perception and control limits robustness, as the planned trajectory may become suboptimal or infeasible in dynamic or uncertain environments. 
 
 %By explicitly incorporating inspection quality into the MPC cost function, we can enable the controller to adapt in real-time, ensuring more robust and effective coverage despite changing environmental conditions.
 

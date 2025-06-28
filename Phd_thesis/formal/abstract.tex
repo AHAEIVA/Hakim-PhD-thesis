@@ -1,14 +1,21 @@
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
 
-Marine robotics have become indispensable for a diverse set of tasks in the maritime industry, from deep-sea surveying to aerial monitoring of offshore installations. Autonomy in these operations is increasingly vital, not just to reduce operational expenses but to ensure consistent high-quality performance with minimal human oversight. Advanced real-time control and planning algorithms such as model predictive control (MPC) are key in marine robotics autonomy, as it can handle nonlinear systems with high degrees of freedom.  Despite its potential, integrating MPC into marine robotic systems presents new challenges related to modeling accuracy, computational efficiency, and robustness in uncertain environments.
+% Applications & motivation
+Marine robotics are becoming crucial for a wide variety of applications in the maritime industry, from deep-sea surveying to aerial monitoring of offshore installations. Autonomy in these operations is becoming increasingly crucial not just to reduce operational expenses but also to ensure consistent high-quality performance with minimal human oversight. 
 
-This research develops optimal navigation algorithms for autonomous underwater inspection robots. It introduces novel methods that integrate learning-based modeling techniques with MPC to address some  of the major challenges associated with the marine robots autonomy, specifically addressing problems related to control and path planning.
+% Problem statement
+Advanced real-time control and planning algorithms such as model predictive control (MPC) are key in marine robotics autonomy, as it can handle nonlinear systems with high degrees of freedom.  Despite its potential, integrating MPC into marine robotic systems presents new challenges related to modeling accuracy, computational efficiency, and robustness to uncertain environments.
 
-A key contribution of this work is the development of an open-source marine robotics simulator that provides highly realistic rendering and physics, enabling safe, cost-effective, and efficient testing of algorithms, as well as synthetic data collection. In addition, novel MPC-based coverage path planning approaches are developed that accounts for tether constraints while ensuring complete area coverage.
 
-To improve the accuracy of dynamic modeling of underwater vehicles, learning-based approaches are employed to capture complex and rapidly changing underwater dynamics. In particular, Gaussian processes and physics-informed neural networks are used to enhance the modeling of underwater vehicle dynamics, thereby enhancing MPC performance.
+% scope of thesis 
+This dissertation addresses key challenges in achieving autonomy for marine and aerial robotic systems, with a particular focus on underwater vehicles and drones used in inspection tasks. It examines problems related to path planning and optimal control, and investigates how path planners and data-driven methods can be integrated with optimization techniques to enhance operation in complex and uncertain environments.
 
+
+% contributions summary
+A key contribution of this work is the development of an open-source marine robotics simulator that provides highly realistic rendering and physics, enabling safe, cost-effective, and efficient testing of algorithms, as well as synthetic data collection. In addition, novel MPC-based coverage path planning approaches are developed that accounts for tether constraints while ensuring complete area coverage. To improve the accuracy of dynamic modeling of underwater vehicles, data-driven approaches are employed to capture complex and rapidly changing underwater dynamics. In particular, Gaussian processes and physics-informed neural networks are used to enhance the modeling of underwater vehicle dynamics, thereby enhancing MPC performance.
+
+% how contributions will help in the big picture
 By integrating data-driven models and task-specific path planners with MPC, this work enables the development of more reliable, safer and highly adaptive algorithms for autonomous marine inspection. The findings advance the state-of-the-art in marine robotics and contribute towards real-world deployment of fully autonomous inspection and surveying operations in complex marine environments.
 
 \newpage

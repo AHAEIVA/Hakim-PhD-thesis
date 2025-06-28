@@ -8,31 +8,36 @@ The evaluation framework directly aligns with the research goals through quantit
 \footnotesize
 \begin{tabular}{p{0.22\textwidth}p{0.73\textwidth}}
 \toprule
-\textbf{Component} & \textbf{Evaluation Metrics} \\
+\textbf{Research goal} & \textbf{Evaluation metrics} \\
 \midrule
+
+\textbf{Simulation Platform} &
+\begin{itemize}[leftmargin=*,noitemsep]
+ \textit{Usability}:  Integration with ROS and compatibility with common robotics middleware \newline
+ \textit{Fidelity}: Visual and physical realism of the simulated environment
+\end{itemize} \\
 
 \textbf{Tether-Aware Planning} &
 \begin{itemize}[leftmargin=*,noitemsep]
-\item \textit{Safety}: Max allowable tether length exceedance time
-\item \textit{Coverage}: Completeness (\% inspected area) on complex structures
-\item \textit{Computation time}
+ \textit{Safety}: Max allowable tether length exceedance time \newline
+ \textit{Coverage}: Completeness (\% inspected area) on complex structures \newline
+ \textit{Computation: Real-time feasibility and comparative computational efficiency against baseline approaches}
 \end{itemize} \\
 
 \textbf{Perception-Aware Control} &
 \begin{itemize}[leftmargin=*,noitemsep]
-\item \textit{Safety}: Distance from inspection surface
-\item \textit{Inspection Quality}: How centered the surfaces being inspected (defined in paper). 
-\item \textit{Robustness}: Performance under operational disturbances
+ \textit{Safety}: Distance from inspection surface \newline
+ \textit{Inspection Quality}: How centered the surfaces being inspected \newline
+ \textit{Robustness}: Performance under operational disturbances
 \end{itemize} \\
 
 \textbf{Data-Driven Modelling} &
 \begin{itemize}[leftmargin=*,noitemsep]
-\item  \textit{Modelling Error}: Mean squared error in predicting environmental disturbances
-\item \textit{Trajectory Tracking Error}:  Mean squared error in trajectory tracking
+ \textit{Modelling Error}: Mean squared error in predicting environmental disturbances \newline
+ \textit{Trajectory Tracking Error}: Mean squared error in trajectory tracking
 \end{itemize} \\
-
-
 
 \bottomrule
 \end{tabular}
 \end{table}
+

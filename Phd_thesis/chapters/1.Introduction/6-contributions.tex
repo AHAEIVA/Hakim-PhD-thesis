@@ -1,34 +1,128 @@
-\section{Thesis Structure and Contributions}
+\section{Contributions}
+In this section, we summarize the contributions made to the literature as part of this dissertation. They can be divided into three main areas: (1) development of new simulation tools for marine robotics, (2) novel inspection path planners, and (3) data-driven modeling techniques. All these methods directly contribute to MPC performance and usability, as they improve accuracy, adaptability, and safety.
 
-\begin{figure}[h!]
-    \centering
-    \includegraphics[width=1.0\textwidth]{Phd_thesis/chapters/1.Introduction/figures/contributions_thesis.pdf}
-    \caption{Research contributions and their interdependencies in marine robotics autonomy}
-    \label{fig:contribution_structure}
-\end{figure}
+\noindent \textbf{[C1] Simulation}  
+Provides the foundational platform for development and validation. \textbf{C1.1: Visually Realistic Underwater Robot Simulator:} Development of a simulation environment combining realistic visual rendering with accurate hydrodynamic modeling to reduce the sim-to-real gap.
 
-The main scientific and technological contributions presented in this thesis are:
+\vspace{0.5em}
 
-\begin{description}[leftmargin=1cm, style=unboxed, font=\normalfont] % Using description list for clarity
+\noindent \textbf{[C2] Control and Planning}  
+Develops novel algorithms for safe and effective autonomous navigation and task execution. \textbf{C2.1: A real-time entanglement-Aware Path Planning:} An entanglement-aware path planner for tethered underwater inspection tasks. \textbf{C2.2: Visual Tracking \ac{NMPC} Formulation:} An \ac{NMPC} strategy that explicitly incorporates visual tracking objectives, optimizing inspection quality and coverage.
 
-    \item[\textcolor{blue}{\textbf{[C1] Simulation }}] \hfill \\
-        Provides the foundational platform for development and validation.
-        \begin{itemize}[leftmargin=0.5cm, itemsep=0pt]
-            \item \textbf{C1.1: Visually Realistic Underwater Robot Simulator:} Development of a simulation environment combining realistic visual rendering with accurate hydrodynamic modeling to reduce the sim-to-real gap.
-        \end{itemize}
+\vspace{0.5em}
 
-    \item[\textcolor{blue}{\textbf{[C2] Control and Planning}}] \hfill \\
-        Develops novel algorithms for safe and effective autonomous navigation and task execution.
-        \begin{itemize}[leftmargin=0.5cm, itemsep=0pt]
-            \item \textbf{C2.1: A real-time entaglement-Aware Path Planning:}  An entanglement-aware path planner for tethered underwater inspection tasks.
-            \item \textbf{C2.2: Visual Tracking  \ac{NMPC} Formulation:} An \ac{NMPC} strategy that explicitly incorporates visual tracking objectives optimizing  inspection quality and coverage.
-        \end{itemize}
+\noindent \textbf{[C3] Model Learning}  
+Enhances controller performance by improving the fidelity of the underlying dynamic models. \textbf{C3.1: Learning Full Model Dynamics using PINNs:} Exploration of physics-informed neural networks  for learning full dynamic models from data while respecting physical laws. \textbf{C3.2: Learning Model Residuals:} Online estimation of model uncertainties and external disturbances using Gaussian Processes to adaptively augment the nominal model used within the \ac{MPC}.
 
-    \item[\textcolor{blue}{\textbf{[C3] Model Learning}}] \hfill \\
-        Enhances controller performance by improving the fidelity of the underlying dynamic models.
-         \begin{itemize}[leftmargin=0.5cm, itemsep=0pt]
-            \item \textbf{C3.1: Learning Full Model Dynamics using PINNs:} Exploration of Physics-Informed Neural Networks (PINNS) for learning full dynamic models from data while respecting physical laws.
-            \item \textbf{C3.2: Learning Model Residuals} Online estimation of model uncertainties and external disturbances using Gaussian Processes (GPs) to adaptively augment the nominal model used within the \ac{MPC}.
-        \end{itemize}
-\end{description}
+
+
+
+% \begin{figure}[h!]
+%     \centering
+%     \includegraphics[width=1.0\textwidth]{Phd_thesis/chapters/1.Introduction/figures/contributions_thesis.pdf}
+%     \caption{Research contributions and their interdependencies in marine robotics autonomy}
+%     \label{fig:contribution_structure}
+% \end{figure}
+
+% The main scientific and technological contributions presented in this thesis are:
+
+% \begin{description}[leftmargin=1cm, style=unboxed, font=\normalfont] % Using description list for clarity
+
+%     \item[\textcolor{blue}{\textbf{[C1] Simulation }}] \hfill \\
+%         Provides the foundational platform for development and validation.
+%         \begin{itemize}[leftmargin=0.5cm, itemsep=0pt]
+%             \item \textbf{C1.1: Visually Realistic Underwater Robot Simulator:} Development of a simulation environment combining realistic visual rendering with accurate hydrodynamic modeling to reduce the sim-to-real gap.
+%         \end{itemize}
+
+%     \item[\textcolor{blue}{\textbf{[C2] Control and Planning}}] \hfill \\
+%         Develops novel algorithms for safe and effective autonomous navigation and task execution.
+%         \begin{itemize}[leftmargin=0.5cm, itemsep=0pt]
+%             \item \textbf{C2.1: A real-time entaglement-Aware Path Planning:}  An entanglement-aware path planner for tethered underwater inspection tasks.
+%             \item \textbf{C2.2: Visual Tracking  \ac{NMPC} Formulation:} An \ac{NMPC} strategy that explicitly incorporates visual tracking objectives optimizing  inspection quality and coverage.
+%         \end{itemize}
+
+%     \item[\textcolor{blue}{\textbf{[C3] Model Learning}}] \hfill \\
+%         Enhances controller performance by improving the fidelity of the underlying dynamic models.
+%          \begin{itemize}[leftmargin=0.5cm, itemsep=0pt]
+%             \item \textbf{C3.1: Learning Full Model Dynamics using PINNs:} Exploration of Physics-Informed Neural Networks (PINNS) for learning full dynamic models from data while respecting physical laws.
+%             \item \textbf{C3.2: Learning Model Residuals} Online estimation of model uncertainties and external disturbances using Gaussian Processes (GPs) to adaptively augment the nominal model used within the \ac{MPC}.
+%         \end{itemize}
+% \end{description}
+
+
+
+
+
+
+%%%%%%%%%%%%%%
+
+
+
+% {\small
+% \begin{tikzpicture}[
+%     node distance=1.5cm and 1.8cm,
+%     box/.style={rectangle, draw=black, thick, minimum height=1cm, minimum width=2.2cm, align=center},
+%     lbl/.style={rectangle, draw=blue, thick, align=center, font=\bfseries\footnotesize, minimum width=2cm},
+%     ->, >=Stealth
+% ]
+
+% % Top row - main blue boxes
+% \node[lbl] (C21a) {C.2.1\\Entanglement Aware\\Tether Planner};
+% \node[lbl, right=of C21a] (C21b) {C.2.1\\Visual Tracking\\NMPC};
+% \node[lbl, right=of C21b] (C1) {C.1\\Underwater Robot\\Simulator};
+
+% % Second row - main process
+% \node[box, below=of C21a] (PathPlanner) {Path Planner};
+% \node[box, below=of C21b] (Cost) {Cost};
+
+% % Image node larger
+% \node[below=of C1] (Sim) {\includegraphics[width=4.0cm]{Phd_thesis/figures/UWRS_pipe.pdf}};
+
+% % Third row
+% \node[box, below=of PathPlanner] (Model) {Model};
+% \node[box, below=of Cost] (Optimizer) {Optimizer};
+
+% % Bottom row - model learning boxes
+% \node[lbl, below left=0.8cm and -0.5cm of Model] (C31) {C.3.1\\Full Model\\(PINNS)};
+% \node[lbl, below right=0.8cm and -0.5cm of Model] (C32) {C.3.2\\Residual Model\\(GPs)};
+
+% % Connections from top blue boxes
+% \draw[blue, thick] (C21a) -- (PathPlanner);
+% \draw[blue, thick] (C21b) -- (Cost);
+% \draw[blue, thick] (C1) -- (Sim);
+
+% % Main process flow
+% \draw (PathPlanner) -- node[above] {reference} (Cost);
+% \coordinate (arrowStart) at ($(Cost.east) + (0.5,0)$);
+% \draw[<-] (Cost.east) -- (arrowStart);
+% \draw[-] (arrowStart) -- ++(0,-0.8);
+
+
+% %\draw (Optimizer) -- node[right] {actions} (Sim);
+% \draw (Model) -- node[above] {prediction} (Optimizer);
+
+% % Model learning connections
+% \draw[blue, thick] (C31) -- (Model);
+% \draw[blue, thick] (C32) -- (Model);
+
+% % New connection from image to Model
+% \draw (Sim.west) -- node[below]{feedback} ++(-6.55,0)
+%                   -- ++(0,-1)
+%                   -- (Model.north);
+
+
+% % New arrow from Optimizer: right 2cm then up 2cm
+% \draw (Optimizer.east) -- ++(3,0) -- node[right]{actions} ++(0,0.5);
+
+% \end{tikzpicture}
+% }
+
+
+
+
+
+
+
+
+
 

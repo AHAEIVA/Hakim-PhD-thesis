@@ -172,31 +172,37 @@ The overall learning-based MPC framework, as depicted in Fig. \ref{fig:abstract}
 
 %% Algorithm starts here
 %%%
-\begin{algorithm}
+\begin{algorithm}[H]
 \caption{Dynamic Forgetting Gaussian Process (DF-GP)}\label{alg:dynamic_forgetting_gp}
-\begin{algorithmic}[1]
-\State \textbf{Input:} 
-\Statex \quad Measurement horizon \(H\)
-\Statex \quad Number of \ac{GP} models \(K\)
-\Statex \quad Forgetting factors \(\lambda_j\)
-\vspace{0.2cm}
-\State  Generate datasets \(D^1\) and \(D^2\), incorporating \eqref{eq:gp_data},\eqref{eq:input_target}
-\State  Optimize GP hyperparameters, using \eqref{eq:hyper_opt}
-\vspace{0.2cm}
 
-\While{learning is active}
+\KwIn{
+  Measurement horizon $H$; \\
+  Number of GP models $K$; \\
+  Forgetting factors $\lambda_j$.
+}
 
-    \State \quad Get current state and control
-    \State \quad Update \(D^2\), append new data and remove old
-    \For{ each GP model with \(\lambda_j\)}
-        \State \quadCompute predictions \(\mu_{gpj}\), using \eqref{eq:pred_asgp1}
-    \EndFor
-    \State \quad Optimize weights \(\eta^{opt}\) over horizon \(N\), using \eqref{eq:DF}
-    \State \quad {Predict disturbance \(\hat{\Delta}_{t+1}\) with \(\eta^{opt}\) using \eqref{eq:pred_dfgp1}.
-    \State \quad {Update MPC model with \(\hat{\Delta}_{t+1}\), using \eqref{eq:NMPC1}
-\EndWhile
-\end{algorithmic}
+Generate datasets $D^1$ and $D^2$ incorporating \eqref{eq:gp_data} and \eqref{eq:input_target}\;
+
+Optimize GP hyperparameters using \eqref{eq:hyper_opt}\;
+
+\While{learning is active}{
+  Get current state and control\;
+  
+  Update $D^2$ by appending new data and removing old\;
+  
+  \For{each GP model with $\lambda_j$}{
+    Compute predictions $\mu_{gpj}$ using \eqref{eq:pred_asgp1}\;
+  }
+  
+  Optimize weights $\eta^{opt}$ over horizon $N$ using \eqref{eq:DF}\;
+  
+  Predict disturbance $\hat{\Delta}_{t+1}$ with $\eta^{opt}$ using \eqref{eq:pred_dfgp1}\;
+  
+  Update MPC model with $\hat{\Delta}_{t+1}$ using \eqref{eq:NMPC1}\;
+}
+
 \end{algorithm}
+
 
 
 

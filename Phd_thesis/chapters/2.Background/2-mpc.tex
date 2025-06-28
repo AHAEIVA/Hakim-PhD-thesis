@@ -1,6 +1,6 @@
 \section{Model Predictive Control}
 \label{sec:MPC_background}
-MPC is an optimization-based control strategy that leverages a dynamic model of the system to predict its future behavior and optimize control actions over a finite time period, known as the prediction horizon ($T_p$). At each control cycle, MPC solves an online optimization problem to find a sequence of future control inputs that minimize a predefined cost function, subject to constraints on the system's states and inputs.
+Having established the foundation for marine vehicle's modeling, from first-principles derivations to data-driven enhancement techniques, we now turn our attention to leveraging these models for advanced control design.  This section introduces MPC, a control framework that directly exploits these dynamic models to achieve optimal performance. MPC is an optimization-based control strategy that leverages a dynamic model of the system to predict its future behavior and optimize control actions over a finite time period, known as the prediction horizon ($T_p$). At each control cycle, MPC solves an online optimization problem to find a sequence of future control inputs that minimize a predefined cost function, subject to constraints on the system's states and inputs.
 
 
 \subsection{Receding Horizon Optimization}
@@ -36,52 +36,54 @@ The MPC control loop is summarized in Algorithm \ref{alg:mpc_loop}.
 }
 \end{algorithm}
 
-\subsection{Discretization for Numerical Solution}
+\subsection{Numerical Discretization }
 
 The continuous-time optimal control problem \eqref{eq:mpc_opt} must be discretized to be solved numerically. The prediction horizon $T_p$ is divided into $N$ intervals of length $\Delta t = T_p/N$. A common approach is to assume piecewise constant control inputs over each interval:
 
 \begin{equation}
-    \mathbf{u}(t) = \mathbf{u}_k \quad \text{for} \quad t \in [t_k, t_{k+1}), \quad k = 0, \dots, N-1
+    \mathbf{\bar{u}}(t) = \mathbf{\bar{u}}_k \quad \text{for} \quad t \in [t_k, t_{k+1}), \quad k = 0, \dots, N-1
 \end{equation}
 
-where $t_k = t + k\Delta t$. Here, $\boldsymbol{x}_k \equiv \boldsymbol{\bar{x}}(t_k)$ and $\mathbf{u}_k \equiv \mathbf{\bar{u}}(\tau)$ for $\tau \in [t_k, t_{k+1})$ represent the discrete-time equivalents of the continuous predicted trajectories. The continuous state dynamics $\dot{\boldsymbol{x}} = f(\boldsymbol{x}, \mathbf{u})$ are discretized using a numerical integration method (e.g., Euler, Runge-Kutta) to obtain a discrete-time prediction model:
+where $t_k = t + k\Delta t$. Here, $\boldsymbol{\bar{x}}_k \equiv \boldsymbol{\bar{x}}(t_k)$ and $\mathbf{\bar{u}}_k \equiv \mathbf{\bar{u}}(\tau)$ for $\tau \in [t_k, t_{k+1})$ represent the discrete-time equivalents of the continuous predicted trajectories. The continuous state dynamics $\dot{\boldsymbol{x}} = f(\boldsymbol{x}, \mathbf{u})$ are discretized using a numerical integration method (e.g., Euler, Runge-Kutta) to obtain a discrete-time prediction model:
 
 \begin{equation}
-    \boldsymbol{x}_{k+1} = f_d(\boldsymbol{x}_k, \mathbf{u}_k)
+    \boldsymbol{\bar{x}}_{k+1} = f_d(\boldsymbol{\bar{x}}_k, \mathbf{\bar{u}}_k)
 \end{equation}
 
 For instance, using the 4th-order Runge-Kutta (RK4) method:
 
 \begin{equation}
-    \boldsymbol{x}_{k+1} = \boldsymbol{x}_k + \frac{\Delta t}{6}(\mathbf{k}_1 + 2\mathbf{k}_2 + 2\mathbf{k}_3 + \mathbf{k}_4)
+    \boldsymbol{\bar{x}}_{k+1} = \boldsymbol{\bar{x}}_k + \frac{\Delta t}{6}(\mathbf{k}_1 + 2\mathbf{k}_2 + 2\mathbf{k}_3 + \mathbf{k}_4)
 \end{equation}
 
-where $\mathbf{k}_1 = f(\boldsymbol{x}_k, \mathbf{u}_k)$, $\mathbf{k}_2 = f(\boldsymbol{x}_k + \frac{\Delta t}{2}\mathbf{k}_1, \mathbf{u}_k)$, $\mathbf{k}_3 = f(\boldsymbol{x}_k + \frac{\Delta t}{2}\mathbf{k}_2, \mathbf{u}_k)$, and $\mathbf{k}_4 = f(\boldsymbol{x}_k + \Delta t \mathbf{k}_3, \mathbf{u}_k)$.
+where $\mathbf{k}_1 = f(\boldsymbol{\bar{x}}_k, \mathbf{\bar{u}}_k)$, $\mathbf{k}_2 = f(\boldsymbol{\bar{x}}_k + \frac{\Delta t}{2}\mathbf{k}_1, \mathbf{\bar{u}}_k)$, $\mathbf{k}_3 = f(\boldsymbol{\bar{x}}_k + \frac{\Delta t}{2}\mathbf{k}_2, \mathbf{\bar{u}}_k)$, and $\mathbf{k}_4 = f(\boldsymbol{\bar{x}}_k + \Delta t \mathbf{k}_3, \mathbf{\bar{u}}_k)$.
 
 The cost function integral is simply approximated by a sum:
 
 \begin{equation}
-    J_d = \sum_{k=0}^{N-1} L_d(\boldsymbol{x}_k, \mathbf{u}_k) + E(\boldsymbol{x}_N)
+    J_d = \sum_{k=0}^{N-1} L_d(\boldsymbol{\bar{x}}_k, \mathbf{\bar{u}}_k) + E(\boldsymbol{\bar{x}}_N)
 \end{equation}
 
-%where $L_d(\boldsymbol{x}_k, \mathbf{u}_k) \approx \int_{t_k}^{t_{k+1}} L(\boldsymbol{\bar{x}}(\tau), \mathbf{\bar{u}}(\tau)) \, d\tau \approx \Delta t \cdot L(\boldsymbol{x}_k, \mathbf{u}_k)$, often simplified to $L_d(\boldsymbol{x}_k, \mathbf{u}_k) = \Delta t \left( \|\boldsymbol{x}_k - \boldsymbol{x}_{ref,k}\|_{\boldsymbol{Q}}^2 + \|\mathbf{u}_k\|_{\boldsymbol{R}}^2 \right)$.
+%where $L_d(\boldsymbol{\bar{x}}_k, \mathbf{\bar{u}}_k) \approx \int_{t_k}^{t_{k+1}} L(\boldsymbol{\bar{x}}(\tau), \mathbf{\bar{u}}(\tau)) \, d\tau \approx \Delta t \cdot L(\boldsymbol{\bar{x}}_k, \mathbf{\bar{u}}_k)$, often simplified to $L_d(\boldsymbol{\bar{x}}_k, \mathbf{\bar{u}}_k) = \Delta t \left( \|\boldsymbol{\bar{x}}_k - \boldsymbol{x}_{ref,k}\|_{\boldsymbol{Q}}^2 + \|\mathbf{\bar{u}}_k\|_{\boldsymbol{R}}^2 \right)$.
 
 \subsection{Solving the Optimization Problem}
 
-The discretized problem is now a finite-dimensional optimization problem with $6N$ control variables $(\mathbf{u}_0, \ldots, \mathbf{u}_{N-1})$ and potentially $12N$ state variables $(\boldsymbol{x}_1, \ldots, \boldsymbol{x}_N)$, subject to $12N$ nonlinear equality constraints from the dynamics and additional inequality constraints from $\mathcal{U}$ and $\mathcal{X}$. This forms a nonlinear program (NLP).
+The discretized problem is now a finite-dimensional optimization problem with $6N$ control variables $(\mathbf{\bar{u}}_0, \ldots, \mathbf{\bar{u}}_{N-1})$ and potentially $12N$ state variables $(\boldsymbol{\bar{x}}_1, \ldots, \boldsymbol{\bar{x}}_N)$, subject to $12N$ nonlinear equality constraints from the dynamics and additional inequality constraints from $\mathcal{U}$ and $\mathcal{X}$. This forms a nonlinear program (NLP).
 
 
-\subsubsection{Direct Methods}
+\subsubsection{Direct vs. Indirect Methods}
 
-Direct methods treat both the sequence of control inputs $\mathbf{U} = (\mathbf{u}_0, \dots, \mathbf{u}_{N-1})$ and the resulting state sequence $\mathbf{X} = (\boldsymbol{x}_1, \dots, \boldsymbol{x}_N)$ as optimization variables (with $\boldsymbol{x}_0 = \boldsymbol{x}(t)$). The discretized dynamics $\boldsymbol{x}_{k+1} = f_d(\boldsymbol{x}_k, \mathbf{u}_k)$ are enforced as equality constraints. The NLP takes the form:
+Two main approaches exist for solving the discretized optimal control problem: direct and indirect methods \cite{betts2010practical}. Indirect methods apply the discrete-time maximum principle, leading to a boundary value problem that must be solved iteratively. While theoretically elegant, indirect methods require good initial guesses and can be sensitive to problem conditioning, making them less suitable for real-time applications.
+
+Direct methods, which are predominantly used in practical MPC implementations for robotics, treat both the sequence of control inputs $\overline{\mathbf{U}} = (\mathbf{\bar{u}}_0, \dots, \mathbf{\bar{u}}_{N-1})$ and the resulting state sequence $\overline{\mathbf{X}} = (\boldsymbol{\bar{x}}_1, \dots, \boldsymbol{\bar{x}}_N)$ as optimization variables (with $\boldsymbol{\bar{x}}_0 = \boldsymbol{x}(t)$). The discretized dynamics $\boldsymbol{\bar{x}}_{k+1} = f_d(\boldsymbol{\bar{x}}_k, \mathbf{\bar{u}}_k)$ are enforced as equality constraints. This approach is preferred in robotics because it is more robust to initialization, handles constraints naturally, and enables efficient warm-starting strategies. The NLP takes the form:
 
 \begin{equation}
 \begin{aligned}
-\min_{\mathbf{U}, \mathbf{X}} \quad & \sum_{k=0}^{N-1} L_d(\boldsymbol{x}_k, \mathbf{u}_k) + E(\boldsymbol{x}_N) \\
-\text{s.t.} \quad & \boldsymbol{x}_{k+1} = f_d(\boldsymbol{x}_k, \mathbf{u}_k), \quad k=0, \dots, N-1 \\
-& \mathbf{u}_k \in \mathcal{U}, \quad k=0, \dots, N-1 \\
-& \boldsymbol{x}_k \in \mathcal{X}, \quad k=1, \dots, N \\
-& \boldsymbol{x}_0 = \boldsymbol{x}(t)
+\min_{\overline{\mathbf{U}}, \overline{\mathbf{X}}} \quad & \sum_{k=0}^{N-1} L_d(\boldsymbol{\bar{x}}_k, \mathbf{\bar{u}}_k) + E(\boldsymbol{\bar{x}}_N) \\
+\text{s.t.} \quad & \boldsymbol{\bar{x}}_{k+1} = f_d(\boldsymbol{\bar{x}}_k, \mathbf{\bar{u}}_k), \quad k=0, \dots, N-1 \\
+& \mathbf{\bar{u}}_k \in \mathcal{U}, \quad k=0, \dots, N-1 \\
+& \boldsymbol{\bar{x}}_k \in \mathcal{X}, \quad k=1, \dots, N \\
+& \boldsymbol{\bar{x}}_0 = \boldsymbol{x}(t)
 \end{aligned}
 \end{equation}
 
@@ -89,12 +91,10 @@ Direct methods treat both the sequence of control inputs $\mathbf{U} = (\mathbf{
 
 \subsubsection{Sequential Quadratic Programming}
 
-Due to the nonlinear dynamics $f_d(\cdot,\cdot)$ and potentially nonlinear constraints, this NLP is typically solved using iterative methods. 
-
-Sequential Quadratic Programming (SQP) is a common iterative method for solving NLPs. At each iteration $j$, it approximates the NLP by a Quadratic Program (QP). To define this QP, let's first define a single concatenated vector, $\boldsymbol{z}$, that contains all of the decision variables. This includes the sequence of control inputs and the sequence of predicted states:
-$$
-\boldsymbol{z} = [\mathbf{u}_0^T, \dots, \mathbf{u}_{N-1}^T, \boldsymbol{x}_1^T, \dots, \boldsymbol{x}_N^T]^T
-$$
+Due to the nonlinear dynamics $f_d(\cdot,\cdot)$ and potentially nonlinear constraints, this NLP is typically solved using iterative methods. Sequential quadratic programming (SQP) is a common iterative method for solving NLPs. At each iteration $j$, it approximates the NLP by a quadratic program (QP). To define this QP, we define a single decision vector $\boldsymbol{z}$ that concatenates all optimization variables:
+\[
+\boldsymbol{z} = \begin{bmatrix} \overline{\mathbf{X}} \\ \overline{\mathbf{U}} \end{bmatrix} \in \mathbb{R}^{18N}
+\]
 The QP subproblem solved at iteration $j$ is then formulated to find the optimal step change, $\Delta\boldsymbol{z}$:
 
 \begin{equation}
@@ -110,8 +110,19 @@ where $\Delta\boldsymbol{z}$ represents the step change in the optimization vari
 
 \subsection{Implementation Considerations}
 
-Implementing MPC effectively on a marine robot involves addressing several practical aspects. Firstly, real-time computation is critical. Solving the optimization problem online at each sampling instant $\delta$ demands significant computational resources. Common techniques to achieve real-time performance include: using efficient, structure-exploiting optimization solvers; warm-starting the solver at time $t+\delta$ with the shifted solution from time $t$ \cite{gros2020linear} or adjusting the prediction horizon $T_p$ (which typically needs to be long enough to capture relevant dynamics); and potentially using constraint softening to handle occasional infeasibility gracefully.
+Implementing MPC effectively on a marine robot involves addressing several practical aspects that directly impact real-time performance and reliability.
 
-Secondly, while the receding horizon nature provides feedback, closed-loop stability is not automatically guaranteed, especially for nonlinear systems with constraints. Ensuring stability is an important consideration in practical MPC design and tuning. Although formal methods exist (often involving specific choices for terminal cost $E(\cdot)$ and potentially terminal constraints \cite{hao2017nonlinear}), they add computational complexity, making it impractical to implement in real time.
+\subsubsection{Real-Time Computational Requirements}
 
-In the following chapters, we will demonstrate how MPC can be utilized in conjunction with data-driven model learning and task-specific path planners to establish a robust framework for complex inspection tasks.
+Real-time computation is the most critical challenge in practical MPC implementation. Solving the optimization problem online at each sampling instant $\delta$ demands significant computational resources. The optimization must complete within the sampling period to maintain control performance. Common techniques to achieve real-time performance include: using efficient, structure-exploiting optimization solvers that leverage the sparse, block-structured nature of MPC problems; warm-starting the solver at time $t+\delta$ with the shifted solution from time $t$ \cite{gros2020linear}, which provides an excellent initial guess; and carefully tuning the prediction horizon $T_p$, which must be long enough to capture relevant dynamics while remaining computationally tractable. Additionally, constraint softening can handle occasional infeasibility gracefully without causing solver failures.
+
+\subsubsection{Solver Selection and Performance}
+
+The choice of optimization solver significantly impacts both computational performance and implementation ease. Several high-quality open-source solvers have been successfully applied in MPC implementations for robotics. qpOASES \cite{qpoases} provides an efficient online active-set strategy well suited for small- to medium-scale problems with reliable warm-starting capabilities, making it popular for embedded applications. OSQP \cite{stellato2020osqp} leverages operator splitting methods and efficiently handles sparse MPC formulations, offering excellent numerical robustness. HPIPM \cite{frison2020hpipm} is a high-performance interior-point solver that exploits the block-sparse structure of optimal control problems and is integrated in modern MPC toolkits such as acados \cite{verschueren2022acados}. Selecting a solver that supports warm-starting, exploits sparsity, and matches the problem size is essential for achieving computational efficiency in real-time marine robotics applications.
+
+\subsubsection{Stability and Robustness Considerations}
+
+While the receding horizon nature provides inherent feedback, closed-loop stability is not automatically guaranteed, especially for nonlinear systems with constraints. Ensuring stability requires careful consideration in MPC design and tuning. Formal stability guarantees exist through specific choices for terminal cost $E(\cdot)$ and terminal constraint sets \cite{hao2017nonlinear}, but these theoretical approaches often add significant computational complexity, making them challenging to implement in real-time applications. In practice, engineers rely on careful tuning of prediction horizon length, cost function weights, and constraint formulations, combined with extensive simulation and testing to ensure robust performance across expected operating conditions.
+
+
+Building upon these foundations, the next chapter provides a comprehensive summary of the upcoming chapters, highlighting how advanced marine simulators, coverage path planners, and data-driven MPC are integrated to enhance the performance of marine robots in autonomous inspection tasks.
