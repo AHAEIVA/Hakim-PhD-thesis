@@ -4,10 +4,10 @@
 This thesis consists of five parts, with this introductory part being the first. The following three parts focus on research topics related to autonomous marine optimal control and path planning, as summarized in the block diagram shown in Figure~\ref{fig:uw_robot_planning_control}. Each chapter within these parts corresponds to a key component in the overall system, as illustrated:
 
 \begin{itemize}
-  \item Chapter 3 presents the development of an \textit{UNav-Sim underwater robot simulator}, which provides a realistic environment for testing and validation.
-  \item Chapter 4 focuses on an \textit{Entanglement Aware Tether Planner} that improves the robustness of the underwater vehicle tether management.
-  \item Chapter 5 explains a \textit{Visual Tracking Nonlinear Model Predictive Control (NMPC)} method for visually robust coverage.
-  \item Chapters 6 and 7 describe the learning and modeling of underwater dynamics via \textit{PINNs} and \textit{Gaussian Processes (GPs)}, respectively, which are integrated into the control and optimization modules.
+  \item Chapter IV presents the development of an \textit{UNav-Sim underwater robot simulator}, which provides a realistic environment for testing and validation.
+  \item Chapter V focuses on an \textit{Entanglement Aware Tether Planner} that improves the robustness of the underwater vehicle tether management.
+  \item Chapter VI presents a \textit{Visual Tracking Nonlinear Model Predictive Control (NMPC)} method for visually robust coverage.
+  \item Chapters VII and VIII describe the learning and modeling of underwater dynamics via \textit{PINNs} and \textit{Gaussian Processes (GPs)}, respectively, which are integrated into the control and optimization modules.
 \end{itemize}
 
 The final part concludes with an overall summary and future research directions.
@@ -19,15 +19,15 @@ The final part concludes with an overall summary and future research directions.
     node distance=1.5cm and 1.8cm,
     block/.style={
         rectangle, 
-        draw=black,         % black border
-        line width=0.8pt,   % medium thickness border
-        fill=blue!60, 
+        draw=TrajectoryBlue,         
+        line width=0.8pt,   
+        fill=TrajectoryBlue, 
         text=white, 
         text width=2.5cm, 
         align=center, 
         minimum height=1cm, 
         font=\bfseries,
-        rounded corners=6pt % rounded edges
+        rounded corners=6pt
     },
     lbl/.style={
         rectangle, 
@@ -41,33 +41,32 @@ The final part concludes with an overall summary and future research directions.
     },
     arrow/.style={-{Latex[width=2mm]}, thick, black},
     arrowlabel/.style={font=\bfseries\footnotesize, text=black, midway, above},
-    bluearrow/.style={-{Latex[width=2mm]}, thick, blue!80!black},
-    bluearrowlabel/.style={font=\bfseries\footnotesize, text=blue!80!black, midway, below}
+    bluearrow/.style={-{Latex[width=2mm]}, thick, TrajectoryBlue},
+    bluearrowlabel/.style={font=\bfseries\footnotesize, text=TrajectoryBlue, midway, below}
 ]
 
-% Top row - main black border + white fill boxes with black text
-\node[lbl, xshift=-1.5cm] (C21a) {Chapter 4\\Entanglement Aware\\Tether Planner};
-\node[lbl, right=of C21a] (C21b) {Chapter 5\\Visual Tracking\\NMPC};
-\node[lbl, right=of C21b] (C1) {Chapter 3\\Underwater Robot\\Simulator};
+% Top row labels
+\node[lbl, xshift=-1.5cm] (C21a) {Chapter V\\Entanglement Aware\\Planner};
+\node[lbl, right=of C21a] (C21b) {Chapter VI\\Visual Tracking\\NMPC};
+\node[lbl, right=of C21b] (C1) {Chapter IV\\Underwater Robot\\Simulator};
 
-% Second row - vertically aligned blocks under their top boxes with smaller shift
+% Second row
 \node[block, below=of C21a, xshift=-0.3cm] (PathPlanner) {Path Planner};
 \node[block, below=of C21b, yshift=-2pt] (Cost) {Cost};
 
 \node[font=\bfseries\large] at ($(Cost.north)+(0.7cm,0.75cm)$) {MPC};
 
-% Image node larger
 \node[below=of C1] (Sim) {\includegraphics[width=4.0cm]{Phd_thesis/figures/UWRS_pipe.pdf}};
 
-% Third row - filled blue blocks with white text
+% Third row
 \node[block, below=of PathPlanner] (Model) {Model};
 \node[block, below=of Cost] (Optimizer) {Optimizer};
 
-% Bottom row - black border + white fill boxes with black text
-\node[lbl, below left=0.8cm and -0.5cm of Model] (C31) {Chapter 6\\Full Model  Learning};
-\node[lbl, below right=0.8cm and -0.5cm of Model] (C32) {Chapter 7\\Residual Model\\Learning};
+% Bottom labels
+\node[lbl, below left=0.8cm and -0.5cm of Model] (C31) {Chapter VII\\Full Model\\Learning};
+\node[lbl, below right=0.8cm and -0.5cm of Model] (C32) {Chapter VIII\\Residual Model\\Learning};
 
-% Connections from top black boxes
+% Connections from labels
 \draw[arrow] (C21a.south) -- ++(0,-1.5cm);
 \draw[arrow] (C21b) -- (Cost);
 \draw[arrow] (C1) -- (Sim);
@@ -75,46 +74,50 @@ The final part concludes with an overall summary and future research directions.
 % Main process flow
 \draw[arrow] (PathPlanner) -- node[arrowlabel, xshift=-0.1cm] {reference} (Cost);
 
-\coordinate (arrowStart) at ($(Cost.east) + (0.5,0)$);
-\draw[arrow, blue] (arrowStart) -- (Cost.east);
-\draw[thick, blue] (arrowStart) -- ++(0,-0.9);
+\draw[bluearrow] ($(Cost.east)+(0.6cm,0)$) -- (Cost.east);
 
-\draw[arrow] (Model) -- node[arrowlabel] {prediction} (Optimizer);
+\draw[TrajectoryBlue, thick] ($(Cost.east)+(0.61cm,0)$) -- ++(0,-0.9cm);
+
+
+
+
 
 % Model learning connections
 \draw[arrow] (C31) -- (Model);
 \draw[arrow] (C32) -- (Model);
 
-% New connection from image to Model (feedback) in blue
+% Model to Optimizer
+\draw[arrow] (Model) -- node[arrowlabel] {prediction} (Optimizer);
+
+% Feedback from simulator to model
 \draw[bluearrow] 
-  ([xshift=2mm]Sim.west) -- % shifted starting point 2mm to the right
+  ([xshift=2mm]Sim.west) -- 
   node[bluearrowlabel, xshift=2cm] {feedback} ++(-6.86,0)
   -- ++(0,-1)
   -- (Model.north);
 
-% New arrow from Optimizer: right 3cm then up 0.5cm
+% Performance metric
 \draw[arrow, line width=1.6pt]
   (Cost.south) -- node[arrowlabel, left] {performance metric} ++(0,-1.5cm);
 
+% Optimizer to output
 \draw[arrow] (Optimizer.east) -- node[arrowlabel, below] {actions} ++(3,0) -- ++(0,0.5);
 
+% Dashed enclosing box
 \begin{scope}[on background layer]
-    % Coordinates for the 6 corners of the L-shaped polygon
     \coordinate (A) at ([xshift=-0.3cm,yshift=0.5cm]Cost.north west);
     \coordinate (B) at ([xshift=0.3cm,yshift=3.cm]Optimizer.north east);
     \coordinate (C) at ([xshift=0.3cm,yshift=-0.5cm]Optimizer.south east);
     \coordinate (D) at ([xshift=-3cm,yshift=-.5cm]Model.south east);
     \coordinate (E) at ([xshift=-0.3cm,yshift=2.07cm]Model.south west);
     \coordinate (F) at ([xshift=-0.3cm,yshift=-0.5cm]Cost.south west);
-    
-    % Draw enclosed 6-sided dashed box
     \draw[dashed, thick]
         (A) -- (B) -- (C) -- (D) -- (E) -- (F) -- cycle;
 \end{scope}
 
 \end{tikzpicture}
 }
-\caption{Block diagram summarizing the key components and their interactions within the thesis framework. Each highlighted module corresponds to a specific chapter, illustrating how the development of the underwater robot simulator (Chapter 3), the entanglement-aware tether planner (Chapter 4), the visual tracking NMPC (Chapter 5), and the data-driven model improvements via PINNs and Gaussian Processes (Chapters 6 and 7) collectively contribute to advancing autonomous marine robotics optimal control. This integrated system reflects the overarching thesis hypothesis of improving robust, optimal marine vehicle navigation through the combination of simulation, planning, control, and data-driven modeling techniques.}
+\caption{Block diagram summarizing the key components and their interactions within the thesis framework. Each highlighted module corresponds to a specific chapter, illustrating how the development of the underwater robot simulator (Chapter 3), the entanglement-aware tether planner (Chapter 4), the visual tracking NMPC (Chapter 5), and the data-driven model improvements via PINNs and Gaussian Processes (Chapters 6 and 7) collectively contribute to advancing autonomous marine robotics optimal control.}
 \label{fig:uw_robot_planning_control}
 \end{figure*}
 
@@ -129,7 +132,8 @@ The final part concludes with an overall summary and future research directions.
 
 
 
-\section{Chapter 3}
+
+\section{Chapter IV}
 \label{ch:simulator}
 The development of reliable autonomous systems begins with the creation of a realistic simulation environment that supports rapid prototyping, synthetic data generation, and thorough testing of proposed algorithms. This is especially crucial in the context of underwater robotics, where field experiments are often expensive, logistically challenging, and time-consuming. Additionally, the absence of the Global Positioning System (GPS) underwater makes it difficult to obtain accurate ground-truth positioning, further underscoring the importance of simulation in the development cycle.
 
@@ -146,7 +150,7 @@ UNav-Sim has been widely adopted by the underwater robotics community, for reali
 With a robust simulation foundation in place, the next chapter shifts focus to a critical challenge in marine robotics: coverage path planning. We begin by addressing the limitations of traditional methods and introduce a novel framework tailored for safe and efficient inspection of complex underwater structures.
 
 
-\section{Chapter 4}
+\section{Chapter V}
 \label{ch:react}
 
 Autonomous inspection of marine structures is one of the most common and critical applications of underwater robotics. These structures are typically deployed in harsh environments for extended periods, requiring frequent and reliable monitoring to ensure their integrity and performance. Traditional inspection methods using human divers are often costly, risky, and logistically challenging. In this context, coverage becomes a key requirement for effective inspection. While numerous coverage path planners (CPP) have been proposed in the literature, a critical limitation remains largely unaddressed: the risk of tether entanglement during inspection with tethered vehicles.
@@ -161,7 +165,7 @@ The chapter concludes with simulation results showing that, although REACT may i
 
 
 
-\section{Chapter 5}
+\section{Chapter VI}
 \label{ch:vtnmpc}
 
 In this chapter, we address another critical challenge in coverage path planning: achieving visually robust inspection. We tackle this by incorporating perception objectives directly into the MPC framework. Specifically, we propose a novel Visual Tracking Nonlinear Model Predictive Control (VT-NMPC) autonomous wind turbine inspection framework designed to enable automated, safe, and efficient inspection of wind turbine blades using aerial robots. In contrast to traditional MPC-based approaches that track predefined position and heading trajectories, VT-NMPC introduces a surface-tracking paradigm, allowing the drone to follow inspection surfaces directly. This shift eliminates the need for precisely planned trajectories and enhances robustness to disturbances such as wind.
@@ -183,7 +187,7 @@ This chapter also reviews related work in automated drone-based inspection and d
 
 
 
-\section{Chapter 6}
+\section{Chapter VII}
 \label{ch:pinc}
 
 
@@ -199,7 +203,7 @@ The chapter contributes an open-source implementation of the PINC framework alon
 
 
 
-\section{Chapter 7}
+\section{Chapter VIII}
 \label{ch:dfgp}
 
 In this chapter, we address the challenge of disturbance modeling in marine robotics. Rather than learning the full system dynamics, we assume a known nominal model derived from first principles and explicitly learn the residual disturbances that affect system performance. These environmental disturbances can significantly degrade trajectory tracking for MPC. 

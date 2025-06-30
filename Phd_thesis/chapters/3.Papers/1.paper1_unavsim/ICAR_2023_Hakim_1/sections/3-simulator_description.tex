@@ -66,18 +66,22 @@ The equation of motion in the body-fixed frame, originally presented in Fossen \
 %
 \begin{equation}\label{eq:eom}
   \begin{multlined}
-    \mathbf{M}_{RB}\dot{\mathbf{\nu}}= \tau - \underbrace{ \mathbf{C}_{RB}(\mathbf{\nu})\mathbf{\nu} }_\text{Coriolis \hspace{1 pt} term} - \underbrace{ \mathbf{M}_A \dot{\mathbf{\nu}} - 
-    \mathbf{C}_A(\mathbf{\nu}) \mathbf{\nu} }_\text{Added\hspace{2pt}mass}     
+    \mathbf{M}_{RB}\dot{\boldsymbol{\nu}}= \tau - \underbrace{ \mathbf{C}_{RB}(\boldsymbol{\nu})\boldsymbol{\nu} }_\text{Coriolis \hspace{1 pt} term} - \underbrace{ \mathbf{M}_A \dot{\boldsymbol{\nu}} - 
+    \mathbf{C}_A(\boldsymbol{\nu}) \boldsymbol{\nu} }_\text{Added\hspace{2pt}mass}     
     \\
-    - \underbrace{ \mathbf{D}(\mathbf{\nu})\mathbf{{\mathbf{\nu}} }}_\text{Drag } - \mathbf{g}(\mathbf{\eta}).
-    \end{multlined}
+    - \underbrace{ \mathbf{D}(\boldsymbol{\nu}){\boldsymbol{\nu}} }_\text{Drag } - \mathbf{g}(\boldsymbol{\eta}).
+  \end{multlined}
 \end{equation}
 %
-The vehicle's pose, $\mathbf{\eta}=[x, y, z, \phi, \theta, \psi]^T$, is described by a six-dimensional column vector where $x$, $y$, and $z$ denote the vehicle's position in the \ac{NED} frame, while $\phi$, $\theta$, and $\psi$ represent its roll, pitch, and yaw angles, respectively (see Fig. \ref{fig:rov_fbd}).
-The linear and angular velocity vector in the body-fixed frame is denoted as $\mathbf{\nu} = [u, v, w, p, q, r]^T$. The inertia matrix of the vehicle's body is represented by $\mathbf{M}_{RB}$.
-Hydrostatic forces, $g(\eta)$, arise from gravity and buoyancy, along with associated moments and torques.
-Hydrodynamic forces arise from the interaction between the vehicle and the surrounding water and can significantly impact the vehicle's behavior. These forces include the Coriolis and centripetal forces caused by the rigid body's mass, $\mathbf{C}_{RB}(\mathbf{\nu})\mathbf{\nu}$, the Coriolis forces, $\mathbf{C}_A(\mathbf{\nu})$, and moment of inertia, $\mathbf{M}_{A}$, arising from the added mass, and linear and quadratic damping effects, $\mathbf{D}(\mathbf{\nu})\mathbf{{\nu} }$.
-External forces, $\tau$, include the forces exerted on the \ac{ROV} by its thrusters, as well as the disturbances, caused by the surrounding water flow. Multiple disturbance models, such as constant value, sinusoidal, and a combination of sine waves are implemented.
+The vehicle's pose, $\boldsymbol{\eta} = [x, y, z, \phi, \theta, \psi]^T$, is described by a six-dimensional column vector where $x$, $y$, and $z$ denote the vehicle's position in the \ac{NED} frame, while $\phi$, $\theta$, and $\psi$ represent its roll, pitch, and yaw angles, respectively (see Fig.~\ref{fig:rov_fbd}). 
+The linear and angular velocity vector in the body-fixed frame is denoted as $\boldsymbol{\nu} = [u, v, w, p, q, r]^T$. 
+The inertia matrix of the vehicle's body is represented by $\mathbf{M}_{RB}$. 
+Hydrostatic forces, $\mathbf{g}(\boldsymbol{\eta})$, arise from gravity and buoyancy, along with associated moments and torques. 
+Hydrodynamic forces arise from the interaction between the vehicle and the surrounding water and can significantly impact the vehicle's behavior. 
+These forces include the Coriolis and centripetal forces caused by the rigid body's mass, $\mathbf{C}_{RB}(\boldsymbol{\nu})\boldsymbol{\nu}$, the Coriolis forces, $\mathbf{C}_A(\boldsymbol{\nu})$, and moment of inertia, $\mathbf{M}_{A}$, arising from the added mass, and linear and quadratic damping effects, $\mathbf{D}(\boldsymbol{\nu})\boldsymbol{\nu}$. 
+External forces, $\boldsymbol{\tau}$, include the forces exerted on the \ac{ROV} by its thrusters, as well as the disturbances caused by the surrounding water flow. 
+Multiple disturbance models, such as constant value, sinusoidal, and a combination of sine waves, are implemented.
+
 
 
 To efficiently solve the equations of motion presented above, AirSim's high-frequency physics engine is utilized with a computational frequency of $1000 \textrm{Hz}$. The engine uses the velocity verlet algorithm for numerical integration due to its computational benefits.

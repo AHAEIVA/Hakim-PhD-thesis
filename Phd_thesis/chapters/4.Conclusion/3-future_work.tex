@@ -1,28 +1,9 @@
 \section{Future Work and Open Questions}
 \label{sec:future_work}
 
-While this thesis presents significant advancements, it also opens avenues for further research and addresses remaining open questions in marine robotics autonomy. Building upon the contributions presented, future work should focus on the following directions:
 
-\begin{enumerate}
-    \item \textbf{Integration and Holistic Validation:}
-        \begin{itemize}
-            \textcolor{black}{Integrate the developed components into a unified framework.} For instance, utilize models learned via PINC or disturbances estimated by DF-GP within the REACT planner and the VT-NMPC controller. \textcolor{black}{Conduct extensive real-world validation} of the integrated system, particularly REACT and the marine application of VT-NMPC, in diverse and challenging underwater environments beyond controlled tank tests or simulations. This is crucial for assessing true robustness and identifying limitations not captured synthetically.
-        \end{itemize}
+While this thesis presents measurable advancements, it also opens avenues for further research and addresses remaining open questions in marine robotics autonomy. A key direction for future work is the integration of the developed components into a unified framework. For instance, models learned via \textit{PINC} or disturbances estimated by \textit{DF-GP} could be embedded within the \textit{REACT} planner and the \textit{VT-NMPC} controller. Such integration would enable comprehensive system-level validation. Crucially, extensive real-world testing of the integrated system—especially the \textit{REACT} framework and marine application of \textit{VT-NMPC}—in diverse and challenging underwater environments beyond controlled tank tests or simulations is necessary to assess true robustness and to uncover limitations that synthetic environments may not reveal.
 
-    \item \textbf{Enhancing Simulation Capabilities (UNav-Sim):}
-        \begin{itemize}
-            Incorporate a wider range of underwater sensors (e.g., various sonar types, acoustic modems, chemical sensors) with realistic noise models. Enhance the accuracy of hydrodynamic modeling by making it geometry-dependent. Integrate differentiable physics capabilities to enable gradient computation for learning-based algorithms, facilitating efficient optimization and control.
+Another important avenue lies in enhancing the simulation capabilities within \textit{UNav-Sim}. Expanding the sensor suite to include a wider range of underwater sensors, such as sonar and doppler velocity log, with realistic noise models would broaden the applicability of the simulator. Furthermore, improving hydrodynamic modeling by incorporating geometry-dependent effects would increase its physical fidelity. Integrating differentiable physics capabilities would also enable gradient-based learning and optimization methods, facilitating more efficient control algorithm development and system identification
 
-        \end{itemize}
-
-\item \textbf{Online Mapping and Adaptive Planning Integration:}
-    \begin{itemize}
-        Extend REACT to handle dynamic obstacles and support online map updates, for example by utilizing continuously updated maps instead of relying on a static environment representation. Investigate adaptive planning strategies that adjust coverage paths in real time based on sensor feedback and dynamically identified areas of interest during the mission.
-    \end{itemize}
-
-\item \textbf{Continual Learning and Safe Model Predictive Control:}
-
-
-    \begin{itemize}
-        Investigate methods for \textcolor{black}{online adaptation and lifelong learning} in both PINC and DF-GP frameworks, enabling continuous model refinement in response to evolving vehicle dynamics and environmental conditions during extended deployments. Further develop \textcolor{black}{automated tuning of MPC weights} using black-box optimization techniques, such as Bayesian optimization or reinforcement learning, to enhance control performance with minimal manual intervention. Investigate the design of \textcolor{black}{safe terminal sets} using learning-based methods to ensure constraint satisfaction and long-term safety, while maintaining computational tractability for real-time implementation.
-    \end{itemize}
+Finally, advancing autonomy calls for adaptive and continual learning strategies alongside more sophisticated planning and control enhancements. Extending the \textit{REACT} planner to handle dynamic obstacles and incorporate online map updates would improve adaptability to real-world conditions. Investigating adaptive planning techniques that dynamically adjust coverage paths based on sensor feedback and mission-specific areas of interest is another promising direction. Concurrently, developing methods for online adaptation and lifelong learning within the \textit{PINC} and \textit{DF-GP} frameworks would allow continuous model refinement as vehicle dynamics and environmental factors evolve during extended missions. In parallel, enhancing the \ac{MPC} framework through automated weight tuning—leveraging black-box optimization approaches such as Bayesian optimization \cite{garnett2023bayesian} or reinforcement learning \cite{sutton1998reinforcement} can improve control performance with minimal manual effort. Moreover, designing safe terminal sets with learning-based guarantees would help ensure constraint satisfaction and long-term safety \cite{hewing2020learning}, while preserving computational efficiency suitable for real-time deployment.

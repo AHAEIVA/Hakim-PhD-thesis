@@ -24,7 +24,9 @@
 
 \section{Marine Robotics: Advancing Autonomy for Underwater and Aerial Applications with Optimal Control}
 
-Marine robotics encompasses a diverse array of platforms, such as remotely operated vehicles (ROVs), autonomous underwater vehicles (AUVs), as well as unmanned aerial vehicles (UAVs). These systems are increasingly vital across multiple domains. In the energy sector, they can perform essential inspections of offshore wind turbines and subsea pipelines, detecting critical structural defects or leaks ( Fig.\ref{fig:underwater_robotics_applications}). Beyond industry, applications span environmental monitoring, archaeological surveying, scientific research, observation and study of marine wildlife, aquaculture monitoring and management, and defense operations like mine countermeasures and surveillance. For example, underwater vehicles are increasingly deployed in fish farms to inspect nets, assess fish health~\cite{evjemo2024biology}. Similarly, marine robots are used for monitoring biodiversity and studying wildlife in their natural habitats \cite{amundsen2024aquaculture}, supporting ecological research and conservation efforts.
+Marine robotics encompasses a diverse array of platforms, such as remotely operated vehicles (ROVs), autonomous underwater vehicles (AUVs), and unmanned aerial vehicles (UAVs). The utilization of these systems is becoming increasingly important across various domains. In the energy sector, they perform essential inspections of offshore wind turbines and subsea pipelines, detecting critical structural defects or leaks (Fig. \ref{fig:underwater_robotics_applications}). As the offshore industry scales up, it places greater demands on robotic systems subsea to ensure efficient, safe, and continuous operations. Marine robotics is thus becoming crucial for a wide variety of applications in the maritime industry, from deep-sea surveying to aerial monitoring of offshore installations.
+
+Beyond industry, applications span environmental monitoring, archaeological surveying, scientific research, and the observation and study of marine wildlife. For example, underwater vehicles are increasingly deployed in fish farms to inspect nets and assess fish health~\cite{evjemo2024biology}. Similarly, marine robots support biodiversity monitoring and wildlife studies in their natural habitats~\cite{amundsen2024aquaculture}, aiding ecological research and conservation efforts.
 
 
 
@@ -91,54 +93,76 @@ Achieving autonomy fundamentally requires the integration of effective planning 
 
 
 
-
-
 \begin{figure*}[t]
 \centering
 \begin{tikzpicture}[
-block/.style={rectangle, draw, fill=blue!60, text=white, text width=2cm, align=center, minimum height=0.8cm},
-arrow/.style={-{Latex[width=2mm]}, thick},
-node distance=1.8cm and 1.8cm,
-imagenode/.style={inner sep=0pt},
-dashedbox/.style={rectangle, draw, dashed, thick, inner sep=0.5cm}
+    node distance=1.4cm and 1.6cm,
+    block/.style={
+        rectangle,
+        draw=black,           % Black outer border
+        line width=1pt,       % Thicker border for emphasis
+        fill=TrajectoryBlue,  % Blue fill
+        text=white,
+        text width=2.5cm,
+        align=center,
+        minimum height=1cm,
+        font=\bfseries,
+        rounded corners=6pt
+    },
+    lbl/.style={
+        rectangle,
+        draw=black,
+        thick,
+        fill=white,
+        text=black,
+        text width=2.2cm,
+        align=center,
+        font=\bfseries\footnotesize,
+        minimum height=1cm
+    },
+    arrow/.style={-{Latex[width=2mm]}, thick, black},
+    arrowlabel/.style={font=\bfseries\footnotesize, text=black, midway, above},
+    dashedbox/.style={rectangle, draw=black, dashed, thick, inner sep=0.5cm, rounded corners=4pt},
+    imagenode/.style={inner sep=0pt}
 ]
 
-less
-Copy
-Edit
 % Nodes
-\node[block] (guidance) at (-5,0) {Path planning};
+\node[block] (guidance) at (-4,0) {Path Planning};
 \node[block, right=of guidance] (control) {Control};
-\node[block, below=of control] (navigation) {State estimation};
+\node[block, below=of control] (navigation) {State \\ Estimation};
 
 % Inputs and outputs
-\node[left=1.2cm of guidance] (mission) {mission};
+\node[lbl, left=1cm of guidance, text width=1.4cm] (mission) {Mission};
 
-\node[imagenode, right=1.8cm of control] (vehicle) {
+\node[imagenode, right=1.4cm of control] (vehicle) {
     \includegraphics[width=2.5cm]{Phd_thesis/chapters/1.Introduction/figures/defender.png}
 };
 
 % Dashed box
-\draw[dashed, thick] 
-    ([xshift=-0.7cm,yshift=0.5cm]guidance.north west) 
+\draw[dashed, thick, rounded corners=4pt]
+    ([xshift=-0.5cm,yshift=0.5cm]guidance.north west) 
     rectangle 
     ([xshift=0.3cm,yshift=-0.5cm]navigation.south east);
 
-% Label above the dashed box
-\node[above, yshift=0.5cm, xshift=1cm] at (guidance.north west |- guidance.north) {Navigation};
+% Label above the dashed box (LARGER FONT)
+\node[above, yshift=0.4cm,xshift=0.6cm, font=\bfseries\large] at (guidance.north west |- guidance.north) {Navigation};
 
 % Arrows
 \draw[arrow] (mission) -- (guidance);
-\draw[arrow] (guidance) -- node[above, align=center, font=\small]{reference} (control);
-\draw[arrow] (control) -- node[above]{forces} (vehicle);
-\draw[arrow] (vehicle) |- node[right, align=center, font=\small]{sensor data} (navigation);
-\draw[arrow] (navigation) -| node[below, align=center, font=\small]{position/velocity} (guidance);
+\draw[arrow] (guidance) -- node[arrowlabel] {reference} (control);
+\draw[arrow] (control) -- node[arrowlabel] {forces} (vehicle);
+\draw[arrow] (vehicle) |- node[arrowlabel, right] {sensor data} (navigation);
+\draw[arrow] (navigation) -| node[arrowlabel, below] {position/velocity} (guidance);
 \draw[arrow] (navigation) -- (control);
 
 \end{tikzpicture}
-\caption{Illustration of the core autonomous navigation architecture. Mission objectives are processed by path planning, which generates reference trajectories. The control module executes the references by applying forces to the vehicle, while state estimation processes sensor data to estimate position and velocity, closing the feedback loop \cite{petillot2019underwater}. }
+\caption{Illustration of the core autonomous navigation architecture. Mission objectives are processed by path planning, which generates reference trajectories. The control module executes the references by applying forces to the vehicle, while state estimation processes sensor data to estimate position and velocity, closing the feedback loop \cite{petillot2019underwater}.}
 \label{fig:autonomous_navigation_diagram}
 \end{figure*}
+
+
+
+
 
 
 

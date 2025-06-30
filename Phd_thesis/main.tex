@@ -294,6 +294,7 @@ Path Planning for Tethered Underwater Vehicles}
 
 \end{acronym}
 
+\definecolor{TrajectoryBlue}{RGB}{52,133,198}
 
 \newtheorem{remark}{Remark}
 \begin{document}
@@ -578,7 +579,8 @@ Path Planning for Tethered Underwater Vehicles}
 %\addcontentsline{toc}{chapter}{Paper II: REACT: Real-time Entanglement-Aware Coverage Path Planning for Tethered Underwater Vehicles}
 \vspace{1cm}
 
-This paper was submitted to the \textbf{Transactions on Field Robotics}.
+This paper is to be submitted to the \textbf{IEEE Robotics and Automation Letters (RA-L)}.
+
 
  \section{Abstract}
  Inspection of complex underwater structures with tethered underwater vehicles is often hindered by the risk of tether entanglement. We propose REACT (real-time entanglement-aware coverage path planning for tethered underwater vehicles), a framework designed to overcome this limitation. REACT comprises a fast geometry-based tether model using the signed distance field (SDF) map for accurate, real-time simulation of taut tether configurations around arbitrary structures in 3D. This model enables an efficient online replanning strategy, by enforcing a maximum tether length constraint, thereby actively preventing entanglement. By integrating REACT into a coverage path planning framework, we achieve safe and optimal inspection paths, previously challenging due to tether constraints. What is more, the underlying model predictive controller (MPC) renders optimal trajectory following while accounting for system dynamics. The complete REACT framework's efficacy is validated in a pipe inspection scenario, demonstrating safe, entanglement-free navigation and full-coverage inspection. Simulation results show REACT achieves 99.91\% coverage while maintaining tether constraints and completing the total mission 20\% faster than conventional planners, despite longer inspection time due to proactive entanglement avoidance that eliminates extensive post-mission disentanglement. Real-world experiments confirm these benefits, where REACT completed the full mission with 95.6\% coverage while the baseline planner failed at 80.9\% coverage due to physical tether entanglement.
@@ -643,9 +645,11 @@ Autonomous underwater vehicles (AUVs) present several challenges due to the comp
 %----------------------------------------------------------------------------------------
 % \backmatter
 \renewcommand\bibname{Bibliography}  % For modifying the bibliography heading
-\bibliographystyle{ieeetr}
+\bibliographystyle{unsrt}  % Choose ONE style only
 \addcontentsline{toc}{chapter}{Bibliography}
-\bibliography{bibliography.bib} % The file containing the bibliography
+\bibliography{bibliography.bib}
+`
+% The file containing the bibliography
 % \printbibliography
 
 %----------------------------------------------------------------------------------------

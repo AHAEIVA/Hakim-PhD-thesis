@@ -30,8 +30,13 @@ For marine applications, the north-east-down (NED) convention system is commonly
 
 \begin{figure}[h!] % Changed [b!] to [h!] for better placement flexibility, adjust as needed
     \centering
-    \includegraphics[width=0.5\textwidth]{Phd_thesis/chapters/1.Introduction/figures/brov4.pdf} % Ensure path is correct
-    \caption{Coordinate frames of the BlueROV underwater vehicle: the body-fixed frame, $\mathcal{F}_B$, is attached to the vehicle’s center of gravity, and the global frame, $\mathcal{F}_E$, is inertial. The thruster configuration is also shown: vertical thrusters in green, horizontal thrusters in blue.}
+    \includegraphics[width=0.5\textwidth]{Phd_thesis/chapters/1.Introduction/figures/brov4 1.pdf} % Ensure path is correct
+    \caption{
+        Depiction of the coordinate frames and thruster configuration of the \textit{BlueROV2} underwater vehicle. 
+        The body-fixed frame, $\mathcal{F}_B$, is attached to the vehicle's center of gravity and defines the vehicle-relative axes. 
+        The global frame, $\mathcal{F}_E$, represents an inertial reference frame. 
+        The thruster configuration is shown, with vertical thrusters highlighted in green and horizontal thrusters in blue.
+    }
     \label{fig:coordinate_frame_brov}
 \end{figure}
 
@@ -201,7 +206,7 @@ The goal is to find the optimal parameters $\boldsymbol{\theta}^*$ that minimize
     \boldsymbol{\theta}^* = \arg \min_{\boldsymbol{\theta}} \sum_{i=1}^N \left\| \dot{\boldsymbol{x}}_i - \hat{f}(\boldsymbol{x}_i, \mathbf{u}_i; \boldsymbol{\theta}) \right\|^2
 \end{equation}
 
-Various function approximators can be used for $\hat{f}$~\cite{brunton2025machine}. Neural networks offer great flexibility in capturing complex nonlinearities but often require large datasets and lack interpretability. For more interpretable models, sparse identification of nonlinear dynamics (SINDy)\cite{fasel2021sindy} identifies a sparse set of governing equations from a library of candidate functions. Operator-theoretic methods such as dynamic mode decomposition (DMD)\cite{schmid2010dynamic} and Koopman operator analysis~\cite{mezic2005spectral} provide linear representations of nonlinear systems by lifting dynamics into higher-dimensional spaces. Another approach is Gaussian process regression, a non-parametric method that provides uncertainty quantification; its hyperparameters are typically optimized by maximizing the marginal log-likelihood~\cite{rasmussen_gaussian_2008}. Among these methods, physics-informed neural networks (PINNs) incorporate first-principles knowledge to enforce physics-consistent training~\cite{raissi2019physics}, bridging data-driven and mechanistic modeling as highlighted in Figure~\ref{fig:nonlinear_modeling_classification}.
+Various function approximators can be used for $\hat{f}$~\cite{brunton2025machine}. Neural networks offer great flexibility in capturing complex nonlinearities but often require large datasets and lack interpretability. For more interpretable models, sparse identification of nonlinear dynamics (SINDy)\cite{fasel2021sindy} identifies a sparse set of governing equations from a library of candidate functions. Operator-theoretic methods such as dynamic mode decomposition (DMD)\cite{schmid2010dynamic} and Koopman operator analysis~\cite{mezic2005spectral} provide linear representations of nonlinear systems by lifting dynamics into higher-dimensional spaces. Hankel matrix methods have also been applied in control contexts~\cite{willems2005note}, notably in data-driven MPC frameworks~\cite{berberich2020data}. Another approach is Gaussian process regression, a non-parametric method that provides uncertainty quantification; its hyperparameters are typically optimized by maximizing the marginal log-likelihood~\cite{rasmussen_gaussian_2008}. Among these methods, physics-informed neural networks (PINNs) incorporate first-principles knowledge to enforce physics-consistent training~\cite{raissi2019physics}, bridging data-driven and mechanistic modeling as highlighted in Figure~\ref{fig:nonlinear_modeling_classification}.
 
 
 
@@ -210,55 +215,54 @@ Various function approximators can be used for $\hat{f}$~\cite{brunton2025machin
 %%%% 
 %%%%%
 
-
-
 \begin{figure}[htbp]
     \centering
     \begin{tikzpicture}[
-        node distance=0.9cm and 0.5cm,
+        node distance=0.9cm and 0.6cm,
         box/.style={
             rectangle,
             draw=black,
             thick,
             rounded corners=4pt,
-            minimum width=1.6cm,
+            minimum width=2.0cm,
             minimum height=0.7cm,
             text centered,
-            text width=1.5cm,
+            text width=1.9cm,
             font=\small
         },
         block/.style={
             box,
-            fill=blue!60,
+            fill=TrajectoryBlue,
             text=white,
             font=\small\bfseries
         },
         arrow/.style={->, thick},
-        dashed_arrow/.style={->, thick, dashed, blue!60!black}
+        dashed_arrow/.style={->, thick, dashed, TrajectoryBlue} % updated color here
     ]
 
     % Top level
     \node[box] (top) {Non-linear Models};
 
     % Second level
-    \node[box, below left=of top] (data) {Data-driven};
+    \node[box, below left=of top] (data) {Data-Driven};
     \node[box, below right=of top, yshift=0.4cm, xshift=-1.0cm] (first) {First Principles};
 
     % Third level
     \node[box, below left=of data, yshift=0.3cm] (param) {Parametric};
+    \node[box, below right=2.6cm and -1.7cm of data] (reg) {Operator-Theoretic Methods};
     \node[box, below right=of data] (nonparam) {Non-parametric};
 
     % Fourth level
-    \node[box, below left=of param, yshift=0.6cm, xshift=-0.3cm] (nn) {Deep Learning Models};
-    \node[box, below right=of param] (reg) {Operator-Theoretic Methods};
+    \node[box, below left=of param, yshift=0.7cm, xshift=-0.3cm] (nn) {Deep Learning Models};
     \node[block, below=0.5cm of nonparam] (gp) {Gaussian Process Regression};
 
     % Fifth level
     \node[box, below left=of nn] (baseline) {Neural Networks};
     \node[block, below right=of nn, xshift=-1.5cm, yshift=0.4cm] (pinn) {Physics-Informed Neural Networks};
-    \node[box, below=0.8cm of reg, xshift=-0.2cm] (sindy) {SINDy};
-    \node[box, below right=of reg, xshift=0.2cm] (dmd) {Dynamic Mode Decomposition};
-    \node[box, below=1.2cm of reg, xshift=-2.1cm] (koopman) {Koopman};
+    \node[box, below=0.45cm of param] (sindy) {SINDy};
+    \node[box, below=1.5cm of reg, xshift=-2.4cm] (koopman) {Koopman};
+    \node[box, below=1.5cm of reg] (dmd) {DMD};
+    \node[box, below=1.5cm of reg, xshift=2.4cm] (subspace) {Subspace Identification \\ (Hankel)};
 
     % Arrows - solid black
     \draw[arrow] (top) -- (data);
@@ -267,19 +271,20 @@ Various function approximators can be used for $\hat{f}$~\cite{brunton2025machin
     \draw[arrow] (data) -- (nonparam);
     \draw[arrow] (param) -- (nn);
     \draw[arrow] (param) -- (reg);
+    \draw[arrow] (param) -- (sindy);
     \draw[arrow] (nonparam) -- (gp);
     \draw[arrow] (nn) -- (baseline);
     \draw[arrow] (nn) -- (pinn);
-    \draw[arrow] (reg) -- (sindy);
     \draw[arrow] (reg) -- (dmd);
-    \draw[arrow] ([xshift=-0.6cm ]reg.south) -- (koopman.north);
+    \draw[arrow] (reg) -- (koopman);
+    \draw[arrow] (reg) -- (subspace);
 
-    % Dashed arrow
+    % Dashed arrow in TrajectoryBlue
     \draw[dashed_arrow] (first) -- (pinn);
 
     \end{tikzpicture}
     \caption{
-Classification of nonlinear modeling techniques. Data-driven approaches split into parametric models (neural networks, SINDy, DMD, Koopman) and non-parametric models (Gaussian Process Regression). PINNs integrate first principles (dashed arrow) for physics-consistent training. PINNs and Gaussian Process Regression, highlighted in blue, are the main methods investigated.
+    Classification of nonlinear modeling techniques. Data-driven approaches split into parametric models (neural networks, SINDy, DMD, Koopman, subspace identification) and non-parametric models (Gaussian Process regression). PINNs integrate first principles (dashed arrow) for physics-consistent training. PINNs and Gaussian process regression, highlighted in blue, are the main methods investigated.
     }
     \label{fig:nonlinear_modeling_classification}
 \end{figure}
